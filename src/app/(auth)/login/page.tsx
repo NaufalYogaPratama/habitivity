@@ -69,7 +69,7 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="w-full max-w-md px-4">
+        <div className="w-full max-w-md px-4 py-6 sm:py-0">
             <div className="text-center mb-8">
                 <Link href="/" className="inline-block text-3xl font-bold font-mono tracking-tighter mb-2">
                     <span className="text-gradient">Habitivity</span>

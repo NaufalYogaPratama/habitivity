@@ -74,7 +74,7 @@ export default function RegisterPage() {
     };
 
     return (
-        <div className="w-full max-w-md px-4">
+        <div className="w-full max-w-md px-4 py-6 sm:py-0">
             <div className="text-center mb-8">
                 <Link href="/" className="inline-block text-3xl font-bold font-mono tracking-tighter mb-2">
                     <span className="text-gradient">Habitivity</span>
@@ -134,7 +134,7 @@ export default function RegisterPage() {
                                 )}
                             />
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <FormField
                                     control={form.control}
                                     name="password"

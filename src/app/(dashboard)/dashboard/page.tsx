@@ -31,9 +31,9 @@ export default async function DashboardPage() {
     const user = session.user as { name?: string; email?: string; role?: string };
 
     return (
-        <div className="flex flex-col xl:flex-row">
+        <div className="flex flex-col xl:flex-row h-full overflow-hidden">
             {/* Main Feed */}
-            <div className="flex-1 p-4 sm:p-6 space-y-6 sm:space-y-7 min-w-0">
+            <div className="flex-1 overflow-y-auto min-h-0 p-4 sm:p-6 space-y-6 sm:space-y-7 min-w-0">
                 {/* Top Bar */}
                 <div className="flex items-center gap-3 sm:gap-4">
                     <div className="flex-1 flex items-center bg-[#151823] border border-white/[0.06] rounded-2xl px-4 py-2.5 focus-within:border-purple-500/30 transition-colors">
@@ -272,7 +272,7 @@ export default async function DashboardPage() {
             </div>
 
             {/* Right Sidebar - Desktop only */}
-            <div className="w-[320px] flex-shrink-0 border-l border-white/[0.04] bg-[#0F1118]/60 backdrop-blur-xl p-5 space-y-6 overflow-y-auto hidden xl:block">
+            <div className="w-[320px] flex-shrink-0 border-l border-white/[0.04] bg-[#0F1118]/60 backdrop-blur-xl p-5 space-y-6 overflow-y-auto min-h-0 hidden xl:block">
                 {/* User Profile Card */}
                 <div className="text-center space-y-3">
                     <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500/30 to-fuchsia-500/30 border border-white/10 flex items-center justify-center text-3xl mx-auto shadow-lg shadow-purple-500/10">

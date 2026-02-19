@@ -133,7 +133,7 @@ export default function DashboardLayoutClient({ children, user }: { children: Re
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     return (
-        <div className="min-h-screen bg-[#0B0E14] text-white flex overflow-hidden selection:bg-purple-500/30 font-sans">
+        <div className="h-screen bg-[#0B0E14] text-white flex overflow-hidden selection:bg-purple-500/30 font-sans">
             {/* Background Ambient */}
             <div className="fixed inset-0 pointer-events-none z-0">
                 <div className="absolute top-0 left-[20%] w-[600px] h-[600px] bg-purple-700/8 blur-[150px] rounded-full" />

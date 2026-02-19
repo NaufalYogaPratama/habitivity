@@ -409,6 +409,12 @@ export default function FocusArenaClient() {
 
     const currentMode = FOCUS_MODES.find((m) => m.id === store.selectedMode)!;
 
+    // ─── Load stats from DB ────────────────
+    useEffect(() => {
+        store.loadStats();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
     // ─── Timer Tick ──────────────────────────
     useEffect(() => {
         if (store.sessionState === 'running') {

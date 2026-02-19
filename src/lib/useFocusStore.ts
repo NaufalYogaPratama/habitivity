@@ -59,7 +59,7 @@ interface FocusStore {
     hp: number;
     hpPenaltyCount: number;
 
-    // Stats
+    // Stats (loaded from DB)
     sessionsCompleted: number;
     totalFocusTime: number;
     currentStreak: number;
@@ -74,6 +74,8 @@ interface FocusStore {
     tick: () => void;
     penalizeHP: () => void;
     resetToIdle: () => void;
+    loadStats: () => Promise<void>;
+    saveSession: (status: 'completed' | 'gave-up') => Promise<void>;
 }
 
 export const useFocusStore = create<FocusStore>((set, get) => ({
@@ -118,16 +120,21 @@ export const useFocusStore = create<FocusStore>((set, get) => ({
             totalFocusTime: state.totalFocusTime + elapsed,
             currentStreak: 0,
         });
+        // Save to DB
+        get().saveSession('gave-up');
     },
 
     completeSession: () => {
         const state = get();
+        const config = FOCUS_MODES.find((m) => m.id === state.selectedMode)!;
         set({
             sessionState: 'completed',
             sessionsCompleted: state.sessionsCompleted + 1,
             totalFocusTime: state.totalFocusTime + state.totalTime,
             currentStreak: state.currentStreak + 1,
         });
+        // Save to DB with XP
+        get().saveSession('completed');
     },
 
     tick: () => {
@@ -145,7 +152,6 @@ export const useFocusStore = create<FocusStore>((set, get) => ({
         if (state.sessionState !== 'running') return;
         const newHP = Math.max(0, state.hp - 5);
         set({ hp: newHP, hpPenaltyCount: state.hpPenaltyCount + 1 });
-        // If HP reaches 0, auto give up
         if (newHP <= 0) {
             get().giveUp();
         }
@@ -161,5 +167,44 @@ export const useFocusStore = create<FocusStore>((set, get) => ({
             hp: 100,
             hpPenaltyCount: 0,
         });
+    },
+
+    // Load stats from MongoDB on mount
+    loadStats: async () => {
+        try {
+            const res = await fetch('/api/focus');
+            if (!res.ok) return;
+            const data = await res.json();
+            set({
+                sessionsCompleted: data.sessionsCompleted || 0,
+                totalFocusTime: data.totalFocusTime || 0,
+                currentStreak: data.currentStreak || 0,
+            });
+        } catch (err) {
+            console.error('Failed to load focus stats:', err);
+        }
+    },
+
+    // Save session to MongoDB
+    saveSession: async (status) => {
+        try {
+            const state = get();
+            const config = FOCUS_MODES.find((m) => m.id === state.selectedMode)!;
+            const elapsed = status === 'completed' ? state.totalTime : state.totalTime - state.timeRemaining;
+
+            await fetch('/api/focus', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    mode: state.selectedMode,
+                    duration: elapsed,
+                    xpEarned: status === 'completed' ? config.xpReward : 0,
+                    hpRemaining: state.hp,
+                    status,
+                }),
+            });
+        } catch (err) {
+            console.error('Failed to save focus session:', err);
+        }
     },
 }));

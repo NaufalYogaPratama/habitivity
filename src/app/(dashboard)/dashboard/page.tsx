@@ -3,6 +3,10 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import connectDB from '@/lib/db/mongodb';
+import User from '@/models/User';
+import FocusSession from '@/models/FocusSession';
+import LedgerEntry from '@/models/LedgerEntry';
 
 const trendingQuests = [
     { icon: '🏃‍♂️', title: '5K Runner', category: 'Fitness', reward: '150 XP', time: '2h 40m', rarity: 'Epic', gradient: 'from-orange-500/30 via-rose-500/20 to-purple-600/20', users: 24 },
@@ -11,24 +15,118 @@ const trendingQuests = [
     { icon: '💧', title: 'Hydration Hero', category: 'Health', reward: '80 XP', time: '5h 00m', rarity: 'Common', gradient: 'from-cyan-500/30 via-blue-500/20 to-indigo-600/20', users: 45 },
 ];
 
-const topHeroes = [
-    { name: 'ShadowBlade', xp: '12,450 XP', level: 28, streak: 45 },
-    { name: 'ZenMaster', xp: '11,200 XP', level: 25, streak: 38 },
-    { name: 'CodeNinja', xp: '9,800 XP', level: 22, streak: 30 },
-];
+// Helper to format relative time
+function timeAgo(date: Date): string {
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMin = Math.floor(diffMs / 60000);
+    if (diffMin < 1) return 'baru saja';
+    if (diffMin < 60) return `${diffMin}m lalu`;
+    const diffHour = Math.floor(diffMin / 60);
+    if (diffHour < 24) return `${diffHour}h lalu`;
+    const diffDay = Math.floor(diffHour / 24);
+    return `${diffDay}d lalu`;
+}
 
-const recentActivity = [
-    { user: 'ShadowBlade', action: 'completed', quest: '10K Run', time: '2m ago', icon: '🏆' },
-    { user: 'ZenMaster', action: 'earned', quest: '500 XP', time: '5m ago', icon: '⚡' },
-    { user: 'CodeNinja', action: 'started', quest: 'Deep Focus', time: '12m ago', icon: '🎯' },
-    { user: 'PixelArt', action: 'minted', quest: 'Art NFT #42', time: '18m ago', icon: '🎨' },
-];
+// Format Rupiah
+function formatRupiah(n: number): string {
+    return 'Rp ' + n.toLocaleString('id-ID');
+}
+
+const MODE_LABELS: Record<string, string> = {
+    'quick-sprint': 'Quick Sprint',
+    'deep-work': 'Deep Work',
+    marathon: 'Marathon',
+};
 
 export default async function DashboardPage() {
     const session = await auth();
     if (!session) redirect('/login');
 
-    const user = session.user as { name?: string; email?: string; role?: string };
+    const userSession = session.user as { id?: string; name?: string; email?: string; role?: string };
+
+    await connectDB();
+
+    // ─── Fetch real data from DB ────────────────
+    const currentUser = await User.findById(userSession.id).select('username stats').lean();
+    const stats = currentUser?.stats || { hp: 100, xp: 0, gold: 0, level: 1, streak: 0 };
+
+    // Leaderboard: top 5 users by XP
+    const topUsersRaw = await User.find({ role: 'user' })
+        .select('username stats.xp stats.level stats.streak')
+        .sort({ 'stats.xp': -1 })
+        .limit(5)
+        .lean();
+
+    const topHeroes = topUsersRaw.map((u) => ({
+        name: u.username || 'Hero',
+        xp: `${(u.stats?.xp || 0).toLocaleString()} XP`,
+        level: u.stats?.level || 1,
+        streak: u.stats?.streak || 0,
+    }));
+
+    // Recent activity: last 6 focus sessions + expenses across all users
+    interface FocusSessionDoc {
+        userId: { username?: string };
+        mode: string;
+        xpEarned: number;
+        status: string;
+        completedAt: Date;
+    }
+
+    interface LedgerEntryDoc {
+        userId: { username?: string };
+        amount: number;
+        category: string;
+        date: Date;
+    }
+
+    const recentFocusSessions = await FocusSession.find()
+        .sort({ completedAt: -1 })
+        .limit(4)
+        .populate('userId', 'username')
+        .lean() as unknown as FocusSessionDoc[];
+
+    const recentExpenses = await LedgerEntry.find()
+        .sort({ date: -1 })
+        .limit(4)
+        .populate('userId', 'username')
+        .lean() as unknown as LedgerEntryDoc[];
+
+    // Merge & sort recent activities
+    type Activity = { user: string; action: string; quest: string; time: string; icon: string; sortDate: Date };
+    const recentActivity: Activity[] = [];
+
+    for (const fs of recentFocusSessions) {
+        const username = fs.userId?.username || 'Hero';
+        recentActivity.push({
+            user: username,
+            action: fs.status === 'completed' ? 'menyelesaikan' : 'menyerah di',
+            quest: `${MODE_LABELS[fs.mode] || fs.mode} (+${fs.xpEarned} XP)`,
+            time: timeAgo(new Date(fs.completedAt)),
+            icon: fs.status === 'completed' ? '🏆' : '💀',
+            sortDate: new Date(fs.completedAt),
+        });
+    }
+
+    for (const le of recentExpenses) {
+        const username = le.userId?.username || 'Hero';
+        recentActivity.push({
+            user: username,
+            action: 'mencatat',
+            quest: `${formatRupiah(le.amount)} (${le.category})`,
+            time: timeAgo(new Date(le.date)),
+            icon: '💸',
+            sortDate: new Date(le.date),
+        });
+    }
+
+    recentActivity.sort((a, b) => b.sortDate.getTime() - a.sortDate.getTime());
+    const limitedActivity = recentActivity.slice(0, 6);
+
+    // XP progress to next level
+    const xpInLevel = stats.xp % 1000;
+    const xpForNextLevel = 1000;
 
     return (
         <div className="flex flex-col xl:flex-row h-full overflow-hidden">
@@ -86,13 +184,13 @@ export default async function DashboardPage() {
                     </div>
                 </div>
 
-                {/* Stats Row */}
+                {/* Stats Row — REAL DATA */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                     {[
-                        { icon: '❤️', label: 'HP', value: '100/100', color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/15' },
-                        { icon: '⚡', label: 'XP', value: '0/1,000', color: 'text-purple-400', bg: 'bg-purple-500/10 border-purple-500/15' },
-                        { icon: '💰', label: 'Gold', value: '0', color: 'text-amber-400', bg: 'bg-amber-500/10 border-amber-500/15' },
-                        { icon: '⭐', label: 'Level', value: '1', color: 'text-fuchsia-400', bg: 'bg-fuchsia-500/10 border-fuchsia-500/15' },
+                        { icon: '❤️', label: 'HP', value: `${stats.hp}/100`, color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/15' },
+                        { icon: '⚡', label: 'XP', value: `${xpInLevel.toLocaleString()}/${xpForNextLevel.toLocaleString()}`, color: 'text-purple-400', bg: 'bg-purple-500/10 border-purple-500/15' },
+                        { icon: '💰', label: 'Gold', value: stats.gold.toLocaleString(), color: 'text-amber-400', bg: 'bg-amber-500/10 border-amber-500/15' },
+                        { icon: '⭐', label: 'Level', value: stats.level.toString(), color: 'text-fuchsia-400', bg: 'bg-fuchsia-500/10 border-fuchsia-500/15' },
                     ].map((stat) => (
                         <div key={stat.label} className={`${stat.bg} border rounded-xl sm:rounded-2xl p-3 sm:p-4 flex items-center gap-2.5 sm:gap-3`}>
                             <span className="text-xl sm:text-2xl">{stat.icon}</span>
@@ -183,16 +281,16 @@ export default async function DashboardPage() {
                                     🧑‍💻
                                 </div>
                                 <div className="flex-1">
-                                    <h3 className="font-bold text-white">{user?.name || 'Hero'}</h3>
-                                    <p className="text-slate-500 text-xs">@{user?.name?.toLowerCase().replace(/\s+/g, '') || 'hero'}</p>
+                                    <h3 className="font-bold text-white">{currentUser?.username || userSession?.name || 'Hero'}</h3>
+                                    <p className="text-slate-500 text-xs">@{(currentUser?.username || userSession?.name || 'hero').toLowerCase().replace(/\s+/g, '')}</p>
                                 </div>
                                 <div className="flex gap-4 text-center">
                                     <div>
-                                        <p className="text-white font-bold text-sm">Lv.1</p>
+                                        <p className="text-white font-bold text-sm">Lv.{stats.level}</p>
                                         <p className="text-slate-600 text-[9px] uppercase">Level</p>
                                     </div>
                                     <div>
-                                        <p className="text-amber-400 font-bold text-sm">0🔥</p>
+                                        <p className="text-amber-400 font-bold text-sm">{stats.streak}🔥</p>
                                         <p className="text-slate-600 text-[9px] uppercase">Streak</p>
                                     </div>
                                 </div>
@@ -208,16 +306,18 @@ export default async function DashboardPage() {
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-2">
                                         <span className="text-lg">💰</span>
-                                        <span className="text-xl font-bold text-white">0 Gold</span>
+                                        <span className="text-xl font-bold text-white">{stats.gold.toLocaleString()} Gold</span>
                                     </div>
-                                    <Button size="xs" className="bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs rounded-lg px-3">
-                                        Add +
-                                    </Button>
+                                    <Link href="/dashboard/ledger">
+                                        <Button size="xs" className="bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs rounded-lg px-3">
+                                            Ledger
+                                        </Button>
+                                    </Link>
                                 </div>
-                                <div className="flex items-end gap-1 h-12 pt-2">
-                                    {[20, 35, 25, 45, 30, 55, 40, 60, 50, 45, 65, 55].map((h, i) => (
-                                        <div key={i} className="flex-1 bg-purple-500/30 rounded-t" style={{ height: `${h}%` }} />
-                                    ))}
+                                <div className="flex items-center gap-2 text-xs text-slate-400">
+                                    <span>⚡ {stats.xp.toLocaleString()} XP</span>
+                                    <span>•</span>
+                                    <span>🔥 {stats.streak} streak</span>
                                 </div>
                             </CardContent>
                         </Card>
@@ -231,18 +331,22 @@ export default async function DashboardPage() {
                                 </div>
                             </CardHeader>
                             <CardContent className="pt-0 space-y-2">
-                                {topHeroes.map((hero, idx) => (
-                                    <div key={hero.name} className="flex items-center gap-3 p-2 rounded-xl bg-white/[0.02]">
-                                        <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-black ${idx === 0 ? 'bg-amber-500/20 text-amber-400' : idx === 1 ? 'bg-slate-400/20 text-slate-300' : 'bg-orange-500/20 text-orange-400'}`}>
-                                            {idx + 1}
+                                {topHeroes.length === 0 ? (
+                                    <p className="text-slate-500 text-xs text-center py-2">Belum ada data</p>
+                                ) : (
+                                    topHeroes.map((hero, idx) => (
+                                        <div key={hero.name} className="flex items-center gap-3 p-2 rounded-xl bg-white/[0.02]">
+                                            <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-black ${idx === 0 ? 'bg-amber-500/20 text-amber-400' : idx === 1 ? 'bg-slate-400/20 text-slate-300' : 'bg-orange-500/20 text-orange-400'}`}>
+                                                {idx + 1}
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-white text-xs font-semibold truncate">{hero.name}</p>
+                                                <p className="text-slate-500 text-[10px]">Lv.{hero.level}</p>
+                                            </div>
+                                            <span className="text-purple-400 text-[10px] font-bold">{hero.xp}</span>
                                         </div>
-                                        <div className="flex-1 min-w-0">
-                                            <p className="text-white text-xs font-semibold truncate">{hero.name}</p>
-                                            <p className="text-slate-500 text-[10px]">Lv.{hero.level}</p>
-                                        </div>
-                                        <span className="text-purple-400 text-[10px] font-bold">{hero.xp}</span>
-                                    </div>
-                                ))}
+                                    ))
+                                )}
                             </CardContent>
                         </Card>
                     </div>
@@ -253,19 +357,23 @@ export default async function DashboardPage() {
                             <CardTitle className="text-sm font-bold text-white">Recent Activity</CardTitle>
                         </CardHeader>
                         <CardContent className="pt-0 space-y-2">
-                            {recentActivity.map((act, idx) => (
-                                <div key={idx} className="flex items-start gap-3 p-2 rounded-xl">
-                                    <span className="text-sm mt-0.5">{act.icon}</span>
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-xs">
-                                            <span className="text-white font-semibold">{act.user}</span>{' '}
-                                            <span className="text-slate-500">{act.action}</span>{' '}
-                                            <span className="text-purple-300 font-medium">{act.quest}</span>
-                                        </p>
-                                        <p className="text-slate-600 text-[10px] mt-0.5">{act.time}</p>
+                            {limitedActivity.length === 0 ? (
+                                <p className="text-slate-500 text-xs text-center py-2">Belum ada aktivitas</p>
+                            ) : (
+                                limitedActivity.map((act, idx) => (
+                                    <div key={idx} className="flex items-start gap-3 p-2 rounded-xl">
+                                        <span className="text-sm mt-0.5">{act.icon}</span>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-xs">
+                                                <span className="text-white font-semibold">{act.user}</span>{' '}
+                                                <span className="text-slate-500">{act.action}</span>{' '}
+                                                <span className="text-purple-300 font-medium">{act.quest}</span>
+                                            </p>
+                                            <p className="text-slate-600 text-[10px] mt-0.5">{act.time}</p>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))
+                            )}
                         </CardContent>
                     </Card>
                 </div>
@@ -279,23 +387,23 @@ export default async function DashboardPage() {
                         🧑‍💻
                     </div>
                     <div>
-                        <h3 className="font-bold text-white">{user?.name || 'Hero'}</h3>
-                        <p className="text-slate-500 text-xs">@{user?.name?.toLowerCase().replace(/\s+/g, '') || 'hero'}</p>
+                        <h3 className="font-bold text-white">{currentUser?.username || userSession?.name || 'Hero'}</h3>
+                        <p className="text-slate-500 text-xs">@{(currentUser?.username || userSession?.name || 'hero').toLowerCase().replace(/\s+/g, '')}</p>
                     </div>
                     <div className="flex justify-center gap-4 text-center">
                         <div>
-                            <p className="text-white font-bold text-sm">Lv. 1</p>
+                            <p className="text-white font-bold text-sm">Lv. {stats.level}</p>
                             <p className="text-slate-600 text-[10px] uppercase tracking-wider">Level</p>
                         </div>
                         <div className="w-px bg-white/10" />
                         <div>
-                            <p className="text-amber-400 font-bold text-sm">0 🔥</p>
+                            <p className="text-amber-400 font-bold text-sm">{stats.streak} 🔥</p>
                             <p className="text-slate-600 text-[10px] uppercase tracking-wider">Streak</p>
                         </div>
                         <div className="w-px bg-white/10" />
                         <div>
-                            <p className="text-purple-400 font-bold text-sm">0</p>
-                            <p className="text-slate-600 text-[10px] uppercase tracking-wider">Quests</p>
+                            <p className="text-purple-400 font-bold text-sm">{stats.xp.toLocaleString()}</p>
+                            <p className="text-slate-600 text-[10px] uppercase tracking-wider">XP</p>
                         </div>
                     </div>
                 </div>
@@ -311,70 +419,75 @@ export default async function DashboardPage() {
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
                                 <span className="text-lg">💰</span>
-                                <span className="text-xl font-bold text-white">0 Gold</span>
+                                <span className="text-xl font-bold text-white">{stats.gold.toLocaleString()} Gold</span>
                             </div>
-                            <Button size="xs" className="bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs rounded-lg px-3">
-                                Add +
-                            </Button>
+                            <Link href="/dashboard/ledger">
+                                <Button size="xs" className="bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs rounded-lg px-3">
+                                    Ledger
+                                </Button>
+                            </Link>
                         </div>
-                        <div className="flex items-end gap-1 h-12 pt-2">
-                            {[20, 35, 25, 45, 30, 55, 40, 60, 50, 45, 65, 55].map((h, i) => (
-                                <div
-                                    key={i}
-                                    className="flex-1 bg-purple-500/30 hover:bg-purple-500/50 rounded-t transition-colors"
-                                    style={{ height: `${h}%` }}
-                                />
-                            ))}
+                        <div className="flex items-center gap-2 text-xs text-slate-400">
+                            <span>⚡ {stats.xp.toLocaleString()} XP</span>
+                            <span>•</span>
+                            <span>🔥 {stats.streak} streak</span>
                         </div>
                     </div>
                 </div>
 
                 <div className="h-px bg-white/[0.04]" />
 
-                {/* Top Heroes */}
+                {/* Top Heroes — REAL DATA */}
                 <div>
                     <div className="flex items-center justify-between mb-3">
                         <h3 className="font-bold text-sm text-white">Top Heroes</h3>
                         <Link href="/dashboard/leaderboard" className="text-[10px] font-bold text-purple-400 hover:text-purple-300 uppercase tracking-wider">See All</Link>
                     </div>
                     <div className="space-y-2">
-                        {topHeroes.map((hero, idx) => (
-                            <div key={hero.name} className="flex items-center gap-3 p-2.5 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] transition-colors">
-                                <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black ${idx === 0 ? 'bg-amber-500/20 text-amber-400' : idx === 1 ? 'bg-slate-400/20 text-slate-300' : 'bg-orange-500/20 text-orange-400'}`}>
-                                    {idx + 1}
+                        {topHeroes.length === 0 ? (
+                            <p className="text-slate-500 text-xs text-center py-2">Belum ada data</p>
+                        ) : (
+                            topHeroes.map((hero, idx) => (
+                                <div key={hero.name} className="flex items-center gap-3 p-2.5 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] transition-colors">
+                                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black ${idx === 0 ? 'bg-amber-500/20 text-amber-400' : idx === 1 ? 'bg-slate-400/20 text-slate-300' : 'bg-orange-500/20 text-orange-400'}`}>
+                                        {idx + 1}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-white text-xs font-semibold truncate">{hero.name}</p>
+                                        <p className="text-slate-500 text-[10px]">Lv.{hero.level} • {hero.streak}🔥</p>
+                                    </div>
+                                    <span className="text-purple-400 text-[10px] font-bold">{hero.xp}</span>
                                 </div>
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-white text-xs font-semibold truncate">{hero.name}</p>
-                                    <p className="text-slate-500 text-[10px]">Lv.{hero.level} • {hero.streak}🔥</p>
-                                </div>
-                                <span className="text-purple-400 text-[10px] font-bold">{hero.xp}</span>
-                            </div>
-                        ))}
+                            ))
+                        )}
                     </div>
                 </div>
 
                 <div className="h-px bg-white/[0.04]" />
 
-                {/* Recent Activity */}
+                {/* Recent Activity — REAL DATA */}
                 <div>
                     <div className="flex items-center justify-between mb-3">
                         <h3 className="font-bold text-sm text-white">Recent Activity</h3>
-                        <span className="text-[10px] font-bold text-purple-400 uppercase tracking-wider">See All</span>
                     </div>
                     <div className="space-y-2">
-                        {recentActivity.map((act, idx) => (
-                            <div key={idx} className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/[0.02] transition-colors">
-                                <span className="text-base mt-0.5">{act.icon}</span>
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-xs">
-                                        <span className="text-white font-semibold">{act.user}</span>{' '}
-                                        <span className="text-slate-500">{act.action}</span>{' '}
-                                        <span className="text-purple-300 font-medium">{act.quest}</span>
-                                    </p>
-                                    <p className="text-slate-600 text-[10px] mt-0.5">{act.time}</p>
+                        {limitedActivity.length === 0 ? (
+                            <p className="text-slate-500 text-xs text-center py-2">Belum ada aktivitas</p>
+                        ) : (
+                            limitedActivity.map((act, idx) => (
+                                <div key={idx} className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/[0.02] transition-colors">
+                                    <span className="text-base mt-0.5">{act.icon}</span>
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-xs">
+                                            <span className="text-white font-semibold">{act.user}</span>{' '}
+                                            <span className="text-slate-500">{act.action}</span>{' '}
+                                            <span className="text-purple-300 font-medium">{act.quest}</span>
+                                        </p>
+                                        <p className="text-slate-600 text-[10px] mt-0.5">{act.time}</p>
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))
+                        )}
                     </div>
                 </div>
             </div>

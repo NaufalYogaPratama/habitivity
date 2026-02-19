@@ -51,7 +51,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
                             <span className="text-white text-sm font-bold">⚡</span>
                         </div>
                         <span className="text-lg font-bold bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
-                            ArcadeOS
+                            Habitivity
                         </span>
                     </Link>
                 </div>

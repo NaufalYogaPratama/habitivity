@@ -54,7 +54,7 @@ export default async function AdminDashboardPage() {
                         </div>
                         <div>
                             <span className="text-base font-bold bg-gradient-to-r from-violet-400 to-purple-400 bg-clip-text text-transparent block leading-none">
-                                ArcadeOS
+                                Habitivity
                             </span>
                             <span className="text-xs text-slate-500">Admin Panel</span>
                         </div>
@@ -99,7 +99,7 @@ export default async function AdminDashboardPage() {
                         <h1 className="text-2xl font-bold text-white flex items-center gap-2">
                             <span>📊</span> Admin Dashboard
                         </h1>
-                        <p className="text-slate-400 mt-1">ArcadeOS platform overview & analytics</p>
+                        <p className="text-slate-400 mt-1">Habitivity platform overview & analytics</p>
                     </div>
                     <AdminSignOut />
                 </div>

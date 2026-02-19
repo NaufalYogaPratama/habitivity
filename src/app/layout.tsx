@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ArcadeOS — Level Up Your Life",
-  description: "The gamified productivity ecosystem. Quests, focus sessions, and finances — powered by AI. FICPACT CUP 2026.",
+  title: 'Habitivity — Gamify Your Life',
+  description: 'The ultimate NFT-styled gamification platform for your habits and productivity.',
 };
 
 export default function RootLayout({

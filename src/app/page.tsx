@@ -1,327 +1,311 @@
-import Link from 'next/link';
-import type { Metadata } from 'next';
+'use client';
 
-export const metadata: Metadata = {
-  title: 'ArcadeOS — Level Up Your Life',
-  description: 'The ultimate gamified productivity ecosystem. Manage quests, focus sessions, and finances — powered by AI. Built for FICPACT CUP 2026.',
+import Link from 'next/link';
+import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+
+// Icons (using emojis for now to keep it zero-dep, but could use Lucide)
+const Icons = {
+  Wallet: () => <span>👛</span>,
+  Grid: () => <span>🔲</span>,
+  Trending: () => <span>🔥</span>,
+  Create: () => <span>✨</span>,
+  User: () => <span>👤</span>,
+  Search: () => <span>🔍</span>,
 };
 
-const features = [
-  {
-    icon: '⚔️',
-    title: 'Quest Board',
-    desc: 'AI-powered task management. Every quest is classified by difficulty, XP reward, and gold reward automatically.',
-    badge: 'AI-Powered',
-    badgeColor: 'text-indigo-400 bg-indigo-500/10 border-indigo-500/20',
-    glow: 'shadow-indigo-500/20',
-    border: 'border-indigo-500/10 hover:border-indigo-500/30',
-  },
-  {
-    icon: '🎯',
-    title: 'Focus Arena',
-    desc: 'Gamified Pomodoro timer. Your HP drops when you switch tabs — stay focused or face the consequences.',
-    badge: 'Real-time',
-    badgeColor: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
-    glow: 'shadow-emerald-500/20',
-    border: 'border-emerald-500/10 hover:border-emerald-500/30',
-  },
-  {
-    icon: '💰',
-    title: 'Gold Ledger',
-    desc: 'Gamified expense tracking. Save money, earn gold bonuses. Overspend, lose HP. Your wallet, your game.',
-    badge: 'Gamified',
-    badgeColor: 'text-amber-400 bg-amber-500/10 border-amber-500/20',
-    glow: 'shadow-amber-500/20',
-    border: 'border-amber-500/10 hover:border-amber-500/30',
-  },
-  {
-    icon: '🤖',
-    title: 'AI Status System',
-    desc: 'AI detects your current state — On Fire, Steady, Struggling, or Burnout Risk — and adapts quests accordingly.',
-    badge: 'Adaptive',
-    badgeColor: 'text-violet-400 bg-violet-500/10 border-violet-500/20',
-    glow: 'shadow-violet-500/20',
-    border: 'border-violet-500/10 hover:border-violet-500/30',
-  },
-];
-
-const stats = [
-  { value: '4', label: 'Core Systems', icon: '⚙️' },
-  { value: 'AI', label: 'Quest Classification', icon: '🤖' },
-  { value: '∞', label: 'Achievements', icon: '🏆' },
-  { value: '2', label: 'Player Roles', icon: '👥' },
-];
-
-const roles = [
-  {
-    icon: '🧑‍💻',
-    title: 'User',
-    desc: 'The Hero',
-    features: ['Quest management', 'Focus Arena with HP', 'Gold Ledger tracking', 'AI status detection', 'Leaderboard & shop'],
-    cta: 'Start as Hero',
-    href: '/register',
-    gradient: 'from-indigo-600 to-violet-600',
-    glow: 'shadow-indigo-500/40',
-    badge: 'Default Role',
-    badgeColor: 'bg-indigo-500/20 text-indigo-300',
-  },
-  {
-    icon: '👑',
-    title: 'Admin',
-    desc: 'The Overlord',
-    features: ['Full analytics dashboard', 'User management', 'Global quest creation', 'Shop item management', 'Platform impact data'],
-    cta: 'Join as Admin',
-    href: '/register',
-    gradient: 'from-violet-600 to-purple-700',
-    glow: 'shadow-violet-500/40',
-    badge: 'Special Role',
-    badgeColor: 'bg-violet-500/20 text-violet-300',
-  },
-];
-
 export default function LandingPage() {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 50);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <div className="min-h-screen bg-[#0F172A] text-white overflow-x-hidden">
-      {/* Background effects */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-60 -right-60 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-indigo-600/20 to-violet-600/20 blur-3xl" />
-        <div className="absolute top-1/2 -left-40 w-[400px] h-[400px] rounded-full bg-gradient-to-br from-violet-600/15 to-purple-600/15 blur-3xl" />
-        <div className="absolute -bottom-40 right-1/3 w-[500px] h-[500px] rounded-full bg-gradient-to-br from-amber-600/10 to-orange-600/10 blur-3xl" />
-        <div
-          className="absolute inset-0 opacity-[0.04]"
-          style={{
-            backgroundImage: `linear-gradient(rgba(99,102,241,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(99,102,241,0.5) 1px, transparent 1px)`,
-            backgroundSize: '60px 60px',
-          }}
-        />
+    <div className="min-h-screen bg-[#0f1021] text-white overflow-x-hidden selection:bg-fuchsia-500/30">
+
+      {/* Background Gradients */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-violet-600/20 blur-[120px] rounded-full" />
+        <div className="absolute top-[20%] right-[-10%] w-[40%] h-[40%] bg-fuchsia-600/20 blur-[120px] rounded-full" />
+        <div className="absolute bottom-[-10%] left-[20%] w-[60%] h-[40%] bg-indigo-600/20 blur-[120px] rounded-full" />
       </div>
 
       {/* Navbar */}
-      <nav className="relative z-50 flex items-center justify-between px-6 py-5 max-w-7xl mx-auto">
-        <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/40">
-            <span className="text-white font-bold">⚡</span>
+      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-[#0f1021]/80 backdrop-blur-md border-b border-white/5' : 'bg-transparent'}`}>
+        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+          <div className="flex items-center gap-12">
+            <Link href="/" className="text-2xl font-bold font-mono tracking-tighter">
+              <span className="text-gradient">Habitivity</span>
+            </Link>
+            <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
+              <Link href="#explore" className="hover:text-white transition-colors">Explore</Link>
+              <Link href="#creators" className="hover:text-white transition-colors">Creators</Link>
+              <Link href="#community" className="hover:text-white transition-colors">Community</Link>
+            </div>
           </div>
-          <span className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
-            ArcadeOS
-          </span>
-        </div>
-        <div className="hidden md:flex items-center gap-6 text-sm text-slate-400">
-          <a href="#features" className="hover:text-white transition-colors">Features</a>
-          <a href="#roles" className="hover:text-white transition-colors">Roles</a>
-          <a href="#about" className="hover:text-white transition-colors">About</a>
-        </div>
-        <div className="flex items-center gap-3">
-          <Link
-            href="/login"
-            className="px-4 py-2 rounded-xl border border-white/10 text-slate-300 hover:text-white hover:border-white/20 hover:bg-white/5 transition-all text-sm font-medium"
-          >
-            Sign In
-          </Link>
-          <Link
-            href="/register"
-            className="px-4 py-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white hover:from-indigo-500 hover:to-violet-500 transition-all text-sm font-medium shadow-lg shadow-indigo-500/30"
-          >
-            Get Started
-          </Link>
+
+          <div className="flex items-center gap-4">
+            <div className="hidden md:flex items-center bg-white/5 border border-white/10 rounded-full px-4 py-2 w-64 focus-within:border-violet-500/50 transition-colors">
+              <Icons.Search />
+              <input
+                type="text"
+                placeholder="Search quests, habits..."
+                className="bg-transparent border-none outline-none text-sm ml-2 w-full text-white placeholder:text-slate-500"
+              />
+            </div>
+            <Link
+              href="/login"
+              className="px-6 py-2.5 bg-white rounded-full text-[#0f1021] font-bold text-sm hover:bg-slate-200 transition-colors"
+            >
+              Start Journey
+            </Link>
+          </div>
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section className="relative z-10 text-center px-6 pt-16 pb-24 max-w-5xl mx-auto">
-        {/* Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 text-sm font-medium mb-8">
-          <span className="w-2 h-2 rounded-full bg-indigo-400 animate-pulse" />
-          FICPACT CUP 2026 · Gamified Productivity
-        </div>
+      <main className="relative pt-32 pb-20">
 
-        <h1 className="text-5xl md:text-7xl font-extrabold mb-6 leading-tight tracking-tight">
-          <span className="text-white">Level Up</span>
-          <br />
-          <span className="bg-gradient-to-r from-indigo-400 via-violet-400 to-purple-400 bg-clip-text text-transparent">
-            Your Life
-          </span>
-        </h1>
-
-        <p className="text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-          The world&apos;s first <span className="text-white font-medium">Life Operating System</span> that turns your daily grind into an epic RPG adventure. Quests, focus sessions, and finances — all gamified and powered by AI.
-        </p>
-
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-          <Link
-            href="/register"
-            className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold text-lg hover:from-indigo-500 hover:to-violet-500 transition-all shadow-2xl shadow-indigo-500/40 flex items-center justify-center gap-2"
-          >
-            🚀 Start Your Journey
-          </Link>
-          <Link
-            href="/login"
-            className="w-full sm:w-auto px-8 py-4 rounded-2xl border border-white/10 text-slate-300 font-semibold text-lg hover:border-white/20 hover:bg-white/5 hover:text-white transition-all flex items-center justify-center gap-2"
-          >
-            ⚡ Sign In
-          </Link>
-        </div>
-
-        {/* Stats row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
-          {stats.map((stat) => (
-            <div
-              key={stat.label}
-              className="bg-slate-800/50 border border-white/5 rounded-2xl p-4 backdrop-blur-sm"
-            >
-              <div className="text-2xl mb-1">{stat.icon}</div>
-              <div className="text-2xl font-extrabold bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">{stat.value}</div>
-              <div className="text-xs text-slate-500 mt-0.5">{stat.label}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section id="features" className="relative z-10 px-6 py-20 max-w-7xl mx-auto">
-        <div className="text-center mb-14">
-          <span className="text-indigo-400 font-semibold text-sm uppercase tracking-widest">Core Systems</span>
-          <h2 className="text-4xl font-extrabold text-white mt-2">
-            Four Pillars of Mastery
-          </h2>
-          <p className="text-slate-400 mt-3 max-w-xl mx-auto">
-            Every feature is designed to reinforce the others. Progress in one system fuels growth across all.
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
-          {features.map((feat) => (
-            <div
-              key={feat.title}
-              className={`bg-[#1E293B]/70 border ${feat.border} rounded-2xl p-6 backdrop-blur-sm shadow-xl ${feat.glow} transition-all group`}
-            >
-              <div className="w-12 h-12 rounded-xl bg-slate-700/60 border border-white/10 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
-                {feat.icon}
-              </div>
-              <div className="flex items-center gap-2 mb-2">
-                <h3 className="text-white font-bold">{feat.title}</h3>
-                <span className={`text-xs px-2 py-0.5 rounded-full border ${feat.badgeColor} font-medium`}>
-                  {feat.badge}
+        {/* Hero Section */}
+        <section className="max-w-7xl mx-auto px-6 mb-32">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="space-y-8">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-medium text-violet-300">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-violet-500"></span>
                 </span>
+                The #1 NFT-Gamified Life OS
               </div>
-              <p className="text-slate-400 text-sm leading-relaxed">{feat.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
 
-      {/* How It Works */}
-      <section className="relative z-10 px-6 py-20 max-w-4xl mx-auto">
-        <div className="text-center mb-12">
-          <span className="text-violet-400 font-semibold text-sm uppercase tracking-widest">The Loop</span>
-          <h2 className="text-4xl font-extrabold text-white mt-2">How ArcadeOS Works</h2>
-        </div>
+              <h1 className="text-5xl md:text-7xl font-bold leading-[1.1]">
+                Collect Habits. <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 via-fuchsia-400 to-white">Build Your Legacy.</span>
+              </h1>
 
-        <div className="relative">
-          <div className="absolute left-8 top-0 bottom-0 w-px bg-gradient-to-b from-indigo-500/50 via-violet-500/50 to-transparent hidden md:block" />
-          <div className="space-y-8">
-            {[
-              { step: '01', icon: '📝', title: 'Create Your Quest', desc: 'Describe your task. AI instantly classifies it — difficulty, XP, gold reward, skills required.' },
-              { step: '02', icon: '🎯', title: 'Enter the Focus Arena', desc: 'Start your Pomodoro session. Stay focused or your HP drops when you switch tabs.' },
-              { step: '03', icon: '✅', title: 'Complete & Earn', desc: 'Finish your quest. Gain XP, gold, and level up your character with NFT-style items.' },
-              { step: '04', icon: '📊', title: 'AI Adapts to You', desc: 'The AI reads your patterns and surfaces quests that match your current state.' },
-            ].map((item) => (
-              <div key={item.step} className="flex gap-6 md:pl-20 relative">
-                <div className="absolute left-4 top-3 w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-xs font-bold text-white shadow-lg shadow-indigo-500/30 hidden md:flex flex-shrink-0">
-                  {item.step}
+              <p className="text-lg text-slate-400 max-w-lg leading-relaxed">
+                Turn your daily routine into a high-value digital asset collection. Complete quests, earn XP, and mint your achievements.
+              </p>
+
+              <div className="flex flex-wrap gap-4">
+                <Link
+                  href="/register"
+                  className="px-8 py-4 bg-gradient-to-r from-violet-600 to-fuchsia-600 rounded-full font-bold shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:scale-[1.02] transition-all"
+                >
+                  Start Collecting
+                </Link>
+                <Link
+                  href="/login"
+                  className="px-8 py-4 bg-white/5 border border-white/10 rounded-full font-bold hover:bg-white/10 transition-colors"
+                >
+                  View Demo
+                </Link>
+              </div>
+
+              <div className="flex items-center gap-8 pt-4">
+                <div>
+                  <p className="text-2xl font-bold">98k+</p>
+                  <p className="text-xs text-slate-500 uppercase tracking-wider">Users</p>
                 </div>
-                <div className="bg-slate-800/50 border border-white/5 rounded-2xl p-5 flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <span className="text-2xl">{item.icon}</span>
-                    <h3 className="text-white font-bold">{item.title}</h3>
+                <div>
+                  <p className="text-2xl font-bold">12M+</p>
+                  <p className="text-xs text-slate-500 uppercase tracking-wider">Quests Done</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold">540k</p>
+                  <p className="text-xs text-slate-500 uppercase tracking-wider">NFTs Minted</p>
+                </div>
+              </div>
+            </div>
+
+            {/* 3D Card Visual */}
+            <div className="relative perspective-1000 group">
+              <div className="absolute inset-0 bg-gradient-to-tr from-violet-600/30 to-fuchsia-600/30 blur-[60px] rounded-full" />
+
+              <motion.div
+                initial={{ rotateY: -10, rotateX: 5 }}
+                animate={{
+                  rotateY: [10, -10],
+                  rotateX: [5, -5]
+                }}
+                transition={{
+                  repeat: Infinity,
+                  repeatType: "mirror",
+                  duration: 6,
+                  ease: "easeInOut"
+                }}
+                className="relative z-10 w-[380px] mx-auto bg-[#1a1b33]/90 border border-white/10 rounded-[32px] p-6 shadow-2xl backdrop-blur-xl"
+              >
+                <div className="aspect-square rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 mb-6 relative overflow-hidden flex items-center justify-center group-hover:scale-[1.02] transition-transform duration-500">
+                  <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
+                  <span className="text-8xl filter drop-shadow-xl animate-bounce duration-[3000ms]">🧘‍♂️</span>
+
+                  {/* Floating Elements */}
+                  <div className="absolute top-4 right-4 bg-black/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold border border-white/10">
+                    Rare
                   </div>
-                  <p className="text-slate-400 text-sm leading-relaxed">{item.desc}</p>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="text-xl font-bold">Morning Zen Master</h3>
+                      <p className="text-slate-400 text-sm">Mindfulness Collection</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-slate-500">Price</p>
+                      <p className="text-violet-400 font-mono font-bold">500 XP</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-xs text-slate-400 bg-black/20 p-3 rounded-xl">
+                    <span className="text-lg">🔥</span>
+                    <span> highest bid <b>320 XP</b> by </span>
+                    <span className="text-white font-medium truncate">@HabitHero...</span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3 pt-2">
+                    <button className="py-3 rounded-xl bg-violet-600 font-bold text-sm hover:bg-violet-700 transition-colors shadow-lg shadow-violet-600/20">
+                      Place Bid
+                    </button>
+                    <button className="py-3 rounded-xl bg-white/5 border border-white/10 font-bold text-sm hover:bg-white/10 transition-colors">
+                      View Details
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+
+        {/* Hot Bids / Trending Quests */}
+        <section className="max-w-7xl mx-auto px-6 mb-32" id="explore">
+          <div className="flex items-center justify-between mb-12">
+            <h2 className="text-3xl font-bold flex items-center gap-3">
+              <span className="text-2xl">🔥</span> Trending Quests
+            </h2>
+            <Link href="/login" className="text-sm font-bold text-violet-400 hover:text-violet-300 transition-colors">
+              View All Quests →
+            </Link>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="group bg-[#1a1b33]/60 border border-white/5 rounded-[24px] p-4 hover:border-violet-500/30 hover:shadow-2xl hover:shadow-violet-900/10 transition-all duration-300 hover:-translate-y-1">
+                <div className="aspect-[4/3] rounded-2xl bg-slate-800/50 mb-4 relative overflow-hidden">
+                  <div className={`absolute inset-0 bg-gradient-to-br ${i === 1 ? 'from-emerald-500/20 to-teal-500/20' :
+                      i === 2 ? 'from-orange-500/20 to-red-500/20' :
+                        i === 3 ? 'from-blue-500/20 to-cyan-500/20' :
+                          'from-pink-500/20 to-rose-500/20'
+                    }`} />
+                  <div className="absolute inset-0 flex items-center justify-center text-5xl transform group-hover:scale-110 transition-transform duration-500">
+                    {i === 1 ? '🏃‍♂️' : i === 2 ? '📚' : i === 3 ? '💧' : '🎨'}
+                  </div>
+                  <div className="absolute top-3 right-3 bg-black/40 backdrop-blur-md px-2 py-1 rounded-lg text-xs font-bold border border-white/10 text-white">
+                    0{i}h : 30m
+                  </div>
+                </div>
+
+                <h3 className="font-bold text-lg mb-1">{
+                  i === 1 ? '5k Runner' : i === 2 ? 'Read 30 Pages' : i === 3 ? 'Hydration Hit' : 'Create Art'
+                }</h3>
+
+                <div className="flex items-center justify-between mt-4">
+                  <div className="flex items-center gap-2">
+                    <div className="flex -space-x-2">
+                      {[1, 2, 3].map(u => (
+                        <div key={u} className="w-6 h-6 rounded-full bg-slate-700 border border-[#1a1b33]" />
+                      ))}
+                    </div>
+                    <span className="text-xs text-slate-400">12+ active</span>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs text-slate-500">Reward</p>
+                    <p className="text-sm font-bold text-emerald-400">+{i * 50} XP</p>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Roles Section */}
-      <section id="roles" className="relative z-10 px-6 py-20 max-w-4xl mx-auto">
-        <div className="text-center mb-12">
-          <span className="text-amber-400 font-semibold text-sm uppercase tracking-widest">Choose Your Path</span>
-          <h2 className="text-4xl font-extrabold text-white mt-2">Two Roles, One Ecosystem</h2>
-          <p className="text-slate-400 mt-3">Pick your role when you register. Each has a unique dashboard.</p>
-        </div>
+        {/* Top Collections */}
+        <section className="max-w-7xl mx-auto px-6 mb-32">
+          <h2 className="text-3xl font-bold mb-12">Top Collections over <span className="text-violet-400">last 7 days</span> ▾</h2>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          {roles.map((role) => (
-            <div
-              key={role.title}
-              className="bg-slate-800/50 border border-white/5 rounded-2xl p-7 flex flex-col hover:border-white/10 transition-all"
-            >
-              <div className="flex items-start justify-between mb-5">
-                <div>
-                  <div className="text-4xl mb-3">{role.icon}</div>
-                  <h3 className="text-2xl font-extrabold text-white">{role.title}</h3>
-                  <p className="text-slate-400 text-sm">{role.desc}</p>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {['Fitness Freaks', 'Code Warriors', 'Mindful Monks', 'Artistic Souls', 'Wealth Builders', 'Social Butterflies'].map((col, idx) => (
+              <div key={idx} className="flex items-center gap-4 hover:bg-white/5 p-4 rounded-xl transition-colors cursor-pointer group">
+                <span className="font-bold text-slate-500 w-4">{idx + 1}</span>
+                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-slate-800 to-slate-900 border border-white/10 relative overflow-hidden group-hover:border-violet-500/50 transition-colors">
+                  {/* Placeholder avatar */}
                 </div>
-                <span className={`text-xs px-2.5 py-1 rounded-full ${role.badgeColor} font-medium`}>
-                  {role.badge}
-                </span>
+                <div>
+                  <h4 className="font-bold group-hover:text-violet-400 transition-colors">{col}</h4>
+                  <p className="text-sm text-slate-400">Floor: <span className="text-white font-medium">2,400 XP</span></p>
+                </div>
+                <div className="ml-auto text-right">
+                  <p className={`text-sm font-bold ${idx % 2 === 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                    {idx % 2 === 0 ? '+' : '-'}{Math.floor(Math.random() * 20)}%
+                  </p>
+                  <p className="text-xs text-slate-500">Vol: 12k</p>
+                </div>
               </div>
-              <ul className="space-y-2.5 flex-1 mb-6">
-                {role.features.map((f) => (
-                  <li key={f} className="flex items-center gap-2.5 text-sm text-slate-300">
-                    <span className="w-4 h-4 rounded-full bg-white/10 flex items-center justify-center text-xs">✓</span>
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <Link
-                href={role.href}
-                className={`block text-center py-3.5 rounded-xl bg-gradient-to-r ${role.gradient} text-white font-bold hover:opacity-90 transition-all shadow-xl ${role.glow}`}
-              >
-                {role.cta}
-              </Link>
-            </div>
-          ))}
-        </div>
-      </section>
+            ))}
+          </div>
 
-      {/* CTA Section */}
-      <section id="about" className="relative z-10 px-6 py-20 max-w-3xl mx-auto text-center">
-        <div className="bg-gradient-to-br from-indigo-600/20 to-violet-600/20 border border-indigo-500/20 rounded-3xl p-12 backdrop-blur-sm">
-          <div className="text-5xl mb-4">⚡</div>
-          <h2 className="text-4xl font-extrabold text-white mb-4">Ready to Play?</h2>
-          <p className="text-slate-400 text-lg mb-8 max-w-md mx-auto">
-            Join the revolution. Turn your daily habits into an epic adventure starting today.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="text-center mt-12">
+            <Link href="/login" className="px-8 py-3 bg-[#1a1b33]/60 border border-white/10 rounded-full text-sm font-bold hover:bg-[#1a1b33] transition-colors">
+              Go to Rankings
+            </Link>
+          </div>
+        </section>
+
+        {/* Create and Sell / How it Works */}
+        <section className="max-w-7xl mx-auto px-6 mb-20">
+          <h2 className="text-3xl font-bold mb-12">Create and Sell Your Habits</h2>
+
+          <div className="grid md:grid-cols-4 gap-8">
+            {[
+              { icon: '👛', title: 'Set up your wallet', desc: 'Create your profile and connect your identity to start your journey.' },
+              { icon: '📂', title: 'Create Collection', desc: 'Define your habit categories and set your daily goals.' },
+              { icon: '🖼️', title: 'Add your NFTs', desc: 'Complete quests to mint your daily achievements as NFTs.' },
+              { icon: '🏷️', title: 'List them for sale', desc: 'Trade your XP and rewards in the community marketplace.' },
+            ].map((step, idx) => (
+              <div key={idx} className="group relative">
+                <div className="w-16 h-16 rounded-2xl bg-[#1a1b33] border border-white/10 flex items-center justify-center text-3xl mb-6 group-hover:bg-violet-600 transition-colors shadow-lg shadow-black/20">
+                  {step.icon}
+                </div>
+                <h3 className="font-bold text-lg mb-2">{step.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{step.desc}</p>
+
+                {/* Connector Line (except last) */}
+                {idx !== 3 && (
+                  <div className="hidden md:block absolute top-8 left-20 right-[-20%] h-[1px] bg-gradient-to-r from-violet-500/50 to-transparent" />
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Footer CTA */}
+        <section className="relative py-32 mt-32 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-violet-900/20 pointer-events-none" />
+          <div className="max-w-4xl mx-auto text-center px-6 relative z-10">
+            <h2 className="text-5xl md:text-7xl font-bold mb-8">Ready to <span className="text-gradient">Mint Your Life?</span></h2>
+            <p className="text-xl text-slate-400 mb-10">Join 98,000+ others who are turning their productivity into a game worth playing.</p>
             <Link
               href="/register"
-              className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold text-lg hover:from-indigo-500 hover:to-violet-500 transition-all shadow-2xl shadow-indigo-500/40"
+              className="px-12 py-5 bg-white text-[#0f1021] rounded-full font-bold text-lg hover:scale-105 transition-transform shadow-[0_0_40px_-5px_rgba(255,255,255,0.3)]"
             >
-              🚀 Create Free Account
-            </Link>
-            <Link
-              href="/login"
-              className="w-full sm:w-auto px-8 py-4 rounded-2xl border border-white/10 text-slate-300 font-semibold text-lg hover:border-white/20 hover:bg-white/5 hover:text-white transition-all"
-            >
-              Sign In
+              Get Started Now
             </Link>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Footer */}
-      <footer className="relative z-10 border-t border-white/5 px-6 py-8 text-center text-slate-500 text-sm">
-        <div className="flex items-center justify-center gap-2.5 mb-3">
-          <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center">
-            <span className="text-white text-xs">⚡</span>
-          </div>
-          <span className="font-semibold text-slate-400">ArcadeOS</span>
-        </div>
-        <p className="text-slate-600">Built for FICPACT CUP 2026 · Web Development Competition</p>
-        <p className="text-slate-700 text-xs mt-1">Theme: Gamified Productivity · &quot;Level Up Your Life&quot;</p>
-      </footer>
+      </main>
     </div>
   );
 }

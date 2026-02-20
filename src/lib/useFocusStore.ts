@@ -147,11 +147,27 @@ export const useFocusStore = create<FocusStore>((set, get) => ({
         set({ timeRemaining: state.timeRemaining - 1 });
     },
 
-    penalizeHP: () => {
+    penalizeHP: async () => {
         const state = get();
         if (state.sessionState !== 'running') return;
+        
         const newHP = Math.max(0, state.hp - 5);
+        
+        // 1. Update UI secara instan (Optimistic UI Update)
         set({ hp: newHP, hpPenaltyCount: state.hpPenaltyCount + 1 });
+        
+        // 2. Tembak API untuk simpan HP ke Database permanen
+        try {
+            await fetch('/api/user/stats', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ hpToSet: newHP }),
+            });
+        } catch (error) {
+            console.error('Gagal menyimpan penalti HP ke database:', error);
+        }
+
+        // 3. Jika HP habis, otomatis Give Up
         if (newHP <= 0) {
             get().giveUp();
         }
@@ -192,6 +208,7 @@ export const useFocusStore = create<FocusStore>((set, get) => ({
             const config = FOCUS_MODES.find((m) => m.id === state.selectedMode)!;
             const elapsed = status === 'completed' ? state.totalTime : state.totalTime - state.timeRemaining;
 
+            // 1. Simpan riwayat sesi ke /api/focus (seperti kode Anda saat ini)
             await fetch('/api/focus', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -203,6 +220,23 @@ export const useFocusStore = create<FocusStore>((set, get) => ({
                     status,
                 }),
             });
+
+            // 2. BARU: Jika sesi sukses, Update XP, Gold, dan Streak user di Database Global!
+            if (status === 'completed') {
+                // Misal: Gold reward adalah 20% dari XP Reward
+                const goldEarned = Math.floor(config.xpReward * 0.2); 
+                
+                await fetch('/api/user/stats', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        xpToAdd: config.xpReward,
+                        goldToAdd: goldEarned,
+                        streakToAdd: 1
+                    }),
+                });
+            }
+
         } catch (err) {
             console.error('Failed to save focus session:', err);
         }

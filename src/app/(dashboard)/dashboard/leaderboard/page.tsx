@@ -86,7 +86,7 @@ export default function LeaderboardPage() {
     const rest = filteredData.slice(3);
 
     return (
-        <div className="p-4 sm:p-8 max-w-6xl mx-auto space-y-8 min-h-screen">
+        <div className="p-4 sm:p-8 space-y-8 min-h-screen">
             {/* Header Section */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="space-y-2">

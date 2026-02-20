@@ -510,7 +510,7 @@ export default function FocusArenaClient() {
     }, [store.timeRemaining, store.sessionState, store.totalTime]);
 
     return (
-        <div className="h-full overflow-y-auto p-4 sm:p-6 space-y-6 sm:space-y-7 min-w-0 max-w-4xl mx-auto">
+        <div className="h-full overflow-y-auto p-4 sm:p-6 space-y-6 sm:space-y-7 min-w-0">
             {/* Tab Penalty Warning */}
             <TabPenaltyOverlay show={showPenaltyWarning} penaltyCount={store.hpPenaltyCount} />
 

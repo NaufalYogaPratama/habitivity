@@ -15,6 +15,10 @@ export interface IQuest extends Document {
     skills: string[];
     confidence: number;
   };
+  rewards: {
+    xp: number;
+    gold: number;
+  };
   timerUsed: boolean;
   completedAt?: Date;
   createdAt: Date;
@@ -22,17 +26,17 @@ export interface IQuest extends Document {
 
 // 2. Definisi Schema Mongoose
 const QuestSchema = new Schema<IQuest>({
-  userId: { 
-    type: Schema.Types.ObjectId, 
-    ref: 'User', 
-    required: true 
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
   },
-  title: { 
-    type: String, 
-    required: true 
+  title: {
+    type: String,
+    required: true
   },
-  description: { 
-    type: String 
+  description: {
+    type: String
   },
   category: {
     type: String,
@@ -56,16 +60,20 @@ const QuestSchema = new Schema<IQuest>({
     skills: [{ type: String }],
     confidence: { type: Number }
   },
-  timerUsed: { 
-    type: Boolean, 
-    default: false 
+  rewards: {
+    xp: { type: Number, default: 0 },
+    gold: { type: Number, default: 0 }
   },
-  completedAt: { 
-    type: Date 
+  timerUsed: {
+    type: Boolean,
+    default: false
   },
-  createdAt: { 
-    type: Date, 
-    default: Date.now 
+  completedAt: {
+    type: Date
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
   }
 });
 

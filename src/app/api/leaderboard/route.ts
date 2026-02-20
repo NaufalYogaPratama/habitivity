@@ -156,7 +156,8 @@ export async function GET(req: NextRequest) {
         } else if (category === 'team') {
             // Team Leaderboard
             const results = await User.aggregate([
-                { $match: { role: 'user', team: { $ne: '', $ne: null } } },
+                // Use $nin to check against multiple excluded values
+                { $match: { role: 'user', team: { $nin: ['', null] } } },
                 { $group: { _id: '$team', totalXp: { $sum: '$stats.xp' }, memberCount: { $sum: 1 } } },
                 { $sort: { totalXp: -1 } },
                 { $limit: 10 },

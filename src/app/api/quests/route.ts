@@ -60,19 +60,19 @@ export async function POST(request: Request) {
     await connectDB();
 
     // Default reward berdasarkan difficulty (Bisa diganti nanti dengan AI )
-    let baseRewards = { xp: 50, gold: 10 };
+    let baseRewards = { xp: 100, gold: 20 };
     switch (difficulty) {
       case "easy":
-        baseRewards = { xp: 20, gold: 5 };
+        baseRewards = { xp: 50, gold: 10 };
         break;
       case "medium":
-        baseRewards = { xp: 50, gold: 15 };
+        baseRewards = { xp: 100, gold: 20 };
         break;
       case "hard":
-        baseRewards = { xp: 100, gold: 30 };
+        baseRewards = { xp: 200, gold: 40 };
         break;
       case "expert":
-        baseRewards = { xp: 200, gold: 50 };
+        baseRewards = { xp: 400, gold: 80 };
         break;
     }
 

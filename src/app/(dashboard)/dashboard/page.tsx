@@ -7,6 +7,7 @@ import connectDB from '@/lib/db/mongodb';
 import User from '@/models/User';
 import FocusSession from '@/models/FocusSession';
 import LedgerEntry from '@/models/LedgerEntry';
+import { Sparkles } from 'lucide-react';
 
 const trendingQuests = [
     { icon: '🏃‍♂️', title: '5K Runner', category: 'Fitness', reward: '150 XP', time: '2h 40m', rarity: 'Epic', gradient: 'from-orange-500/30 via-rose-500/20 to-purple-600/20', users: 24 },
@@ -48,7 +49,7 @@ export default async function DashboardPage() {
     await connectDB();
 
     // ─── Fetch real data from DB ────────────────
-    const currentUser = await User.findById(userSession.id).select('username stats').lean();
+    const currentUser = await User.findById(userSession.id).select('username stats avatar').lean();
     const stats = currentUser?.stats || { hp: 100, xp: 0, gold: 0, level: 1, streak: 0 };
 
     // Leaderboard: top 5 users by XP
@@ -405,6 +406,33 @@ export default async function DashboardPage() {
                             <p className="text-purple-400 font-bold text-sm">{stats.xp.toLocaleString()}</p>
                             <p className="text-slate-600 text-[10px] uppercase tracking-wider">XP</p>
                         </div>
+                    </div>
+                </div>
+
+                <div className="h-px bg-white/[0.04]" />
+
+                {/* Equipped Gear (NFT Style) */}
+                <div>
+                    <div className="flex items-center justify-between mb-3">
+                        <h3 className="font-bold text-sm text-white flex items-center gap-2">
+                            <Sparkles className="w-4 h-4 text-purple-400" /> My Equipment
+                        </h3>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                        {[
+                            { slot: 'Helm', item: currentUser?.avatar?.equipment?.helm, icon: '🪖' },
+                            { slot: 'Armor', item: currentUser?.avatar?.equipment?.armor, icon: '👕' },
+                            { slot: 'Weapon', item: currentUser?.avatar?.equipment?.weapon, icon: '🗡️' },
+                            { slot: 'Accessory', item: currentUser?.avatar?.equipment?.accessory, icon: '💍' },
+                        ].map((gear) => (
+                            <div key={gear.slot} className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-2 flex flex-col items-center text-center group hover:border-purple-500/30 transition-all">
+                                <span className="text-xl mb-1 group-hover:scale-110 transition-transform">{gear.item ? '✨' : gear.icon}</span>
+                                <p className="text-[8px] uppercase font-black text-slate-600 tracking-wider leading-none">{gear.slot}</p>
+                                <p className={`text-[9px] font-bold mt-1 truncate w-full ${gear.item ? 'text-purple-400' : 'text-slate-500 italic'}`}>
+                                    {gear.item || 'Empty'}
+                                </p>
+                            </div>
+                        ))}
                     </div>
                 </div>
 

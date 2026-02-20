@@ -34,6 +34,7 @@ export interface IUser extends Document {
         university: string;
     };
     team: string;
+    inventory: string[]; // List of owned shop item names or IDs
     createdAt: Date;
     updatedAt: Date;
 }
@@ -93,6 +94,7 @@ const UserSchema = new Schema<IUser>(
             university: { type: String, default: '' },
         },
         team: { type: String, default: '' },
+        inventory: [{ type: String }],
     },
     {
         timestamps: true,

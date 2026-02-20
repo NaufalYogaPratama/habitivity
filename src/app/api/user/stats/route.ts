@@ -14,7 +14,7 @@ export async function GET() {
         await connectDB();
 
         const user = await User.findById(session.user.id)
-            .select('username stats')
+            .select('username stats inventory avatar')
             .lean();
 
         if (!user) {
@@ -24,6 +24,8 @@ export async function GET() {
         return NextResponse.json({
             username: user.username,
             stats: user.stats,
+            inventory: user.inventory || [],
+            avatar: user.avatar,
         });
     } catch (error) {
         console.error('User stats error:', error);
@@ -66,7 +68,7 @@ export async function PATCH(request: Request) {
         // 2. Update XP dan Sistem Leveling
         if (typeof xpToAdd === 'number') {
             user.stats.xp += xpToAdd;
-            
+
             // Logika Leveling Sederhana: Tiap 1000 XP naik 1 level
             const newLevel = Math.floor(user.stats.xp / 1000) + 1;
             if (newLevel > user.stats.level) {

@@ -29,6 +29,11 @@ export interface IUser extends Document {
         finance: string;
         motivation: string;
     };
+    regional: {
+        city: string;
+        university: string;
+    };
+    team: string;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -83,6 +88,11 @@ const UserSchema = new Schema<IUser>(
             finance: { type: String, default: 'balanced' },
             motivation: { type: String, default: 'neutral' },
         },
+        regional: {
+            city: { type: String, default: '' },
+            university: { type: String, default: '' },
+        },
+        team: { type: String, default: '' },
     },
     {
         timestamps: true,

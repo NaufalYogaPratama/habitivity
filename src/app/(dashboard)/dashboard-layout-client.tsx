@@ -3,9 +3,10 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { usePathname } from 'next/navigation';
 
 const navItems = [
-    { href: '/dashboard', icon: '🏠', label: 'Home', active: true },
+    { href: '/dashboard', icon: '🏠', label: 'Home' },
     { href: '/dashboard/quests', icon: '⚔️', label: 'Quests' },
     { href: '/dashboard/focus', icon: '🎯', label: 'Focus Arena' },
     { href: '/dashboard/ledger', icon: '💰', label: 'Gold Ledger' },
@@ -40,6 +41,7 @@ function MobileHeader({ onToggle }: { onToggle: () => void }) {
 }
 
 function Sidebar({ user, open, onClose }: { user: { name?: string; email?: string }; open: boolean; onClose: () => void }) {
+    const pathname = usePathname();
     return (
         <>
             {/* Overlay */}
@@ -75,21 +77,27 @@ function Sidebar({ user, open, onClose }: { user: { name?: string; email?: strin
 
                 {/* Navigation */}
                 <nav className="flex-1 px-3 space-y-0.5 overflow-y-auto">
-                    {navItems.map((item) => (
-                        <Link
-                            key={item.href}
-                            href={item.href}
-                            onClick={onClose}
-                            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group
-                                ${item.active
-                                    ? 'bg-purple-600/15 text-white border border-purple-500/20'
-                                    : 'text-slate-500 hover:text-white hover:bg-white/[0.03]'
-                                }`}
-                        >
-                            <span className="text-lg group-hover:scale-110 transition-transform">{item.icon}</span>
-                            {item.label}
-                        </Link>
-                    ))}
+                    {navItems.map((item) => {
+                        const isActive = item.href === '/dashboard'
+                            ? pathname === '/dashboard'
+                            : pathname.startsWith(item.href);
+
+                        return (
+                            <Link
+                                key={item.href}
+                                href={item.href}
+                                onClick={onClose}
+                                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group
+                                    ${isActive
+                                        ? 'bg-purple-600/15 text-white border border-purple-500/20'
+                                        : 'text-slate-500 hover:text-white hover:bg-white/[0.03]'
+                                    }`}
+                            >
+                                <span className="text-lg group-hover:scale-110 transition-transform">{item.icon}</span>
+                                {item.label}
+                            </Link>
+                        );
+                    })}
                 </nav>
 
                 {/* User Card Bottom */}

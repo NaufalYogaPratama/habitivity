@@ -14,6 +14,7 @@ export const authConfig: NextAuthConfig = {
                 token.id = user.id;
                 token.role = (user as { role?: string }).role;
                 token.username = (user as { username?: string }).username;
+                token.accountStatus = (user as any).accountStatus;
             }
             return token;
         },
@@ -22,6 +23,7 @@ export const authConfig: NextAuthConfig = {
                 session.user.id = token.id as string;
                 (session.user as { role?: string }).role = token.role as string;
                 (session.user as { username?: string }).username = token.username as string;
+                (session.user as any).accountStatus = token.accountStatus;
             }
             return session;
         },
@@ -65,6 +67,7 @@ export const authConfig: NextAuthConfig = {
                         username: user.username,
                         role: user.role,
                         name: user.username,
+                        accountStatus: user.accountStatus,
                     };
                 } catch (error) {
                     console.error('Auth error:', error);

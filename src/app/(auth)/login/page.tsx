@@ -56,8 +56,11 @@ export default function LoginPage() {
             const res = await fetch('/api/auth/session');
             const session = await res.json();
             const role = session?.user?.role;
+            const accountStatus = session?.user?.accountStatus;
 
-            if (role === 'admin') {
+            if (accountStatus === 'banned') {
+                router.push('/banned');
+            } else if (role === 'admin') {
                 router.push('/admin/dashboard');
             } else {
                 router.push('/dashboard');

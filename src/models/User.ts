@@ -5,6 +5,7 @@ export interface IUser extends Document {
     password: string;
     username: string;
     role: 'user' | 'admin';
+    accountStatus: 'active' | 'banned';
     avatar: {
         base: string;
         equipment: {
@@ -64,6 +65,11 @@ const UserSchema = new Schema<IUser>(
             type: String,
             enum: ['user', 'admin'],
             default: 'user',
+        },
+        accountStatus: {
+            type: String,
+            enum: ['active', 'banned'],
+            default: 'active',
         },
         avatar: {
             base: { type: String, default: 'CyberNinja' },

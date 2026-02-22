@@ -39,7 +39,7 @@ const CATEGORIES = [
     { id: 'focus', label: 'Focus Legends', icon: <Timer className="w-4 h-4" />, desc: 'Total jam fokus' },
     { id: 'streak', label: 'Streak Kings', icon: <Flame className="w-4 h-4" />, desc: 'Streak terpanjang' },
     { id: 'level', label: 'Highest Level', icon: <Zap className="w-4 h-4" />, desc: 'Level tertinggi' },
-    { id: 'regional', label: 'Regional', icon: <MapPin className="w-4 h-4" />, desc: 'Per kota/universitas' },
+    { id: 'regional', label: 'Universitas', icon: <MapPin className="w-4 h-4" />, desc: 'Leaderboard antar Kampus' },
     { id: 'team', label: 'Team', icon: <Users className="w-4 h-4" />, desc: 'Cooperative leaderboard' },
 ];
 
@@ -61,7 +61,8 @@ export default function LeaderboardPage() {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const res = await fetch(`/api/leaderboard?category=${category}&timeframe=${timeframe}`);
+                const regionTypeParam = category === 'regional' ? '&regionType=university' : '';
+                const res = await fetch(`/api/leaderboard?category=${category}&timeframe=${timeframe}${regionTypeParam}`);
                 const result = await res.json();
                 if (result.leaderboard) {
                     setData(result.leaderboard);

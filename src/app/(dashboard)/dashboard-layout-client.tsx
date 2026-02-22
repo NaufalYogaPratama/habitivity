@@ -12,6 +12,7 @@ const navItems = [
     { href: '/dashboard/ledger', icon: '💰', label: 'Gold Ledger' },
     { href: '/dashboard/leaderboard', icon: '🏆', label: 'Leaderboard' },
     { href: '/dashboard/shop', icon: '🏪', label: 'Shop' },
+    { href: '/dashboard/teams', icon: '🛡️', label: 'Clans' },
     { href: '/dashboard/profile', icon: '👤', label: 'Profile' },
 ];
 

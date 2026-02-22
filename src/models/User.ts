@@ -34,7 +34,8 @@ export interface IUser extends Document {
         city: string;
         university: string;
     };
-    team: string;
+    team: string; // Legacy string-based team
+    teamId?: mongoose.Types.ObjectId; // New clan/guild system
     inventory: string[]; // List of owned shop item names or IDs
     createdAt: Date;
     updatedAt: Date;
@@ -100,6 +101,7 @@ const UserSchema = new Schema<IUser>(
             university: { type: String, default: '' },
         },
         team: { type: String, default: '' },
+        teamId: { type: Schema.Types.ObjectId, ref: 'Team' },
         inventory: [{ type: String }],
     },
     {

@@ -4,6 +4,7 @@ import User from '@/models/User';
 import FocusSession from '@/models/FocusSession';
 import LedgerEntry from '@/models/LedgerEntry';
 import mongoose from 'mongoose';
+import Team from '@/models/Team';
 
 export async function GET(req: NextRequest) {
     try {
@@ -136,29 +137,12 @@ export async function GET(req: NextRequest) {
                 displayValue: `${u.stats.gold.toLocaleString()} Gold`
             }));
         } else if (category === 'regional') {
-            // Regional Leaderboard
+            // Regional / University Leaderboard
             const field = regionType === 'university' ? 'regional.university' : 'regional.city';
 
-            const results = await User.find({ role: 'user', [field]: { $ne: '' } })
-                .sort({ 'stats.xp': -1 })
-                .limit(20)
-                .select(`username avatar stats.xp stats.level ${field}`)
-                .lean();
-
-            leaderboard = results.map(u => ({
-                username: u.username,
-                avatar: u.avatar,
-                value: u.stats.xp,
-                level: u.stats.level,
-                region: regionType === 'university' ? u.regional?.university : u.regional?.city,
-                displayValue: `${u.stats.xp.toLocaleString()} XP`
-            }));
-        } else if (category === 'team') {
-            // Team Leaderboard
             const results = await User.aggregate([
-                // Use $nin to check against multiple excluded values
-                { $match: { role: 'user', team: { $nin: ['', null] } } },
-                { $group: { _id: '$team', totalXp: { $sum: '$stats.xp' }, memberCount: { $sum: 1 } } },
+                { $match: { role: 'user', [field]: { $nin: ['', null] } } },
+                { $group: { _id: `$${field}`, totalXp: { $sum: '$stats.xp' }, memberCount: { $sum: 1 } } },
                 { $sort: { totalXp: -1 } },
                 { $limit: 10 },
                 {
@@ -169,10 +153,34 @@ export async function GET(req: NextRequest) {
                     }
                 }
             ]);
+
             leaderboard = results.map(r => ({
                 ...r,
                 level: 0,
-                displayValue: `${(r.value || 0).toLocaleString()} XP (${r.memberCount} anggota)`
+                region: r.username,
+                displayValue: `${(r.value || 0).toLocaleString()} XP (${r.memberCount} Mhs)`
+            }));
+        } else if (category === 'team') {
+            // Clan / Team Leaderboard
+            const results = await User.aggregate([
+                { $match: { role: 'user', teamId: { $exists: true, $ne: null } } },
+                { $group: { _id: '$teamId', totalXp: { $sum: '$stats.xp' }, memberCount: { $sum: 1 } } },
+                { $lookup: { from: 'teams', localField: '_id', foreignField: '_id', as: 'teamDetails' } },
+                { $unwind: '$teamDetails' },
+                { $sort: { totalXp: -1 } },
+                { $limit: 10 },
+                {
+                    $project: {
+                        username: '$teamDetails.name',
+                        value: '$totalXp',
+                        level: '$teamDetails.stats.level',
+                        memberCount: '$memberCount'
+                    }
+                }
+            ]);
+            leaderboard = results.map(r => ({
+                ...r,
+                displayValue: `${(r.value || 0).toLocaleString()} XP (${r.memberCount} Mhs)`
             }));
         }
 

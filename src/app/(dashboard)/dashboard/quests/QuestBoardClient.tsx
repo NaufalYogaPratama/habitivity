@@ -56,6 +56,9 @@ export default function QuestBoardClient() {
   const [description, setDescription] = useState("");
   const [difficulty, setDifficulty] = useState("medium");
   const [category, setCategory] = useState("work");
+  const [isAILoading, setIsAILoading] = useState(false);
+  const [hasAnalyzed, setHasAnalyzed] = useState(false);
+  const [aiConfidence, setAiConfidence] = useState<number | null>(null);
 
   useEffect(() => {
     fetchQuests();
@@ -93,6 +96,7 @@ export default function QuestBoardClient() {
         setIsDialogOpen(false);
         setTitle("");
         setDescription("");
+        setHasAnalyzed(false);
         fetchQuests();
       } else {
         toast.error("Gagal menambahkan misi");
@@ -101,6 +105,36 @@ export default function QuestBoardClient() {
       toast.error("Terjadi kesalahan sistem");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleAskAI = async () => {
+    if (!title) {
+      toast.error("Masukkan judul misi terlebih dahulu!");
+      return;
+    }
+
+    setIsAILoading(true);
+    try {
+      const res = await fetch("/api/quests/classify-ai", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title, description }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.difficulty) setDifficulty(data.difficulty);
+        if (data.category) setCategory(data.category);
+        setHasAnalyzed(true);
+        toast.success("Misi berhasil dianalisis oleh AI! ✨");
+      } else {
+        toast.error("Gagal menganalisis misi via AI");
+      }
+    } catch (error) {
+      toast.error("Terjadi kesalahan saat menghubungi AI");
+    } finally {
+      setIsAILoading(false);
     }
   };
 
@@ -196,11 +230,31 @@ export default function QuestBoardClient() {
             <form onSubmit={handleCreateQuest} className="space-y-5 py-4">
               <div className="space-y-2">
                 <Label htmlFor="title" className="text-xs font-bold uppercase tracking-widest text-slate-500">Judul Misi</Label>
-                <Input id="title" placeholder="Cth: Belajar React Fiber" value={title} onChange={(e) => setTitle(e.target.value)} className="bg-white/[0.03] border-white/[0.06] rounded-xl h-12 focus:ring-emerald-500" />
+                <Input id="title" placeholder="Cth: Belajar React Fiber" value={title} onChange={(e) => { setTitle(e.target.value); setHasAnalyzed(false); }} onPointerDown={(e) => e.stopPropagation()} className="bg-white/[0.03] border-white/[0.06] rounded-xl h-12 focus:ring-emerald-500" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="desc" className="text-xs font-bold uppercase tracking-widest text-slate-500">Deskripsi (Opsional)</Label>
-                <Input id="desc" placeholder="Cth: Dokumentasikan kemajuan" value={description} onChange={(e) => setDescription(e.target.value)} className="bg-white/[0.03] border-white/[0.06] rounded-xl h-12 focus:ring-emerald-500" />
+                <Input id="desc" placeholder="Cth: Dokumentasikan kemajuan" value={description} onChange={(e) => { setDescription(e.target.value); setHasAnalyzed(false); }} onPointerDown={(e) => e.stopPropagation()} className="bg-white/[0.03] border-white/[0.06] rounded-xl h-12 focus:ring-emerald-500" />
+              </div>
+
+              <div className="flex justify-end">
+                <Button
+                  type="button"
+                  onClick={handleAskAI}
+                  disabled={isAILoading || !title || hasAnalyzed}
+                  className={`h-10 px-4 rounded-xl text-sm font-bold transition-all w-full sm:w-auto flex items-center justify-center ${hasAnalyzed
+                      ? "bg-emerald-900/20 border border-emerald-500/30 text-emerald-400 opacity-100 disabled:opacity-100"
+                      : "bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 border border-purple-500/30"
+                    }`}
+                >
+                  {isAILoading ? (
+                    <span className="animate-pulse">✨ Menganalisis...</span>
+                  ) : hasAnalyzed ? (
+                    "✓ Dianalisis AI"
+                  ) : (
+                    "✨ Auto-Analyze dengan AI"
+                  )}
+                </Button>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">

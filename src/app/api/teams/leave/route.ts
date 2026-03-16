@@ -3,6 +3,7 @@ import { auth } from '@/auth';
 import connectDB from '@/lib/db/mongodb';
 import Team from '@/models/Team';
 import User from '@/models/User';
+import mongoose from 'mongoose';
 
 export async function POST() {
     try {
@@ -22,7 +23,7 @@ export async function POST() {
 
         // Remove from members
         if (team) {
-            team.members = team.members.filter(m => m.toString() !== user._id.toString());
+            team.members = team.members.filter((m: mongoose.Types.ObjectId) => m.toString() !== user._id.toString());
 
             // If empty, delete clan
             if (team.members.length === 0) {

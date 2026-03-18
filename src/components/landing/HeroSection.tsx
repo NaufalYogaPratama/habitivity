@@ -449,7 +449,12 @@ export default function HeroSection() {
                                             'linear-gradient(135deg, #4338ca 0%, #7c3aed 50%, #a855f7 100%)',
                                     }}
                                 >
-                                    <span className="text-3xl drop-shadow-lg">🧘‍♂️</span>
+                                    <Image
+                                        src="/assets/hero3.png"
+                                        alt="Zen Master"
+                                        fill
+                                        className="object-contain p-4 drop-shadow-2xl rounded-xl"
+                                    />
                                     <div
                                         className="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded-full text-[9px] font-bold"
                                         style={{
@@ -483,7 +488,7 @@ export default function HeroSection() {
                                             background: 'linear-gradient(135deg, #7C5AF6, #C084FC)',
                                         }}
                                     >
-                                        Place Bid
+                                        Accept
                                     </button>
                                     <button
                                         className="py-1.5 rounded-lg text-[9px] font-bold border"

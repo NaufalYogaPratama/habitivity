@@ -142,8 +142,8 @@ export function useCountUp(target: number, duration: number = 2) {
         const timer = setInterval(() => {
             const elapsed = Date.now() - start;
             const progress = Math.min(elapsed / (duration * 1000), 1);
-            // easeOutExpo
-            const eased = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+            // easeOutCubic
+            const eased = 1 - Math.pow(1 - progress, 3);
             setCount(Math.floor(eased * target));
             if (progress === 1) clearInterval(timer);
         }, 16);

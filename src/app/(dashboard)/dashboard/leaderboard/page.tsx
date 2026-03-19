@@ -12,9 +12,7 @@ import {
     TrendingUp,
     MapPin,
     Users,
-    ChevronRight,
     Search,
-    Filter
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -90,12 +88,12 @@ export default function LeaderboardPage() {
         <div className="p-4 sm:p-8 space-y-8 min-h-screen">
             {/* Header Section */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div className="space-y-2">
-                    <h1 className="text-3xl sm:text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-400 via-purple-400 to-indigo-400 tracking-tight">
-                        HALAMAN PAHLAWAN
+                <div>
+                    <h1 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2.5">
+                        <span className="text-2xl sm:text-3xl">🏆</span> Leaderboard
                     </h1>
-                    <p className="text-slate-400 font-medium">
-                        Ciptakan kompetisi sehat dan raih peringkat tertinggi di Habitivity.
+                    <p className="text-slate-500 text-xs sm:text-sm mt-1">
+                        Ciptakan kompetisi sehat dan raih peringkat tertinggi.
                     </p>
                 </div>
 
@@ -186,9 +184,6 @@ export default function LeaderboardPage() {
                             className="w-full bg-white/[0.03] border border-white/[0.06] rounded-2xl pl-11 pr-4 py-3 text-sm text-white focus:outline-none focus:border-purple-500/30 transition-all"
                         />
                     </div>
-                    <Button variant="outline" className="sm:w-auto h-auto py-3 px-6 rounded-2xl border-white/[0.06] font-bold text-xs gap-2">
-                        <Filter className="w-4 h-4" /> Filter Advanced
-                    </Button>
                 </div>
 
                 <CardContent className="p-0">

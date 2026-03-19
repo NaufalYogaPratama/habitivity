@@ -110,11 +110,11 @@ export default function TeamsPage() {
     return (
         <div className="p-4 sm:p-8 space-y-8 min-h-screen">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div className="space-y-2">
-                    <h1 className="text-3xl sm:text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 tracking-tight">
-                        KLAN & GUILD
+                <div>
+                    <h1 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2.5">
+                        <span className="text-2xl sm:text-3xl">🛡️</span> Klan & Guild
                     </h1>
-                    <p className="text-slate-400 font-medium">Bentuk tim pahlawan dan raih skor tertinggi bersama-sama.</p>
+                    <p className="text-slate-500 text-xs sm:text-sm mt-1">Bentuk tim pahlawan dan raih skor tertinggi bersama-sama.</p>
                 </div>
             </div>
 
@@ -276,8 +276,15 @@ export default function TeamsPage() {
                                             </div>
                                             {/* Untuk bisa join klan tanpa kode jika open. Sementara asumsikan wajib kode atau tidak. Kita buat tombol Minta Kode atau Join Langsung */}
                                             {/* Sebenarnya kalau sistem Clash of Clans, search klan bisa lgsg Click -> Join jika tipe klannya "Open". Di db kita belum pakai limit open. Kita asumsikan saat search bisa tap "Join?" tapi butuh code, jadi sementara buat pamer aja klan yg ada :D */}
-                                            <Button disabled className="h-8 text-[10px] uppercase font-bold tracking-wider px-3" variant="outline">
-                                                Ask Code
+                                            <Button
+                                                onClick={() => {
+                                                    const code = prompt("Masukkan kode join klan:");
+                                                    if (code) handleJoin(code);
+                                                }}
+                                                className="h-8 text-[10px] uppercase font-bold tracking-wider px-3 bg-indigo-600/20 border border-indigo-500/30 text-indigo-300 hover:bg-indigo-600/30"
+                                                variant="outline"
+                                            >
+                                                Join Klan
                                             </Button>
                                         </div>
                                     </Card>

@@ -124,10 +124,38 @@ export default async function AdminDashboardPage() {
     ]);
     const avgFocusMin = avgFocusResult[0]?.avgDuration ? Math.round(avgFocusResult[0].avgDuration / 60) : 0;
 
+    // Mini chart: daily user signups for last 12 days
+    const twelveDaysAgo = new Date();
+    twelveDaysAgo.setDate(twelveDaysAgo.getDate() - 12);
+    twelveDaysAgo.setHours(0, 0, 0, 0);
+
+    const dailySignups = await User.aggregate([
+        { $match: { role: 'user', createdAt: { $gte: twelveDaysAgo } } },
+        {
+            $group: {
+                _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
+                count: { $sum: 1 }
+            }
+        },
+        { $sort: { _id: 1 } }
+    ]);
+
+    // Build array of 12 days with counts
+    const chartData: number[] = [];
+    for (let i = 11; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        const dateStr = d.toISOString().split('T')[0];
+        const found = dailySignups.find((s: any) => s._id === dateStr);
+        chartData.push(found?.count || 0);
+    }
+    const chartMax = Math.max(...chartData, 1);
+    const chartHeights = chartData.map(v => Math.round((v / chartMax) * 100) || 5);
+
     return (
-        <div className="flex h-screen custom-scrollbar w-full">
+        <div className="flex custom-scrollbar w-full">
             {/* Center Feed */}
-            <div className="flex-1 p-6 space-y-7 max-w-[calc(100%-320px)]">
+            <div className="flex-1 p-4 sm:p-6 space-y-7 min-w-0">
                 {/* Top Bar */}
                 <div className="flex items-center justify-between">
                     <div>
@@ -138,14 +166,11 @@ export default async function AdminDashboardPage() {
                             Welcome back, <span className="text-white font-medium">{user?.name}</span>
                         </p>
                     </div>
-                    <div className="flex gap-2.5">
-                        <Button variant="outline" size="sm" className="bg-[#151823] border-white/[0.06] text-white hover:bg-white/5 rounded-xl">
-                            <span>📅</span> Last 7 Days
-                        </Button>
+                    <Link href="/admin/analytics">
                         <Button size="sm" className="bg-purple-600 hover:bg-purple-500 text-white shadow-lg shadow-purple-600/20 border-none rounded-xl">
-                            <span>📥</span> Export
+                            <span>📈</span> View Analytics
                         </Button>
-                    </div>
+                    </Link>
                 </div>
 
                 {/* Analytics Cards */}
@@ -206,10 +231,10 @@ export default async function AdminDashboardPage() {
                         </CardHeader>
                         <CardContent className="p-4 space-y-2">
                             {[
-                                { icon: '⚔️', label: 'Create Quest', desc: 'Push global quest', href: '/admin/quests/new', hover: 'hover:border-purple-500/20' },
-                                { icon: '🏪', label: 'Add Item', desc: 'New shop item', href: '/admin/shop/new', hover: 'hover:border-emerald-500/20' },
+                                { icon: '⚔️', label: 'Manage Quests', desc: 'View all quests', href: '/admin/quests', hover: 'hover:border-purple-500/20' },
+                                { icon: '🏪', label: 'Manage Shop', desc: 'Add & edit items', href: '/admin/shop', hover: 'hover:border-emerald-500/20' },
                                 { icon: '👥', label: 'Manage Users', desc: 'View user DB', href: '/admin/users', hover: 'hover:border-blue-500/20' },
-                                { icon: '📢', label: 'Broadcast', desc: 'Send alerts', href: '/admin/announcements', hover: 'hover:border-amber-500/20' },
+                                { icon: '📈', label: 'Analytics', desc: 'View metrics', href: '/admin/analytics', hover: 'hover:border-amber-500/20' },
                             ].map((action) => (
                                 <Link
                                     key={action.label}
@@ -270,13 +295,14 @@ export default async function AdminDashboardPage() {
                                 </div>
                             ))}
                         </div>
-                        {/* Mini chart */}
+                        {/* Mini chart — Real daily signups (12 days) */}
                         <div className="flex items-end gap-1 h-14 pt-2">
-                            {[20, 35, 25, 45, 30, 55, 40, 60, 50, 45, 65, 55].map((h, i) => (
+                            {chartHeights.map((h, i) => (
                                 <div
                                     key={i}
                                     className="flex-1 bg-purple-500/30 hover:bg-purple-500/50 rounded-t transition-colors cursor-pointer"
                                     style={{ height: `${h}%` }}
+                                    title={`${chartData[i]} signups`}
                                 />
                             ))}
                         </div>

@@ -1,85 +1,31 @@
 'use client';
 
-
-
 import { useState } from 'react';
-
 import Link from 'next/link';
-
-import Image from 'next/image';
-
-import { Button } from '@/components/ui/button';
-
 import { usePathname } from 'next/navigation';
+import { adminSignOutAction } from './actions';
 
-
-
-
-
-const navItems = [
-
-    {
-
-        href: '/dashboard',
-
-        icon: <Image src="/assets/logo/icon-home.png" alt="Home" width={32} height={32} className="object-contain" />,
-
-        label: 'Home'
-
-    },
-    {
-
-        href: '/dashboard/quests',
-
-        icon: <Image src="/assets/logo/icon-quest.png" alt="Quests" width={32} height={32} className="object-contain" />,
-
-        label: 'Quests'
-
-    },
-    {
-
-        href: '/dashboard/focus',
-
-        icon: <Image src="/assets/logo/icon-fokus.png" alt="Focus Arena" width={32} height={32} className="object-contain" />,
-
-        label: 'Focus Arena'
-
-    },
-    {
-
-        href: '/dashboard/ledger',
-
-        icon: <Image src="/assets/logo/icon-gold.png" alt="Gold Ledger" width={32} height={32} className="object-contain" />,
-
-        label: 'Gold Ledger'
-
-    },
-    {
-
-        href: '/dashboard/leaderboard',
-
-        icon: <Image src="/assets/logo/icon-leaderboard.png" alt="Leaderboard" width={32} height={32} className="object-contain" />,
-
-        label: 'Leaderboard'
-
-    },
-
-    { href: '/dashboard/shop', icon: '🏪', label: 'Shop' },
-    { href: '/dashboard/avatar', icon: '🧑‍🚀', label: 'NFT Avatar' },
-    { href: '/dashboard/teams', icon: '🛡️', label: 'Clans' },
-    { href: '/dashboard/profile', icon: '👤', label: 'Profile' },
+const adminNavItems = [
+    { href: '/admin/dashboard', icon: '📊', label: 'Overview' },
+    { href: '/admin/users', icon: '👥', label: 'Users' },
+    { href: '/admin/quests', icon: '⚔️', label: 'Global Quests' },
+    { href: '/admin/shop', icon: '🏪', label: 'Shop Items' },
+    { href: '/admin/analytics', icon: '📈', label: 'Analytics' },
 ];
 
 function MobileHeader({ onToggle }: { onToggle: () => void }) {
     return (
         <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-[#0B0E14]/95 backdrop-blur-xl border-b border-white/[0.04] px-4 py-3 flex items-center justify-between">
-            <Link href="/dashboard" className="flex items-center gap-2.5">
+            <Link href="/admin/dashboard" className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-fuchsia-600 flex items-center justify-center shadow-lg shadow-purple-600/25">
-                    <span className="text-white text-xs font-black">⚡</span>
+                    <span className="text-white text-xs">👑</span>
                 </div>
-                <span className="text-sm font-bold bg-gradient-to-r from-purple-400 to-fuchsia-400 bg-clip-text text-transparent">
-                    Habitivity
-                </span>
+                <div className="leading-none">
+                    <span className="text-sm font-bold bg-gradient-to-r from-purple-400 to-fuchsia-400 bg-clip-text text-transparent block">
+                        Habitivity
+                    </span>
+                    <span className="text-[9px] text-slate-500 font-semibold uppercase tracking-widest">Admin</span>
+                </div>
             </Link>
             <button
                 onClick={onToggle}
@@ -95,8 +41,9 @@ function MobileHeader({ onToggle }: { onToggle: () => void }) {
     );
 }
 
-function Sidebar({ user, open, onClose }: { user: { name?: string; email?: string }; open: boolean; onClose: () => void }) {
+function AdminSidebar({ user, open, onClose }: { user: { name?: string }; open: boolean; onClose: () => void }) {
     const pathname = usePathname();
+
     return (
         <>
             {/* Overlay */}
@@ -120,23 +67,40 @@ function Sidebar({ user, open, onClose }: { user: { name?: string; email?: strin
             `}>
                 {/* Logo */}
                 <div className="p-5 pb-6">
-                    <Link href="/dashboard" className="flex items-center gap-2.5 group" onClick={onClose}>
+                    <Link href="/admin/dashboard" className="flex items-center gap-2.5 group" onClick={onClose}>
                         <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-600 to-fuchsia-600 flex items-center justify-center shadow-lg shadow-purple-600/25 group-hover:shadow-purple-600/40 transition-all group-hover:scale-105">
-                            <span className="text-white text-sm font-black">⚡</span>
+                            <span className="text-white text-sm">👑</span>
                         </div>
-                        <span className="text-base font-bold bg-gradient-to-r from-purple-400 to-fuchsia-400 bg-clip-text text-transparent">
-                            Habitivity
-                        </span>
+                        <div className="leading-none">
+                            <span className="text-base font-bold bg-gradient-to-r from-purple-400 to-fuchsia-400 bg-clip-text text-transparent block">
+                                Habitivity
+                            </span>
+                            <span className="text-[10px] text-slate-500 font-semibold uppercase tracking-widest">Admin</span>
+                        </div>
                     </Link>
                 </div>
 
-                {/* Navigation */}
-                <nav className="flex-1 px-3 space-y-0.5 overflow-y-auto">
-                    {navItems.map((item) => {
-                        const isActive = item.href === '/dashboard'
-                            ? pathname === '/dashboard'
-                            : pathname.startsWith(item.href);
+                {/* Admin User */}
+                <div className="px-3 mb-3">
+                    <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-white/[0.03]">
+                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500/30 to-fuchsia-500/30 flex items-center justify-center text-sm border border-white/5">
+                            👑
+                        </div>
+                        <div className="min-w-0 flex-1">
+                            <p className="text-white font-semibold text-xs truncate">{user?.name || 'Admin'}</p>
+                            <div className="flex items-center gap-1.5">
+                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                <span className="text-[10px] text-slate-500">Admin • Online</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
+                {/* Navigation */}
+                <nav className="flex-1 px-3 space-y-0.5 overflow-y-auto custom-scrollbar">
+                    <p className="px-3 text-[10px] font-bold text-slate-600 uppercase tracking-widest mb-2">Menu</p>
+                    {adminNavItems.map((item) => {
+                        const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
                         return (
                             <Link
                                 key={item.href}
@@ -155,44 +119,24 @@ function Sidebar({ user, open, onClose }: { user: { name?: string; email?: strin
                     })}
                 </nav>
 
-                {/* User Card Bottom */}
+                {/* Bottom */}
                 <div className="p-3 border-t border-white/[0.04]">
-                    <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-white/[0.03] mb-1">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500/30 to-fuchsia-500/30 flex items-center justify-center text-sm border border-white/5">
-                            🧑‍💻
-                        </div>
-                        <div className="min-w-0 flex-1">
-                            <p className="text-white font-semibold text-xs truncate">{user?.name || 'Hero'}</p>
-                            <p className="text-slate-500 text-[10px] truncate">{user?.email}</p>
-                        </div>
-                    </div>
-                    <SignOutForm />
+                    <form action={adminSignOutAction}>
+                        <button
+                            type="submit"
+                            className="w-full flex items-center justify-start gap-3 text-slate-500 hover:text-white hover:bg-white/5 rounded-xl h-11 px-3 cursor-pointer transition-colors"
+                        >
+                            <span className="text-lg">🚪</span>
+                            <span className="text-sm font-medium">Sign Out</span>
+                        </button>
+                    </form>
                 </div>
             </aside>
         </>
     );
 }
 
-function SignOutForm() {
-    const handleSignOut = async () => {
-        const { signOut } = await import('next-auth/react');
-        await signOut({ callbackUrl: '/' });
-    };
-
-    return (
-        <Button
-            variant="ghost"
-            type="button"
-            onClick={handleSignOut}
-            className="w-full justify-start gap-3 text-slate-500 hover:text-white hover:bg-white/5 rounded-xl h-11 px-3 cursor-pointer"
-        >
-            <span className="text-lg">🚪</span>
-            <span className="text-sm font-medium">Sign Out</span>
-        </Button>
-    );
-}
-
-export default function DashboardLayoutClient({ children, user }: { children: React.ReactNode; user: { name?: string; email?: string } }) {
+export default function AdminLayoutClient({ children, user }: { children: React.ReactNode; user: { name?: string } }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     return (
@@ -201,14 +145,13 @@ export default function DashboardLayoutClient({ children, user }: { children: Re
             <div className="fixed inset-0 pointer-events-none z-0">
                 <div className="absolute top-0 left-[20%] w-[600px] h-[600px] bg-purple-700/8 blur-[150px] rounded-full" />
                 <div className="absolute bottom-0 right-[10%] w-[500px] h-[500px] bg-fuchsia-700/6 blur-[150px] rounded-full" />
-                <div className="absolute top-[40%] left-0 w-[400px] h-[400px] bg-indigo-700/5 blur-[120px] rounded-full" />
             </div>
 
             {/* Mobile Header */}
             <MobileHeader onToggle={() => setSidebarOpen(!sidebarOpen)} />
 
             {/* Sidebar */}
-            <Sidebar user={user} open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+            <AdminSidebar user={user} open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
             {/* Main content */}
             <main className="flex-1 overflow-y-auto relative z-10 pt-14 lg:pt-0">

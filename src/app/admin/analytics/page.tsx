@@ -67,7 +67,7 @@ export default async function AdminAnalyticsPage() {
 
     // 4. Quests Engagement (Completed vs Failed)
     const completedQuests = await Quest.countDocuments({ status: 'completed' });
-    const activeQuests = await Quest.countDocuments({ status: 'active' });
+    const activeQuests = await Quest.countDocuments({ status: { $in: ['pending', 'in_progress'] } });
 
     const statsOverview = {
         totalGold,

@@ -113,17 +113,12 @@ export default function ShopClient() {
         <div className="space-y-8 px-4 sm:px-6 min-h-screen pb-20">
             {/* Header Section */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
-                <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                        <div className="bg-amber-500/10 p-2 rounded-lg">
-                            <ShoppingBag className="w-6 h-6 text-amber-500" />
-                        </div>
-                        <h1 className="text-3xl sm:text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-amber-400 via-orange-400 to-yellow-400 tracking-tight">
-                            MARKETPLACE
-                        </h1>
-                    </div>
-                    <p className="text-slate-400 font-medium max-w-md">
-                        Gunakan Gold hasil kerja kerasmu untuk memperkuat avatar dan mempercepat progress.
+                <div>
+                    <h1 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2.5">
+                        <span className="text-2xl sm:text-3xl">🏪</span> Marketplace
+                    </h1>
+                    <p className="text-slate-500 text-xs sm:text-sm mt-1">
+                        Gunakan Gold untuk memperkuat avatar dan progress.
                     </p>
                 </div>
 
@@ -150,8 +145,8 @@ export default function ShopClient() {
                         key={t.id}
                         onClick={() => setFilter(t.id)}
                         className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all border whitespace-nowrap ${filter === t.id
-                                ? 'bg-amber-600 border-amber-500 text-white shadow-lg shadow-amber-600/20'
-                                : 'bg-[#151823] border-white/[0.06] text-slate-500 hover:text-slate-300'
+                            ? 'bg-amber-600 border-amber-500 text-white shadow-lg shadow-amber-600/20'
+                            : 'bg-[#151823] border-white/[0.06] text-slate-500 hover:text-slate-300'
                             }`}
                     >
                         {t.icon} {t.label}
@@ -213,8 +208,8 @@ export default function ShopClient() {
                                                     onClick={() => handlePurchase(item)}
                                                     disabled={userGold < item.price}
                                                     className={`w-full h-12 rounded-xl font-bold flex items-center justify-between px-4 ${userGold >= item.price
-                                                            ? 'bg-amber-600 hover:bg-amber-500 text-white shadow-lg shadow-amber-600/20'
-                                                            : 'bg-white/[0.03] border border-white/[0.06] text-slate-600'
+                                                        ? 'bg-amber-600 hover:bg-amber-500 text-white shadow-lg shadow-amber-600/20'
+                                                        : 'bg-white/[0.03] border border-white/[0.06] text-slate-600'
                                                         }`}
                                                 >
                                                     <div className="flex items-center gap-2">

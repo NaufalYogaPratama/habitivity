@@ -5,16 +5,25 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import connectDB from '@/lib/db/mongodb';
 import User from '@/models/User';
+import Quest from '@/models/Quest';
 import FocusSession from '@/models/FocusSession';
 import LedgerEntry from '@/models/LedgerEntry';
 import { Sparkles } from 'lucide-react';
 
-const trendingQuests = [
-    { icon: '🏃‍♂️', title: '5K Runner', category: 'Fitness', reward: '150 XP', time: '2h 40m', rarity: 'Epic', gradient: 'from-orange-500/30 via-rose-500/20 to-purple-600/20', users: 24 },
-    { icon: '📚', title: 'Read 30 Pages', category: 'Knowledge', reward: '100 XP', time: '1h 20m', rarity: 'Rare', gradient: 'from-blue-500/30 via-indigo-500/20 to-violet-600/20', users: 18 },
-    { icon: '🧘‍♂️', title: 'Zen Master', category: 'Mindfulness', reward: '200 XP', time: '3h 10m', rarity: 'Legendary', gradient: 'from-emerald-500/30 via-teal-500/20 to-cyan-600/20', users: 31 },
-    { icon: '💧', title: 'Hydration Hero', category: 'Health', reward: '80 XP', time: '5h 00m', rarity: 'Common', gradient: 'from-cyan-500/30 via-blue-500/20 to-indigo-600/20', users: 45 },
-];
+const CATEGORY_CONFIG: Record<string, { icon: string; gradient: string }> = {
+    work: { icon: '💼', gradient: 'from-blue-500/30 via-indigo-500/20 to-violet-600/20' },
+    learning: { icon: '📚', gradient: 'from-emerald-500/30 via-teal-500/20 to-cyan-600/20' },
+    personal: { icon: '🧩', gradient: 'from-purple-500/30 via-fuchsia-500/20 to-pink-600/20' },
+    health: { icon: '❤️', gradient: 'from-rose-500/30 via-red-500/20 to-orange-600/20' },
+    finance: { icon: '💰', gradient: 'from-amber-500/30 via-yellow-500/20 to-orange-600/20' },
+};
+
+const DIFFICULTY_LABEL: Record<string, string> = {
+    easy: 'Common',
+    medium: 'Rare',
+    hard: 'Epic',
+    expert: 'Legendary',
+};
 
 // Helper to format relative time
 function timeAgo(date: Date): string {
@@ -51,6 +60,25 @@ export default async function DashboardPage() {
     // ─── Fetch real data from DB ────────────────
     const currentUser = await User.findById(userSession.id).select('username stats avatar').lean();
     const stats = currentUser?.stats || { hp: 100, xp: 0, gold: 0, level: 1, streak: 0 };
+
+    // Trending Quests: Recent active quests from all users
+    const recentQuestsForTrending = await Quest.find({ status: { $in: ['pending', 'in_progress'] } })
+        .sort({ createdAt: -1 })
+        .limit(4)
+        .lean();
+
+    const trendingQuests = recentQuestsForTrending.map((q: any) => {
+        const catCfg = CATEGORY_CONFIG[q.category] || CATEGORY_CONFIG.work;
+        return {
+            icon: catCfg.icon,
+            title: q.title,
+            category: q.category?.charAt(0).toUpperCase() + q.category?.slice(1) || 'Work',
+            reward: `${q.rewards?.xp || 100} XP`,
+            gold: `${q.rewards?.gold || 20}g`,
+            rarity: DIFFICULTY_LABEL[q.difficulty] || 'Rare',
+            gradient: catCfg.gradient,
+        };
+    });
 
     // Leaderboard: top 5 users by XP
     const topUsersRaw = await User.find({ role: 'user' })
@@ -133,19 +161,20 @@ export default async function DashboardPage() {
         <div className="flex flex-col xl:flex-row h-full overflow-hidden">
             {/* Main Feed */}
             <div className="flex-1 overflow-y-auto min-h-0 p-4 sm:p-6 space-y-6 sm:space-y-7 min-w-0">
-                {/* Top Bar */}
-                <div className="flex items-center gap-3 sm:gap-4">
-                    <div className="flex-1 flex items-center bg-[#151823] border border-white/[0.06] rounded-2xl px-4 py-2.5 focus-within:border-purple-500/30 transition-colors">
-                        <span className="text-slate-500 mr-3">🔍</span>
-                        <input
-                            type="text"
-                            placeholder="Search quests, heroes..."
-                            className="bg-transparent border-none outline-none text-sm w-full text-white placeholder:text-slate-600"
-                        />
+                {/* Welcome Bar */}
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2.5">
+                            <span className="text-2xl sm:text-3xl">🏠</span> Dashboard
+                        </h1>
+                        <p className="text-slate-500 text-xs sm:text-sm mt-1">
+                            Welcome back, <span className="text-white font-medium">{currentUser?.username || userSession?.name || 'Hero'}</span>
+                        </p>
                     </div>
-                    <button className="w-10 h-10 rounded-xl bg-[#151823] border border-white/[0.06] flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/5 transition-all flex-shrink-0">
-                        🔔
-                    </button>
+                    <div className="flex items-center gap-2 bg-purple-500/10 border border-purple-500/20 rounded-xl px-3 py-2">
+                        <span>⭐</span>
+                        <span className="text-purple-400 font-bold text-sm">Lv. {stats.level}</span>
+                    </div>
                 </div>
 
                 {/* Hero Banner */}
@@ -214,39 +243,51 @@ export default async function DashboardPage() {
                         </Link>
                     </div>
                     {/* Horizontal scroll on mobile, grid on larger */}
-                    <div className="flex gap-3 sm:gap-4 overflow-x-auto pb-2 snap-x snap-mandatory lg:grid lg:grid-cols-4 lg:overflow-x-visible lg:pb-0">
-                        {trendingQuests.map((quest) => (
-                            <Card key={quest.title} className="bg-[#151823] border-white/[0.06] hover:border-purple-500/20 transition-all group hover:-translate-y-1 duration-300 min-w-[200px] sm:min-w-[220px] lg:min-w-0 snap-start flex-shrink-0 lg:flex-shrink">
-                                <CardContent className="p-0">
-                                    <div className={`aspect-[4/3] rounded-t-xl bg-gradient-to-br ${quest.gradient} relative overflow-hidden flex items-center justify-center`}>
-                                        <span className="text-4xl sm:text-5xl group-hover:scale-110 transition-transform duration-500 drop-shadow-lg">{quest.icon}</span>
-                                        <div className="absolute top-2 right-2 sm:top-2.5 sm:right-2.5 bg-black/40 backdrop-blur-md px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg text-[9px] sm:text-[10px] font-bold border border-white/10 text-white uppercase tracking-wider">
-                                            {quest.rarity}
+                    {trendingQuests.length === 0 ? (
+                        <div className="bg-[#151823] border border-white/[0.06] rounded-2xl p-8 text-center">
+                            <p className="text-3xl mb-2">📭</p>
+                            <p className="text-slate-500 text-sm">Belum ada quest aktif saat ini</p>
+                            <Link href="/dashboard/quests" className="inline-block mt-3 px-4 py-2 bg-purple-600/20 border border-purple-500/20 text-purple-300 rounded-xl text-xs font-bold hover:bg-purple-600/30 transition-colors">
+                                Buat Quest Pertamamu
+                            </Link>
+                        </div>
+                    ) : (
+                        <div className="flex gap-3 sm:gap-4 overflow-x-auto pb-2 snap-x snap-mandatory lg:grid lg:grid-cols-4 lg:overflow-x-visible lg:pb-0">
+                            {trendingQuests.map((quest) => (
+                                <Card key={quest.title} className="bg-[#151823] border-white/[0.06] hover:border-purple-500/20 transition-all group hover:-translate-y-1 duration-300 min-w-[200px] sm:min-w-[220px] lg:min-w-0 snap-start flex-shrink-0 lg:flex-shrink">
+                                    <CardContent className="p-0">
+                                        <div className={`aspect-[4/3] rounded-t-xl bg-gradient-to-br ${quest.gradient} relative overflow-hidden flex items-center justify-center`}>
+                                            <span className="text-4xl sm:text-5xl group-hover:scale-110 transition-transform duration-500 drop-shadow-lg">{quest.icon}</span>
+                                            <div className="absolute top-2 right-2 sm:top-2.5 sm:right-2.5 bg-black/40 backdrop-blur-md px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg text-[9px] sm:text-[10px] font-bold border border-white/10 text-white uppercase tracking-wider">
+                                                {quest.rarity}
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="p-3 sm:p-4 space-y-2.5 sm:space-y-3">
-                                        <div>
-                                            <h3 className="font-bold text-xs sm:text-sm text-white">{quest.title}</h3>
-                                            <p className="text-slate-500 text-[10px] sm:text-xs mt-0.5">{quest.category}</p>
-                                        </div>
-                                        <div className="flex items-center justify-between text-[10px] sm:text-xs">
+                                        <div className="p-3 sm:p-4 space-y-2.5 sm:space-y-3">
                                             <div>
-                                                <p className="text-slate-600 mb-0.5">Time Left</p>
-                                                <p className="text-white font-mono font-bold">{quest.time}</p>
+                                                <h3 className="font-bold text-xs sm:text-sm text-white truncate">{quest.title}</h3>
+                                                <p className="text-slate-500 text-[10px] sm:text-xs mt-0.5">{quest.category}</p>
                                             </div>
-                                            <div className="text-right">
-                                                <p className="text-slate-600 mb-0.5">Reward</p>
-                                                <p className="text-purple-400 font-mono font-bold">{quest.reward}</p>
+                                            <div className="flex items-center justify-between text-[10px] sm:text-xs">
+                                                <div>
+                                                    <p className="text-slate-600 mb-0.5">Reward</p>
+                                                    <p className="text-purple-400 font-mono font-bold">{quest.reward}</p>
+                                                </div>
+                                                <div className="text-right">
+                                                    <p className="text-slate-600 mb-0.5">Gold</p>
+                                                    <p className="text-amber-400 font-mono font-bold">{quest.gold}</p>
+                                                </div>
                                             </div>
+                                            <Link href="/dashboard/quests">
+                                                <Button className="w-full bg-purple-600/20 hover:bg-purple-600/40 border border-purple-500/20 text-purple-300 font-bold text-[10px] sm:text-xs rounded-xl h-8 sm:h-9 transition-all">
+                                                    View Quest →
+                                                </Button>
+                                            </Link>
                                         </div>
-                                        <Button className="w-full bg-purple-600/20 hover:bg-purple-600/40 border border-purple-500/20 text-purple-300 font-bold text-[10px] sm:text-xs rounded-xl h-8 sm:h-9 transition-all">
-                                            Accept Quest
-                                        </Button>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        ))}
-                    </div>
+                                    </CardContent>
+                                </Card>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 {/* Quick Actions */}

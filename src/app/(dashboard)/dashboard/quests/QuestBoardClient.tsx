@@ -205,12 +205,12 @@ export default function QuestBoardClient() {
     <div className="space-y-8 px-4 sm:px-6">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
-        <div className="space-y-2">
-          <h1 className="text-3xl sm:text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 tracking-tight">
-            QUEST BOARD
+        <div>
+          <h1 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2.5">
+            <span className="text-2xl sm:text-3xl">⚔️</span> Quest Board
           </h1>
-          <p className="text-slate-400 font-medium max-w-md">
-            Kelola misi harianmu, raih XP dan kumpulkan Gold untuk menjadi Pahlawan terkuat.
+          <p className="text-slate-500 text-xs sm:text-sm mt-1">
+            Kelola misi harianmu, raih XP dan kumpulkan Gold.
           </p>
         </div>
 
@@ -243,8 +243,8 @@ export default function QuestBoardClient() {
                   onClick={handleAskAI}
                   disabled={isAILoading || !title || hasAnalyzed}
                   className={`h-10 px-4 rounded-xl text-sm font-bold transition-all w-full sm:w-auto flex items-center justify-center ${hasAnalyzed
-                      ? "bg-emerald-900/20 border border-emerald-500/30 text-emerald-400 opacity-100 disabled:opacity-100"
-                      : "bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 border border-purple-500/30"
+                    ? "bg-emerald-900/20 border border-emerald-500/30 text-emerald-400 opacity-100 disabled:opacity-100"
+                    : "bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 border border-purple-500/30"
                     }`}
                 >
                   {isAILoading ? (

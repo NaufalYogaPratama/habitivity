@@ -201,26 +201,7 @@ export default function HeroSection() {
                         className="space-y-7 text-center lg:text-left relative z-10"
                         style={{ y: textY }}
                     >
-                        {/* [1] Badge pill */}
-                        <motion.div
-                            custom={0.2}
-                            variants={fadeUp}
-                            initial="hidden"
-                            animate={isInView ? 'visible' : 'hidden'}
-                            className="inline-block"
-                        >
-                            <span
-                                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[12px] tracking-[0.03em] font-medium border"
-                                style={{
-                                    borderColor: 'rgba(124,90,246,0.3)',
-                                    background: 'rgba(124,90,246,0.1)',
-                                    color: '#A78BFA',
-                                    fontFamily: 'var(--font-dm-sans)',
-                                }}
-                            >
-                                ✦ The #1 Gamified Habit OS
-                            </span>
-                        </motion.div>
+
 
                         {/* [2] Headline H1 — line reveal animation */}
                         <h1

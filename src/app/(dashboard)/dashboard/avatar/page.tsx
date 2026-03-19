@@ -123,12 +123,11 @@ export default function AvatarCustomizationPage() {
         }
     };
 
-    const hasItem = (itemId: string, defaultAllow = false) => {
-        if (!itemId || defaultAllow) return true;
-        // In this implementation, to let judges test, we allow EVERYTHING normally 
-        // to show off the NFT UI. You might want to restrict it or show locks in production.
-        // For Ficpact, showing full features without restrictions is usually better for demo.
-        return true;
+    const hasItem = (itemId: string) => {
+        // Empty ID means "remove equipment" — always allowed
+        if (!itemId) return true;
+        // Check if the item name exists in the user's inventory
+        return inventory.includes(itemId);
     };
 
     if (isLoading) {
@@ -140,13 +139,12 @@ export default function AvatarCustomizationPage() {
     return (
         <div className="p-4 sm:p-8 min-h-screen space-y-6">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                <div className="space-y-2">
-                    <h1 className="text-3xl sm:text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 tracking-tight flex items-center gap-3">
-                        <Sparkles className="w-8 h-8 text-emerald-400" />
-                        NFT AVATAR STUDIO
+                <div>
+                    <h1 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2.5">
+                        <span className="text-2xl sm:text-3xl">🧑‍🚀</span> NFT Avatar Studio
                     </h1>
-                    <p className="text-slate-400 font-medium max-w-xl">
-                        Kustomisasi karakter digital Anda. Semakin tinggi level Anda, semakin megah evolusi karakter Anda.
+                    <p className="text-slate-500 text-xs sm:text-sm mt-1">
+                        Kustomisasi karakter digital Anda.
                     </p>
                 </div>
                 <Button
@@ -234,8 +232,8 @@ export default function AvatarCustomizationPage() {
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id as any)}
                                 className={`px-5 py-3 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-300 ${activeTab === tab.id
-                                        ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
-                                        : "text-slate-400 hover:text-white hover:bg-white/[0.03] border border-transparent"
+                                    ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
+                                    : "text-slate-400 hover:text-white hover:bg-white/[0.03] border border-transparent"
                                     }`}
                             >
                                 {tab.label}
@@ -277,7 +275,7 @@ export default function AvatarCustomizationPage() {
                             {["helm", "armor", "weapon", "accessory"].includes(activeTab) &&
                                 EQUIPMENTS[activeTab as keyof typeof EQUIPMENTS].map(item => {
                                     const isSelected = avatar.equipment[activeTab as keyof typeof avatar.equipment] === item.id;
-                                    const unlocked = hasItem(item.id, true); // Assuming all unlocked for demo
+                                    const unlocked = hasItem(item.id);
 
                                     return (
                                         <motion.div
@@ -294,8 +292,8 @@ export default function AvatarCustomizationPage() {
                                                     equipment: { ...avatar.equipment, [activeTab]: item.id }
                                                 })}
                                                 className={`w-full text-left bg-[#151823] border ${isSelected ? "border-emerald-500 shadow-lg shadow-emerald-500/20" :
-                                                        !unlocked ? "border-white/[0.02] opacity-50 cursor-not-allowed" :
-                                                            "border-white/[0.06] hover:border-white/20"
+                                                    !unlocked ? "border-white/[0.02] opacity-50 cursor-not-allowed" :
+                                                        "border-white/[0.06] hover:border-white/20"
                                                     } rounded-2xl p-4 transition-all group relative h-32 flex flex-col justify-between`}
                                             >
                                                 {!unlocked && <Lock className="absolute top-3 right-3 w-4 h-4 text-slate-600" />}

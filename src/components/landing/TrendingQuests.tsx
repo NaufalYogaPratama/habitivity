@@ -1,48 +1,52 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Link from 'next/link';
 import { fadeUp, staggerContainer } from '@/lib/animations';
 
-const quests = [
-    {
-        emoji: '🏃‍♂️',
-        name: '5k Runner',
-        timer: '01h : 30m',
-        xp: 50,
-        active: 12,
-        gradient: 'from-emerald-500/30 to-teal-600/20',
-    },
-    {
-        emoji: '📚',
-        name: 'Read 30 Pages',
-        timer: '02h : 15m',
-        xp: 100,
-        active: 28,
-        gradient: 'from-orange-500/30 to-amber-600/20',
-    },
-    {
-        emoji: '💧',
-        name: 'Hydration Hit',
-        timer: '00h : 45m',
-        xp: 150,
-        active: 45,
-        gradient: 'from-blue-500/30 to-cyan-600/20',
-    },
-    {
-        emoji: '🎨',
-        name: 'Create Art',
-        timer: '03h : 00m',
-        xp: 200,
-        active: 8,
-        gradient: 'from-pink-500/30 to-rose-600/20',
-    },
+interface QuestData {
+    emoji: string;
+    name: string;
+    xp: number;
+    gold: number;
+    rarity: string;
+    gradient: string;
+    category: string;
+}
+
+// Fallback when DB has no quests yet
+const FALLBACK_QUESTS: QuestData[] = [
+    { emoji: '🏃‍♂️', name: '5k Runner', xp: 50, gold: 20, rarity: 'Epic', gradient: 'from-emerald-500/30 to-teal-600/20', category: 'Health' },
+    { emoji: '📚', name: 'Read 30 Pages', xp: 100, gold: 30, rarity: 'Rare', gradient: 'from-orange-500/30 to-amber-600/20', category: 'Learning' },
+    { emoji: '💧', name: 'Hydration Hit', xp: 150, gold: 50, rarity: 'Common', gradient: 'from-blue-500/30 to-cyan-600/20', category: 'Health' },
+    { emoji: '🎨', name: 'Create Art', xp: 200, gold: 80, rarity: 'Legendary', gradient: 'from-pink-500/30 to-rose-600/20', category: 'Personal' },
 ];
 
 export default function TrendingQuests() {
     const ref = useRef<HTMLElement>(null);
     const isInView = useInView(ref, { once: true, amount: 0.2 });
+    const [quests, setQuests] = useState<QuestData[]>([]);
+
+    useEffect(() => {
+        const fetchQuests = async () => {
+            try {
+                const res = await fetch('/api/landing/stats');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.trendingQuests?.length > 0) {
+                        setQuests(data.trendingQuests);
+                        return;
+                    }
+                }
+            } catch (e) {
+                console.error('Failed to fetch trending quests:', e);
+            }
+            // Fallback to sample data if DB is empty or fetch fails
+            setQuests(FALLBACK_QUESTS);
+        };
+        fetchQuests();
+    }, []);
 
     return (
         <section
@@ -60,14 +64,14 @@ export default function TrendingQuests() {
                         <span className="text-2xl">🔥</span> Trending Quests
                     </h2>
                     <Link
-                        href="#"
+                        href="/register"
                         className="text-sm font-medium transition-colors hover:opacity-80"
                         style={{
                             color: 'var(--hv-primary-light)',
                             fontFamily: 'var(--font-dm-sans)',
                         }}
                     >
-                        View All →
+                        Join Now →
                     </Link>
                 </div>
 
@@ -95,9 +99,9 @@ export default function TrendingQuests() {
                                 <div className="absolute inset-0 flex items-center justify-center text-5xl transform group-hover:scale-110 transition-transform duration-500">
                                     {q.emoji}
                                 </div>
-                                {/* Timer badge */}
+                                {/* Rarity badge */}
                                 <div
-                                    className="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-lg text-[10px] font-bold border"
+                                    className="absolute top-2.5 right-2.5 px-2.5 py-1 rounded-lg text-[10px] font-bold border uppercase tracking-wider"
                                     style={{
                                         background: 'rgba(0,0,0,0.5)',
                                         backdropFilter: 'blur(8px)',
@@ -106,44 +110,23 @@ export default function TrendingQuests() {
                                         fontFamily: 'var(--font-mono)',
                                     }}
                                 >
-                                    {q.timer}
+                                    {q.rarity}
                                 </div>
                             </div>
 
                             {/* Quest name */}
                             <h3
-                                className="font-bold text-base sm:text-lg mb-1 text-[var(--hv-text-primary)]"
+                                className="font-bold text-base sm:text-lg mb-1 text-[var(--hv-text-primary)] truncate"
                                 style={{ fontFamily: 'var(--font-syne)' }}
                             >
                                 {q.name}
                             </h3>
+                            <p className="text-xs mb-2" style={{ color: 'var(--hv-text-muted)' }}>
+                                {q.category}
+                            </p>
 
                             {/* Footer */}
                             <div className="flex items-center justify-between mt-3">
-                                <div className="flex items-center gap-2">
-                                    {/* Avatar stack */}
-                                    <div className="flex -space-x-2">
-                                        {[0, 1, 2].map((j) => (
-                                            <div
-                                                key={j}
-                                                className="w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2"
-                                                style={{
-                                                    background: `hsl(${250 + j * 25}, 50%, ${45 + j * 10}%)`,
-                                                    borderColor: 'var(--hv-bg-surface)',
-                                                }}
-                                            />
-                                        ))}
-                                    </div>
-                                    <span
-                                        className="text-[10px] sm:text-xs"
-                                        style={{
-                                            color: 'var(--hv-text-muted)',
-                                            fontFamily: 'var(--font-dm-sans)',
-                                        }}
-                                    >
-                                        {q.active}+ active
-                                    </span>
-                                </div>
                                 <span
                                     className="text-xs sm:text-sm font-bold"
                                     style={{
@@ -152,6 +135,15 @@ export default function TrendingQuests() {
                                     }}
                                 >
                                     +{q.xp} XP
+                                </span>
+                                <span
+                                    className="text-xs font-bold"
+                                    style={{
+                                        color: 'var(--hv-accent-gold, #f59e0b)',
+                                        fontFamily: 'var(--font-mono)',
+                                    }}
+                                >
+                                    +{q.gold}g
                                 </span>
                             </div>
                         </motion.div>

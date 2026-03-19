@@ -1,23 +1,53 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Link from 'next/link';
-import { ArrowUp, ArrowDown } from 'lucide-react';
+import { ArrowUp, Users, Zap } from 'lucide-react';
 import { fadeLeft, staggerContainerFast } from '@/lib/animations';
 
-const collections = [
-    { name: 'Fitness Freaks', floor: '2,400', change: 15.2, positive: true, volume: '24.5k' },
-    { name: 'Code Warriors', floor: '3,100', change: 8.7, positive: true, volume: '18.2k' },
-    { name: 'Mindful Monks', floor: '1,800', change: 3.1, positive: false, volume: '12.8k' },
-    { name: 'Artistic Souls', floor: '4,200', change: 22.4, positive: true, volume: '31.6k' },
-    { name: 'Wealth Builders', floor: '5,600', change: 9.3, positive: false, volume: '42.1k' },
-    { name: 'Social Butterflies', floor: '1,200', change: 11.8, positive: true, volume: '8.9k' },
+interface TeamData {
+    name: string;
+    icon: string;
+    totalXp: number;
+    level: number;
+    members: number;
+}
+
+// Fallback when DB has no teams yet
+const FALLBACK_TEAMS: TeamData[] = [
+    { name: 'Fitness Freaks', icon: '💪', totalXp: 2400, level: 5, members: 8 },
+    { name: 'Code Warriors', icon: '⚔️', totalXp: 3100, level: 7, members: 12 },
+    { name: 'Mindful Monks', icon: '🧘', totalXp: 1800, level: 4, members: 6 },
+    { name: 'Artistic Souls', icon: '🎨', totalXp: 4200, level: 9, members: 15 },
+    { name: 'Wealth Builders', icon: '💰', totalXp: 5600, level: 11, members: 10 },
+    { name: 'Social Butterflies', icon: '🦋', totalXp: 1200, level: 3, members: 4 },
 ];
 
 export default function TopCollections() {
     const ref = useRef<HTMLElement>(null);
     const isInView = useInView(ref, { once: true, amount: 0.15 });
+    const [teams, setTeams] = useState<TeamData[]>([]);
+
+    useEffect(() => {
+        const fetchTeams = async () => {
+            try {
+                const res = await fetch('/api/landing/stats');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.topCollections?.length > 0) {
+                        setTeams(data.topCollections);
+                        return;
+                    }
+                }
+            } catch (e) {
+                console.error('Failed to fetch top collections:', e);
+            }
+            // Fallback to sample data if DB is empty or fetch fails
+            setTeams(FALLBACK_TEAMS);
+        };
+        fetchTeams();
+    }, []);
 
     return (
         <section ref={ref} id="collections" className="py-20 sm:py-32">
@@ -28,7 +58,7 @@ export default function TopCollections() {
                         className="text-2xl sm:text-3xl md:text-4xl font-[800] tracking-[-0.02em] text-[var(--hv-text-primary)]"
                         style={{ fontFamily: 'var(--font-syne)' }}
                     >
-                        Top Collections over{' '}
+                        Top Guilds{' '}
                         <span
                             className="border-b border-dotted"
                             style={{
@@ -36,7 +66,7 @@ export default function TopCollections() {
                                 borderColor: 'var(--hv-primary-light)',
                             }}
                         >
-                            last 7 days
+                            by XP
                         </span>
                     </h2>
                 </div>
@@ -51,10 +81,10 @@ export default function TopCollections() {
                     }}
                 >
                     <span>#</span>
-                    <span>Collection</span>
-                    <span className="text-right">Floor Price</span>
-                    <span className="text-right">Change</span>
-                    <span className="text-right">Volume</span>
+                    <span>Guild</span>
+                    <span className="text-right">Total XP</span>
+                    <span className="text-right">Level</span>
+                    <span className="text-right">Members</span>
                 </div>
 
                 {/* Rows */}
@@ -63,7 +93,7 @@ export default function TopCollections() {
                     initial="hidden"
                     animate={isInView ? 'visible' : 'hidden'}
                 >
-                    {collections.map((col, idx) => (
+                    {teams.map((team, idx) => (
                         <motion.div
                             key={idx}
                             variants={fadeLeft}
@@ -81,15 +111,17 @@ export default function TopCollections() {
                                 {idx + 1}
                             </span>
 
-                            {/* Name + Thumbnail */}
+                            {/* Name + Icon */}
                             <div className="flex items-center gap-3 min-w-0">
                                 <div
-                                    className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg flex-shrink-0 border transition-colors group-hover:border-[var(--hv-border-hover)]"
+                                    className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg flex-shrink-0 border transition-colors group-hover:border-[var(--hv-border-hover)] flex items-center justify-center text-xl"
                                     style={{
                                         background: `linear-gradient(135deg, hsl(${260 + idx * 15}, 50%, 25%) 0%, hsl(${280 + idx * 15}, 60%, 35%) 100%)`,
                                         borderColor: 'var(--hv-border)',
                                     }}
-                                />
+                                >
+                                    {team.icon}
+                                </div>
                                 <div className="min-w-0">
                                     <h4
                                         className="font-bold text-sm truncate transition-colors group-hover:text-[var(--hv-primary-light)]"
@@ -98,18 +130,18 @@ export default function TopCollections() {
                                             fontFamily: 'var(--font-dm-sans)',
                                         }}
                                     >
-                                        {col.name}
+                                        {team.name}
                                     </h4>
                                     <p
                                         className="text-xs sm:hidden"
                                         style={{ color: 'var(--hv-text-muted)' }}
                                     >
-                                        Floor: {col.floor} XP
+                                        {team.totalXp.toLocaleString()} XP • Lv.{team.level}
                                     </p>
                                 </div>
                             </div>
 
-                            {/* Floor Price (desktop) */}
+                            {/* Total XP (desktop) */}
                             <span
                                 className="hidden sm:block text-right text-sm font-medium"
                                 style={{
@@ -117,40 +149,33 @@ export default function TopCollections() {
                                     fontFamily: 'var(--font-mono)',
                                 }}
                             >
-                                {col.floor} XP
+                                {team.totalXp.toLocaleString()} XP
                             </span>
 
-                            {/* Change */}
+                            {/* Level */}
                             <div className="flex items-center justify-end gap-1">
                                 <span
                                     className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold"
                                     style={{
-                                        background: col.positive
-                                            ? 'rgba(74, 222, 128, 0.1)'
-                                            : 'rgba(248, 113, 113, 0.1)',
-                                        color: col.positive
-                                            ? 'var(--hv-accent-green)'
-                                            : 'var(--hv-accent-red)',
+                                        background: 'rgba(74, 222, 128, 0.1)',
+                                        color: 'var(--hv-accent-green, #4ade80)',
                                     }}
                                 >
-                                    {col.positive ? (
-                                        <ArrowUp className="w-3 h-3" />
-                                    ) : (
-                                        <ArrowDown className="w-3 h-3" />
-                                    )}
-                                    {col.change}%
+                                    <Zap className="w-3 h-3" />
+                                    Lv.{team.level}
                                 </span>
                             </div>
 
-                            {/* Volume (desktop) */}
+                            {/* Members (desktop) */}
                             <span
-                                className="hidden sm:block text-right text-sm"
+                                className="hidden sm:flex items-center justify-end gap-1 text-right text-sm"
                                 style={{
                                     color: 'var(--hv-text-secondary)',
                                     fontFamily: 'var(--font-mono)',
                                 }}
                             >
-                                {col.volume}
+                                <Users className="w-3 h-3" />
+                                {team.members}
                             </span>
                         </motion.div>
                     ))}
@@ -159,7 +184,7 @@ export default function TopCollections() {
                 {/* CTA */}
                 <div className="text-center mt-10 sm:mt-14">
                     <Link
-                        href="#"
+                        href="/register"
                         className="inline-flex items-center px-7 py-3 rounded-full text-sm font-bold transition-all duration-300 border hover:bg-[var(--hv-primary)]/10"
                         style={{
                             borderColor: 'var(--hv-border)',
@@ -167,7 +192,7 @@ export default function TopCollections() {
                             fontFamily: 'var(--font-dm-sans)',
                         }}
                     >
-                        Go to Rankings
+                        Join a Guild →
                     </Link>
                 </div>
             </div>

@@ -100,7 +100,7 @@ export default function HeroSection() {
     return (
         <section
             ref={sectionRef}
-            className="relative min-h-screen flex items-center overflow-hidden"
+            className="relative min-h-screen flex items-start overflow-hidden"
             style={{ paddingTop: 120, paddingBottom: 0 }}
         >
             {/* ════════════════════════════════════════════
@@ -198,8 +198,7 @@ export default function HeroSection() {
               LEFT COLUMN: TEXT
               ──────────────────────────────────────── */}
                     <motion.div
-                        className="space-y-7 text-center lg:text-left relative z-10"
-                        style={{ y: textY }}
+                        className="space-y-7 text-center lg:text-left relative z-10 lg:-mt-36" style={{ y: textY }}
                     >
 
 
@@ -453,7 +452,7 @@ export default function HeroSection() {
                                     className="text-[12px] font-bold mb-0.5"
                                     style={{ fontFamily: 'var(--font-syne)', color: '#F8F8FF' }}
                                 >
-                                    Morning Zen Master
+                                    Focus Arena
                                 </p>
                                 <p
                                     className="text-[10px] mb-2"

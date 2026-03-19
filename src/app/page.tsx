@@ -1,5 +1,6 @@
 import Navbar from '@/components/landing/Navbar';
 import HeroSection from '@/components/landing/HeroSection';
+import CoreFeaturesSection from '@/components/landing/CoreFeaturesSection';
 import TrendingQuests from '@/components/landing/TrendingQuests';
 import TopCollections from '@/components/landing/TopCollections';
 import HowItWorks from '@/components/landing/HowItWorks';
@@ -18,6 +19,7 @@ export default function LandingPage() {
       <Navbar />
       <main>
         <HeroSection />
+        <CoreFeaturesSection />
         <TrendingQuests />
         <TopCollections />
         <HowItWorks />

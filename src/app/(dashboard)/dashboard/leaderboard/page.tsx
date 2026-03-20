@@ -16,6 +16,7 @@ import {
     Search,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { UserAvatar } from "@/components/ui/UserAvatar";
 
 type Category = 'xp' | 'savings' | 'focus' | 'streak' | 'level' | 'regional' | 'team';
 type Timeframe = 'daily' | 'weekly' | 'monthly' | 'all';
@@ -140,45 +141,46 @@ export default function LeaderboardPage() {
             </div>
 
             {/* Podium Section */}
-            <div className="flex flex-col md:grid md:grid-cols-3 items-center md:items-end gap-10 md:gap-6 pt-16 pb-12 overflow-hidden">
-                <AnimatePresence mode="wait">
-                    <motion.div
-                        key={`${category}-${timeframe}`}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="contents"
-                    >
-                        {/* Rank 2 - Appears second on mobile, first on desktop */}
-                        <PodiumCard
-                            item={topThree[1]}
-                            rank={2}
-                            color="from-slate-400 to-slate-200"
-                            delay={0.1}
-                            className="order-2 md:order-1 h-[220px] md:h-[280px] w-full max-w-[200px]"
-                        />
+            <AnimatePresence mode="wait">
+                <motion.div
+                    key={`${category}-${timeframe}`}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="flex flex-col md:grid md:grid-cols-3 items-center md:items-end gap-10 md:gap-6 pt-16 pb-12 overflow-hidden"
+                >
+                    {/* Rank 2 - Appears second on mobile, first on desktop */}
+                    <PodiumCard
+                        item={topThree[1]}
+                        category={category}
+                        rank={2}
+                        color="from-slate-400 to-slate-200"
+                        delay={0.1}
+                        className="order-2 md:order-1 h-[220px] md:h-[280px] w-full max-w-[200px]"
+                    />
 
-                        {/* Rank 1 - Appears first on mobile, middle on desktop */}
-                        <PodiumCard
-                            item={topThree[0]}
-                            rank={1}
-                            color="from-amber-400 to-yellow-200"
-                            delay={0}
-                            className="order-1 md:order-2 h-[260px] md:h-[340px] md:scale-110 w-full max-w-[240px]"
-                        />
+                    {/* Rank 1 - Appears first on mobile, middle on desktop */}
+                    <PodiumCard
+                        item={topThree[0]}
+                        category={category}
+                        rank={1}
+                        color="from-amber-400 to-yellow-200"
+                        delay={0}
+                        className="order-1 md:order-2 h-[260px] md:h-[340px] md:scale-110 w-full max-w-[240px]"
+                    />
 
-                        {/* Rank 3 - Appears third on mobile, last on desktop */}
-                        <PodiumCard
-                            item={topThree[2]}
-                            rank={3}
-                            color="from-orange-400 to-orange-200"
-                            delay={0.2}
-                            className="order-3 h-[180px] md:h-[240px] w-full max-w-[180px]"
-                        />
-                    </motion.div>
-                </AnimatePresence>
-            </div>
+                    {/* Rank 3 - Appears third on mobile, last on desktop */}
+                    <PodiumCard
+                        item={topThree[2]}
+                        category={category}
+                        rank={3}
+                        color="from-orange-400 to-orange-200"
+                        delay={0.2}
+                        className="order-3 h-[180px] md:h-[240px] w-full max-w-[180px]"
+                    />
+                </motion.div>
+            </AnimatePresence>
 
             {/* List Section */}
             <Card className="bg-[#151823] border-white/[0.06] rounded-3xl overflow-hidden backdrop-blur-xl">
@@ -238,9 +240,17 @@ export default function LeaderboardPage() {
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500/20 to-fuchsia-500/20 flex items-center justify-center text-lg border border-white/10 group-hover:scale-110 transition-transform">
-                                                        {item.username === 'Teammate' ? '👥' : '🧑‍🚀'}
-                                                    </div>
+                                                    {category === 'team' ? (
+                                                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center border border-white/10 group-hover:scale-110 transition-transform">
+                                                            <Image src="/assets/logo/icon-clans.png" alt="Team" width={24} height={24} className="object-contain" />
+                                                        </div>
+                                                    ) : category === 'regional' ? (
+                                                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center border border-white/10 group-hover:scale-110 transition-transform text-xl">
+                                                            🎓
+                                                        </div>
+                                                    ) : (
+                                                        <UserAvatar avatar={item.avatar} className="w-10 h-10 rounded-xl shadow-lg border border-white/5 group-hover:scale-110 transition-transform" emojiSize="text-xl" showEvolution={false} />
+                                                    )}
                                                     <div>
                                                         <p className="text-sm font-bold text-white group-hover:text-purple-300 transition-colors">
                                                             {item.username}
@@ -275,7 +285,7 @@ export default function LeaderboardPage() {
     );
 }
 
-function PodiumCard({ item, rank, color, delay, className = "" }: { item?: LeaderboardItem, rank: number, color: string, delay: number, className?: string }) {
+function PodiumCard({ item, category, rank, color, delay, className = "" }: { item?: LeaderboardItem, category: string, rank: number, color: string, delay: number, className?: string }) {
     if (!item) return <div className={`hidden md:block ${className}`} />;
 
     const medals = {
@@ -295,8 +305,19 @@ function PodiumCard({ item, rank, color, delay, className = "" }: { item?: Leade
                 {medals[rank as keyof typeof medals]}
             </div>
 
-            <div className={`w-20 h-20 rounded-3xl bg-gradient-to-br from-purple-500/20 to-fuchsia-500/20 border-2 border-white/20 flex items-center justify-center text-3xl mb-4 relative z-10 shadow-2xl`}>
-                🧑‍🚀
+            <div className={`w-20 h-20 rounded-3xl border-2 border-white/20 flex items-center justify-center text-3xl mb-4 relative z-10 shadow-2xl bg-[#151823]`}>
+                {category === 'team' ? (
+                    <div className="w-full h-full rounded-[22px] bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center">
+                        <Image src="/assets/logo/icon-clans.png" alt="Team" width={40} height={40} className="object-contain" />
+                    </div>
+                ) : category === 'regional' ? (
+                    <div className="w-full h-full rounded-[22px] bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center text-4xl">
+                        🎓
+                    </div>
+                ) : (
+                    <UserAvatar avatar={item.avatar} className="w-full h-full !rounded-[22px]" emojiSize="text-4xl" showEvolution={false} />
+                )}
+
                 <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-white text-black flex items-center justify-center text-xs font-black border-2 border-[#0F1118]">
                     {rank}
                 </div>

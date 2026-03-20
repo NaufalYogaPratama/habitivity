@@ -111,8 +111,8 @@ function CategorySelector({
                                 : 'bg-white/[0.02] border-white/[0.06] hover:bg-white/[0.05]'
                             }`}
                     >
-                        <span className="text-lg">{cat.icon}</span>
-                        <span className={`text-[10px] font-medium ${isActive ? cat.color : 'text-slate-500'}`}>
+                        <span className="text-xl sm:text-2xl">{cat.icon}</span>
+                        <span className={`text-[11px] sm:text-xs font-semibold ${isActive ? cat.color : 'text-slate-400'}`}>
                             {cat.label}
                         </span>
                     </motion.button>
@@ -602,7 +602,7 @@ export default function GoldLedgerClient() {
     const categoryBreakdown = store.getSpendingByCategory();
 
     return (
-        <div className="h-full overflow-y-auto p-4 sm:p-6 space-y-6 sm:space-y-7 min-w-0">
+        <div className="h-full overflow-y-auto p-4 sm:p-6 space-y-6 min-w-0">
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
@@ -636,120 +636,121 @@ export default function GoldLedgerClient() {
 
             {/* Only show the rest if budget is configured */}
             {store.budgetConfigured && (
-                <>
-                    {/* Budget Alert */}
-                    <BudgetAlertBanner percentage={budgetPct} status={budgetStatus} />
+                <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+                    {/* LEFT COLUMN: Overview & Insights */}
+                    <div className="xl:col-span-7 space-y-6">
+                        {/* Budget Alert */}
+                        <BudgetAlertBanner percentage={budgetPct} status={budgetStatus} />
 
-                    {/* Stats Row */}
-                    <StatsRow spending={todaySpending} streak={store.savingStreak} gold={store.gold} />
+                        {/* Stats Row */}
+                        <StatsRow spending={todaySpending} streak={store.savingStreak} gold={store.gold} />
 
-                    {/* Budget Status */}
-                    <BudgetStatusCard
-                        percentage={budgetPct}
-                        spent={todaySpending}
-                        budget={dailyBudget}
-                        status={budgetStatus}
-                        shieldActive={store.shieldActive}
-                    />
+                        {/* Budget Status */}
+                        <BudgetStatusCard
+                            percentage={budgetPct}
+                            spent={todaySpending}
+                            budget={dailyBudget}
+                            status={budgetStatus}
+                            shieldActive={store.shieldActive}
+                        />
 
-                    {/* Add Expense */}
-                    <AddExpenseForm onAdd={store.addExpense} />
+                        {/* Spending Breakdown */}
+                        <SpendingBreakdown data={categoryBreakdown} />
 
-                    {/* Today's Expenses */}
-                    <div className="space-y-3">
-                        <div className="flex items-center justify-between">
-                            <h3 className="text-sm font-bold text-slate-300 flex items-center gap-2">
-                                <span>📋</span> Pengeluaran Hari Ini
-                            </h3>
-                            <span className="text-slate-600 text-xs">{todayExpenses.length} transaksi</span>
-                        </div>
-
-                        {todayExpenses.length === 0 ? (
-                            <div className="bg-[#151823]/50 border border-white/[0.04] rounded-2xl p-8 text-center">
-                                <p className="text-3xl mb-2">🎉</p>
-                                <p className="text-slate-500 text-sm">Belum ada pengeluaran hari ini</p>
-                                <p className="text-slate-600 text-xs mt-1">Hemat terus untuk dapat Gold bonus!</p>
-                            </div>
-                        ) : (
-                            <div className="space-y-1.5">
-                                <AnimatePresence mode="popLayout">
-                                    {todayExpenses.map((expense) => (
-                                        <ExpenseItem
-                                            key={expense._id}
-                                            expense={expense}
-                                            onDelete={store.deleteExpense}
-                                        />
-                                    ))}
-                                </AnimatePresence>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Spending Breakdown */}
-                    <SpendingBreakdown data={categoryBreakdown} />
-
-                    {/* Savings Goals */}
-                    <div className="space-y-3">
-                        <div className="flex items-center justify-between">
-                            <h3 className="text-sm font-bold text-slate-300 flex items-center gap-2">
-                                <span>🎯</span> Target Tabungan
-                            </h3>
-                            <motion.button
-                                whileTap={{ scale: 0.95 }}
-                                onClick={() => setShowAddGoal(true)}
-                                className="text-purple-400 text-xs font-bold hover:text-purple-300 transition-colors"
-                            >
-                                + Tambah
-                            </motion.button>
-                        </div>
-
-                        {store.savingsGoals.length === 0 ? (
-                            <div className="bg-[#151823]/50 border border-white/[0.04] rounded-2xl p-6 text-center">
-                                <p className="text-2xl mb-2">🏦</p>
-                                <p className="text-slate-500 text-sm">Belum ada target tabungan</p>
+                        {/* Savings Goals */}
+                        <div className="space-y-4">
+                            <div className="flex items-center justify-between">
+                                <h3 className="text-sm font-bold text-slate-300 flex items-center gap-2">
+                                    <span>🎯</span> Target Tabungan
+                                </h3>
                                 <motion.button
-                                    whileTap={{ scale: 0.97 }}
+                                    whileTap={{ scale: 0.95 }}
                                     onClick={() => setShowAddGoal(true)}
-                                    className="mt-3 px-4 py-2 bg-purple-600/20 border border-purple-500/20 text-purple-300 rounded-xl text-xs font-bold hover:bg-purple-600/30 transition-colors"
+                                    className="text-purple-400 text-xs font-bold hover:text-purple-300 transition-colors bg-purple-500/10 px-3 py-1.5 rounded-lg border border-purple-500/20"
                                 >
-                                    Buat Target Pertama
+                                    + Tambah Target
                                 </motion.button>
                             </div>
-                        ) : (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                {store.savingsGoals.map((goal) => (
-                                    <SavingsGoalCard
-                                        key={goal._id}
-                                        goal={goal}
-                                        onAdd={store.addToSavingsGoal}
-                                        onDelete={store.deleteSavingsGoal}
-                                    />
+
+                            {store.savingsGoals.length === 0 ? (
+                                <div className="bg-[#151823]/50 border border-white/[0.04] rounded-2xl p-6 text-center">
+                                    <p className="text-2xl mb-2">🏦</p>
+                                    <p className="text-slate-500 text-sm">Belum ada target tabungan</p>
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    {store.savingsGoals.map((goal) => (
+                                        <SavingsGoalCard
+                                            key={goal._id}
+                                            goal={goal}
+                                            onAdd={store.addToSavingsGoal}
+                                            onDelete={store.deleteSavingsGoal}
+                                        />
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* RIGHT COLUMN: Action & History */}
+                    <div className="xl:col-span-5 space-y-6 flex flex-col">
+                        {/* Add Expense */}
+                        <AddExpenseForm onAdd={store.addExpense} />
+
+                        {/* Gamification Rules */}
+                        <div className="bg-gradient-to-br from-[#151823] to-[#151823]/50 border border-white/[0.04] rounded-2xl p-5 space-y-3 shadow-sm">
+                            <h3 className="text-sm font-bold text-slate-300 flex items-center gap-2">
+                                <span>📖</span> Aturan Gold Ledger
+                            </h3>
+                            <div className="space-y-2">
+                                {[
+                                    { icon: '🛡️', rule: 'Spending < 50% budget', result: '+10 Gold & Shield', color: 'text-emerald-400' },
+                                    { icon: '⚖️', rule: 'Spending 50-100% budget', result: 'Normal', color: 'text-amber-400' },
+                                    { icon: '⚠️', rule: 'Spending > 100% budget', result: '-5 Gold Penalty', color: 'text-red-400' },
+                                ].map((r) => (
+                                    <div key={r.rule} className="flex items-center gap-3 text-xs bg-white/[0.02] p-2 rounded-xl border border-white/[0.02]">
+                                        <span className="text-base">{r.icon}</span>
+                                        <span className="text-slate-400 flex-1 font-medium">{r.rule}</span>
+                                        <span className={`font-bold ${r.color} whitespace-nowrap`}>{r.result}</span>
+                                    </div>
                                 ))}
                             </div>
-                        )}
+                        </div>
+
+                        {/* Today's Expenses */}
+                        <div className="bg-[#151823]/80 border border-white/[0.06] rounded-2xl p-5 space-y-4 flex-1">
+                            <div className="flex items-center justify-between border-b border-white/[0.06] pb-3">
+                                <h3 className="text-sm font-bold text-slate-300 flex items-center gap-2">
+                                    <span>📋</span> Riwayat Hari Ini
+                                </h3>
+                                <span className="text-slate-500 text-[10px] font-bold uppercase tracking-wider bg-white/[0.05] px-2 py-1 rounded-md">{todayExpenses.length} transaksi</span>
+                            </div>
+
+                            {todayExpenses.length === 0 ? (
+                                <div className="text-center py-8">
+                                    <p className="text-3xl mb-3">🎉</p>
+                                    <p className="text-slate-400 text-sm font-medium">Belum ada pengeluaran!</p>
+                                    <p className="text-slate-500 text-xs mt-1">Pertahankan streak hematmu.</p>
+                                </div>
+                            ) : (
+                                <div className="space-y-2 max-h-[400px] overflow-y-auto pr-1 custom-scrollbar">
+                                    <AnimatePresence mode="popLayout">
+                                        {todayExpenses.map((expense) => (
+                                            <ExpenseItem
+                                                key={expense._id}
+                                                expense={expense}
+                                                onDelete={store.deleteExpense}
+                                            />
+                                        ))}
+                                    </AnimatePresence>
+                                </div>
+                            )}
+                        </div>
                     </div>
-                </>
+                </div>
             )}
 
-            {/* Gamification Rules */}
-            <div className="bg-[#151823]/50 border border-white/[0.04] rounded-2xl p-5 space-y-3">
-                <h3 className="text-sm font-bold text-slate-300 flex items-center gap-2">
-                    <span>📖</span> Aturan Gold Ledger
-                </h3>
-                <div className="space-y-2">
-                    {[
-                        { icon: '🛡️', rule: 'Spending < 50% budget', result: '+10 Gold + Shield', color: 'text-emerald-400' },
-                        { icon: '⚖️', rule: 'Spending 50-100% budget', result: 'Normal', color: 'text-amber-400' },
-                        { icon: '⚠️', rule: 'Spending > 100% budget', result: '-5 Gold + Warning', color: 'text-red-400' },
-                    ].map((r) => (
-                        <div key={r.rule} className="flex items-center gap-3 text-xs">
-                            <span className="text-base">{r.icon}</span>
-                            <span className="text-slate-400 flex-1">{r.rule}</span>
-                            <span className={`font-bold ${r.color}`}>{r.result}</span>
-                        </div>
-                    ))}
-                </div>
-            </div>
+
 
             {/* Spacer for mobile */}
             <div className="h-4" />

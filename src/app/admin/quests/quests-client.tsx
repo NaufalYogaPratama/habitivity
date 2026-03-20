@@ -3,6 +3,21 @@
 import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import Image from "next/image";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger
+} from "@/components/ui/dialog";
+import { Plus } from "lucide-react";
+import { createAdminQuestAction } from './actions';
 
 interface QuestData {
     _id: string;
@@ -46,10 +61,22 @@ const categoryIcons: Record<string, string> = {
     finance: '💰',
 };
 
-export default function AdminQuestsClient({ initialQuests, stats }: { initialQuests: QuestData[]; stats: QuestStats }) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export default function AdminQuestsClient({ initialQuests, stats, users }: { initialQuests: QuestData[]; stats: QuestStats; users: { _id: string, username: string, email: string }[] }) {
     const [quests, setQuests] = useState(initialQuests);
     const [filterStatus, setFilterStatus] = useState<string>('all');
     const [searchQuery, setSearchQuery] = useState('');
+
+    // Form modal state
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
+    const [difficulty, setDifficulty] = useState("medium");
+    const [category, setCategory] = useState("work");
+    const [targetUserId, setTargetUserId] = useState("all");
+    const [isAILoading, setIsAILoading] = useState(false);
+    const [hasAnalyzed, setHasAnalyzed] = useState(false);
+    const [isCreating, setIsCreating] = useState(false);
 
     const formatDate = (date: string) => {
         return new Intl.DateTimeFormat('en-US', {
@@ -70,11 +97,74 @@ export default function AdminQuestsClient({ initialQuests, stats }: { initialQue
             });
             if (res.ok) {
                 setQuests(prev => prev.filter(q => q._id !== id));
+                toast.success('Quest deleted successfully.');
             } else {
-                alert('Failed to delete quest');
+                toast.error('Failed to delete quest');
             }
         } catch (error) {
             console.error(error);
+            toast.error('System error occurred.');
+        }
+    };
+
+    const handleCreateQuest = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!title) return toast.error("Judul misi wajib diisi!");
+
+        setIsCreating(true);
+        try {
+            const res = await createAdminQuestAction({
+                title,
+                description,
+                difficulty,
+                category,
+                targetUserId
+            });
+
+            if (res.success) {
+                toast.success(targetUserId === 'all' ? "Global Quest broadcasted! 🚀" : "User Quest created! 🚀");
+                setIsDialogOpen(false);
+                setTitle("");
+                setDescription("");
+                setTargetUserId("all");
+                setHasAnalyzed(false);
+            } else {
+                toast.error(res.error || "Gagal menambahkan misi");
+            }
+        } catch (error) {
+            toast.error("Terjadi kesalahan sistem");
+        } finally {
+            setIsCreating(false);
+        }
+    };
+
+    const handleAskAI = async () => {
+        if (!title) {
+            toast.error("Masukkan judul misi terlebih dahulu!");
+            return;
+        }
+
+        setIsAILoading(true);
+        try {
+            const res = await fetch("/api/quests/classify-ai", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ title, description }),
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                if (data.difficulty) setDifficulty(data.difficulty);
+                if (data.category) setCategory(data.category);
+                setHasAnalyzed(true);
+                toast.success("Misi dianalisis AI! ✨");
+            } else {
+                toast.error("Gagal menganalisis misi via AI");
+            }
+        } catch (error) {
+            toast.error("Terjadi kesalahan sistem AI");
+        } finally {
+            setIsAILoading(false);
         }
     };
 
@@ -103,8 +193,87 @@ export default function AdminQuestsClient({ initialQuests, stats }: { initialQue
                     </h1>
                     <p className="text-slate-400 text-sm mt-1">View and manage all quests across the platform.</p>
                 </div>
-                <div className="text-sm font-medium px-4 py-2 bg-purple-500/10 text-purple-400 rounded-xl border border-purple-500/20">
-                    Total: {quests.length} Quests
+
+                <div className="flex items-center gap-3">
+                    <div className="text-sm font-medium px-4 py-2 bg-purple-500/10 text-purple-400 rounded-xl border border-purple-500/20">
+                        Total: {quests.length} Quests
+                    </div>
+
+                    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                        <DialogTrigger asChild>
+                            <Button className="bg-purple-600 hover:bg-purple-500 text-white font-bold h-10 px-4 rounded-xl shadow-lg shadow-purple-600/20 transition-all">
+                                <Plus className="mr-2 h-4 w-4" /> ADD QUEST
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[425px] bg-[#0F1118]/95 backdrop-blur-2xl border-white/[0.06] text-white rounded-3xl">
+                            <DialogHeader>
+                                <DialogTitle className="text-2xl font-black italic tracking-tight">CREATE QUEST</DialogTitle>
+                                <DialogDescription className="text-slate-400 font-medium">
+                                    Broadcast quests to all heroes or assign specific tasks.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <form onSubmit={handleCreateQuest} className="space-y-4 py-2">
+                                <div className="space-y-2">
+                                    <Label htmlFor="title" className="text-xs font-bold uppercase tracking-widest text-slate-500">Judul Misi</Label>
+                                    <Input id="title" placeholder="Cth: Habisi naga hutan" value={title} onChange={(e) => { setTitle(e.target.value); setHasAnalyzed(false); }} className="bg-white/[0.03] border-white/[0.06] rounded-xl h-10" />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="desc" className="text-xs font-bold uppercase tracking-widest text-slate-500">Deskripsi</Label>
+                                    <Input id="desc" placeholder="Cth: Dokumentasikan hasil pembunuhan" value={description} onChange={(e) => { setDescription(e.target.value); setHasAnalyzed(false); }} className="bg-white/[0.03] border-white/[0.06] rounded-xl h-10" />
+                                </div>
+
+                                <div className="flex justify-end">
+                                    <Button
+                                        type="button"
+                                        onClick={handleAskAI}
+                                        disabled={isAILoading || !title || hasAnalyzed}
+                                        className={`h-9 px-4 rounded-lg text-xs font-bold transition-all w-full flex items-center justify-center ${hasAnalyzed
+                                            ? "bg-purple-900/20 border border-purple-500/30 text-purple-400 opacity-100 disabled:opacity-100"
+                                            : "bg-fuchsia-500/10 text-fuchsia-400 hover:bg-fuchsia-500/20 border border-fuchsia-500/30"
+                                            }`}
+                                    >
+                                        {isAILoading ? "✨ Menganalisis..." : hasAnalyzed ? "✓ Dianalisis AI" : "✨ Auto-Analyze dengan AI"}
+                                    </Button>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className="space-y-1.5">
+                                        <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Kesulitan</Label>
+                                        <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)} className="flex h-10 w-full rounded-xl border border-white/[0.06] bg-white/[0.03] px-3 text-xs text-white">
+                                            <option value="easy" className="bg-[#151823]">Easy (50 XP)</option>
+                                            <option value="medium" className="bg-[#151823]">Medium (100 XP)</option>
+                                            <option value="hard" className="bg-[#151823]">Hard (200 XP)</option>
+                                            <option value="expert" className="bg-[#151823]">Expert (400 XP)</option>
+                                        </select>
+                                    </div>
+                                    <div className="space-y-1.5">
+                                        <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Kategori</Label>
+                                        <select value={category} onChange={(e) => setCategory(e.target.value)} className="flex h-10 w-full rounded-xl border border-white/[0.06] bg-white/[0.03] px-3 text-xs text-white">
+                                            <option value="work" className="bg-[#151823]">🛠️ Work</option>
+                                            <option value="learning" className="bg-[#151823]">🎓 Learning</option>
+                                            <option value="personal" className="bg-[#151823]">👤 Personal</option>
+                                            <option value="health" className="bg-[#151823]">💪 Health</option>
+                                            <option value="finance" className="bg-[#151823]">💰 Finance</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="space-y-1.5">
+                                    <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Target User</Label>
+                                    <select value={targetUserId} onChange={(e) => setTargetUserId(e.target.value)} className="flex h-10 w-full rounded-xl border border-white/[0.06] bg-white/[0.03] px-3 text-xs text-white">
+                                        <option value="all" className="bg-[#151823]">🌎 Semua Pahlawan (Global Broadcast)</option>
+                                        {users.map(u => (
+                                            <option key={u._id} value={u._id} className="bg-[#151823]">👤 {u.username} ({u.email})</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <DialogFooter>
+                                    <Button type="submit" disabled={isCreating} className="bg-purple-600 hover:bg-purple-500 w-full h-10 rounded-xl font-bold mt-2 shadow-lg shadow-purple-600/20">
+                                        {isCreating ? "PROSES..." : "LAUNCH QUEST 🚀"}
+                                    </Button>
+                                </DialogFooter>
+                            </form>
+                        </DialogContent>
+                    </Dialog>
                 </div>
             </div>
 

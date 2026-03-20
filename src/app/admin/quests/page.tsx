@@ -42,10 +42,19 @@ export default async function AdminQuestsPage() {
     const pendingQuests = quests.filter((q: any) => q.status === 'pending').length;
     const inProgressQuests = quests.filter((q: any) => q.status === 'in_progress').length;
 
+    // User List needed for specific user assignment
+    const rawUsers = await User.find({ role: 'user' }).select('username email _id').lean();
+    const simpleUsers = rawUsers.map((u: any) => ({
+        _id: u._id.toString(),
+        username: u.username,
+        email: u.email
+    }));
+
     return (
         <AdminQuestsClient
             initialQuests={serializedQuests}
             stats={{ totalQuests, completedQuests, pendingQuests, inProgressQuests }}
+            users={simpleUsers}
         />
     );
 }

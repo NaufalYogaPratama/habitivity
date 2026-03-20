@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import Image from "next/image";
 import { indonesianUniversities } from "@/data/universities";
 
 export default function ProfilePage() {
@@ -98,7 +99,15 @@ export default function ProfilePage() {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2.5">
-                        <span className="text-2xl sm:text-3xl">👤</span> My Profile
+                        <Image
+                            src="/assets/logo/icon-profile.png"
+                            alt="Profile"
+                            width={32}
+                            height={32}
+                            className="object-contain drop-shadow-md"
+                            priority
+                        />
+                        Profile
                     </h1>
                     <p className="text-slate-500 text-xs sm:text-sm mt-1">Kelola informasi pribadi, kampus, dan tim Anda di sini.</p>
                 </div>

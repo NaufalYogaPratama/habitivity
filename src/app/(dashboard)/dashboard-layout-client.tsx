@@ -202,9 +202,7 @@ function Sidebar({ user, open, onClose }: { user: { name?: string; email?: strin
                 {/* User Card Bottom */}
                 <div className="p-3 border-t border-white/[0.04]">
                     <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-white/[0.03] mb-1">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500/30 to-fuchsia-500/30 flex items-center justify-center text-sm border border-white/5">
-                            🧑‍💻
-                        </div>
+
                         <div className="min-w-0 flex-1">
                             <p className="text-white font-semibold text-xs truncate">{user?.name || 'Hero'}</p>
                             <p className="text-slate-500 text-[10px] truncate">{user?.email}</p>

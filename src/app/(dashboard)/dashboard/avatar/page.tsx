@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Lock, Sparkles, Zap, Shield, Sword, Eye } from "lucide-react";
@@ -141,7 +142,15 @@ export default function AvatarCustomizationPage() {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
                     <h1 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2.5">
-                        <span className="text-2xl sm:text-3xl">🧑‍🚀</span> NFT Avatar Studio
+                        <Image
+                            src="/assets/logo/icon-nft.png"
+                            alt="NFT Avatar"
+                            width={32}
+                            height={32}
+                            className="object-contain drop-shadow-md"
+                            priority
+                        />
+                        NFT Avatar
                     </h1>
                     <p className="text-slate-500 text-xs sm:text-sm mt-1">
                         Kustomisasi karakter digital Anda.

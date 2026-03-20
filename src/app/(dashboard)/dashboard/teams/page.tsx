@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import Image from "next/image";
 import { Shield, Users, Search, Target, Award, UserPlus, LogOut } from "lucide-react";
 
 export default function TeamsPage() {
@@ -112,7 +113,15 @@ export default function TeamsPage() {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
                     <h1 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2.5">
-                        <span className="text-2xl sm:text-3xl">🛡️</span> Klan & Guild
+                        <Image
+                            src="/assets/logo/icon-clans.png"
+                            alt="clans"
+                            width={32}
+                            height={32}
+                            className="object-contain drop-shadow-md"
+                            priority
+                        />
+                        Clans
                     </h1>
                     <p className="text-slate-500 text-xs sm:text-sm mt-1">Bentuk tim pahlawan dan raih skor tertinggi bersama-sama.</p>
                 </div>

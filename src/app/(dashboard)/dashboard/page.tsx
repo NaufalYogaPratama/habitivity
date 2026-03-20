@@ -1,6 +1,7 @@
 import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import connectDB from '@/lib/db/mongodb';
@@ -165,7 +166,15 @@ export default async function DashboardPage() {
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2.5">
-                            <span className="text-2xl sm:text-3xl">🏠</span> Dashboard
+                            <Image
+                                src="/assets/logo/icon-home1.png"
+                                alt="Dashboard"
+                                width={32}
+                                height={32}
+                                className="object-contain"
+                                priority
+                            />
+                            Dashboard
                         </h1>
                         <p className="text-slate-500 text-xs sm:text-sm mt-1">
                             Welcome back, <span className="text-white font-medium">{currentUser?.username || userSession?.name || 'Hero'}</span>
@@ -297,14 +306,28 @@ export default async function DashboardPage() {
                     </h2>
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                         {[
-                            { icon: '⚔️', label: 'New Quest', desc: 'Create a task', href: '/dashboard/quests', gradient: 'from-purple-600/20 to-fuchsia-600/20', border: 'border-purple-500/15 hover:border-purple-500/30' },
-                            { icon: '🎯', label: 'Focus Now', desc: 'Start session', href: '/dashboard/focus', gradient: 'from-blue-600/20 to-indigo-600/20', border: 'border-blue-500/15 hover:border-blue-500/30' },
-                            { icon: '💸', label: 'Log Expense', desc: 'Track gold', href: '/dashboard/ledger', gradient: 'from-amber-600/20 to-orange-600/20', border: 'border-amber-500/15 hover:border-amber-500/30' },
-                            { icon: '🏆', label: 'Rankings', desc: 'Leaderboard', href: '/dashboard/leaderboard', gradient: 'from-emerald-600/20 to-teal-600/20', border: 'border-emerald-500/15 hover:border-emerald-500/30' },
+                            {
+                                icon: <Image src="/assets/logo/icon-quest.png" alt="Quest" width={32} height={32} className="object-contain drop-shadow-md" />,
+                                label: 'New Quest', desc: 'Create a task', href: '/dashboard/quests', gradient: 'from-purple-600/20 to-fuchsia-600/20', border: 'border-purple-500/15 hover:border-purple-500/30'
+                            },
+                            {
+                                icon: <Image src="/assets/logo/icon-fokus.png" alt="Focus" width={32} height={32} className="object-contain drop-shadow-md" />,
+                                label: 'Focus Now', desc: 'Start session', href: '/dashboard/focus', gradient: 'from-blue-600/20 to-indigo-600/20', border: 'border-blue-500/15 hover:border-blue-500/30'
+                            },
+                            {
+                                icon: <Image src="/assets/logo/icon-gold.png" alt="Gold" width={32} height={32} className="object-contain drop-shadow-md" />,
+                                label: 'Log Expense', desc: 'Track gold', href: '/dashboard/ledger', gradient: 'from-amber-600/20 to-orange-600/20', border: 'border-amber-500/15 hover:border-amber-500/30'
+                            },
+                            {
+                                icon: <Image src="/assets/logo/icon-leaderboard.png" alt="Rankings" width={32} height={32} className="object-contain drop-shadow-md" />,
+                                label: 'Rankings', desc: 'Leaderboard', href: '/dashboard/leaderboard', gradient: 'from-emerald-600/20 to-teal-600/20', border: 'border-emerald-500/15 hover:border-emerald-500/30'
+                            },
                         ].map((action) => (
                             <Link key={action.label} href={action.href}>
                                 <div className={`bg-gradient-to-br ${action.gradient} border ${action.border} rounded-xl sm:rounded-2xl p-4 sm:p-5 transition-all hover:-translate-y-0.5 duration-200 group cursor-pointer`}>
-                                    <span className="text-2xl sm:text-3xl block mb-2 sm:mb-3 group-hover:scale-110 transition-transform">{action.icon}</span>
+                                    <div className="block mb-2 sm:mb-3 group-hover:scale-110 transition-transform">
+                                        {action.icon}
+                                    </div>
                                     <p className="text-white font-bold text-xs sm:text-sm">{action.label}</p>
                                     <p className="text-slate-500 text-[10px] sm:text-xs mt-0.5">{action.desc}</p>
                                 </div>
@@ -319,8 +342,14 @@ export default async function DashboardPage() {
                     <Card className="bg-[#151823] border-white/[0.06]">
                         <CardContent className="p-5">
                             <div className="flex items-center gap-4">
-                                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500/30 to-fuchsia-500/30 border border-white/10 flex items-center justify-center text-2xl shadow-lg shadow-purple-500/10">
-                                    🧑‍💻
+                                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500/30 to-fuchsia-500/30 border border-white/10 flex items-center justify-center shadow-lg shadow-purple-500/10 overflow-hidden">
+                                    <Image
+                                        src="/assets/logo/icon-profile.png"
+                                        alt="Profile"
+                                        width={56}
+                                        height={56}
+                                        className="object-cover"
+                                    />
                                 </div>
                                 <div className="flex-1">
                                     <h3 className="font-bold text-white">{currentUser?.username || userSession?.name || 'Hero'}</h3>
@@ -423,10 +452,16 @@ export default async function DashboardPage() {
 
             {/* Right Sidebar - Desktop only */}
             <div className="w-[320px] flex-shrink-0 border-l border-white/[0.04] bg-[#0F1118]/60 backdrop-blur-xl p-5 space-y-6 overflow-y-auto min-h-0 hidden xl:block">
-                {/* User Profile Card */}
+                {/* User Profile Card - Desktop */}
                 <div className="text-center space-y-3">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500/30 to-fuchsia-500/30 border border-white/10 flex items-center justify-center text-3xl mx-auto shadow-lg shadow-purple-500/10">
-                        🧑‍💻
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500/30 to-fuchsia-500/30 border border-white/10 flex items-center justify-center mx-auto shadow-lg shadow-purple-500/10 overflow-hidden">
+                        <Image
+                            src="/assets/logo/icon-profile.png"
+                            alt="Profile"
+                            width={64}
+                            height={64}
+                            className="object-cover"
+                        />
                     </div>
                     <div>
                         <h3 className="font-bold text-white">{currentUser?.username || userSession?.name || 'Hero'}</h3>

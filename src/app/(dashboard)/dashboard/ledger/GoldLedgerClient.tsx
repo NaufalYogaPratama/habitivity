@@ -8,6 +8,7 @@ import {
     type ExpenseCategory,
     type CategoryConfig,
 } from '@/lib/useLedgerStore';
+import Image from "next/image";
 
 // ─── Helpers ─────────────────────────────────────────────────────
 function formatRupiah(amount: number): string {
@@ -606,7 +607,15 @@ export default function GoldLedgerClient() {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2.5">
-                        <span className="text-2xl sm:text-3xl">💰</span> Gold Ledger
+                        <Image
+                            src="/assets/logo/icon-gold.png"
+                            alt="Gold Ledger"
+                            width={32}
+                            height={32}
+                            className="object-contain drop-shadow-md"
+                            priority
+                        />
+                        Gold Ledger
                     </h1>
                     <p className="text-slate-500 text-xs sm:text-sm mt-1">Kelola keuangan, kumpulkan gold</p>
                 </div>

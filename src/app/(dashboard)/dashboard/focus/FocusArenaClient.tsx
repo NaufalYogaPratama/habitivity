@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from "next/image";
 import { useFocusStore, FOCUS_MODES, type FocusMode } from '@/lib/useFocusStore';
 
 // ─── Sound Effects (Web Audio API) ───────────────────────────────
@@ -518,7 +519,15 @@ export default function FocusArenaClient() {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2.5">
-                        <span className="text-2xl sm:text-3xl">🎯</span> Focus Arena
+                        <Image
+                            src="/assets/logo/icon-fokus.png"
+                            alt="Focus Arena"
+                            width={32}
+                            height={32}
+                            className="object-contain drop-shadow-md"
+                            priority
+                        />
+                        Focus Arena
                     </h1>
                     <p className="text-slate-500 text-xs sm:text-sm mt-1">Train your discipline, earn rewards</p>
                 </div>

@@ -1,19 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image"; // <-- Tambahkan import Image
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-    ShoppingBag,
     Coins,
     Sparkles,
     ShieldCheck,
     Zap,
     Crown,
     Check,
-    Lock,
-    ArrowRight,
-    Filter
+    ArrowRight
 } from "lucide-react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -100,13 +98,9 @@ export default function ShopClient() {
             case "common": return "from-slate-500/20 to-slate-600/20 border-slate-500/30 text-slate-400";
             case "rare": return "from-blue-500/20 to-indigo-600/20 border-blue-500/30 text-blue-400";
             case "epic": return "from-purple-500/20 to-fuchsia-600/20 border-purple-500/30 text-purple-400";
-            case "legendary": return "from-amber-400/20 to-orange-600/20 border-amber-400/30 text-amber-400";
+            case "legendary": return "from-fuchsia-400/20 to-pink-600/20 border-fuchsia-400/30 text-fuchsia-400"; // Ubah jadi pink/fuchsia agar tak oren
             default: return "from-slate-500/20 to-slate-600/20 border-slate-500/30 text-slate-400";
         }
-    };
-
-    const getRarityLabel = (rarity: string) => {
-        return rarity.toUpperCase();
     };
 
     return (
@@ -115,7 +109,16 @@ export default function ShopClient() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
                 <div>
                     <h1 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2.5">
-                        <span className="text-2xl sm:text-3xl">🏪</span> Marketplace
+                        {/* PERUBAHAN: Emoji diganti gambar icon-shop */}
+                        <Image
+                            src="/assets/logo/icon-shop.png"
+                            alt="Shop"
+                            width={32}
+                            height={32}
+                            className="object-contain drop-shadow-md"
+                            priority
+                        />
+                        Marketplace
                     </h1>
                     <p className="text-slate-500 text-xs sm:text-sm mt-1">
                         Gunakan Gold untuk memperkuat avatar dan progress.
@@ -145,7 +148,7 @@ export default function ShopClient() {
                         key={t.id}
                         onClick={() => setFilter(t.id)}
                         className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all border whitespace-nowrap ${filter === t.id
-                            ? 'bg-amber-600 border-amber-500 text-white shadow-lg shadow-amber-600/20'
+                            ? 'bg-purple-600 border-purple-500 text-white shadow-lg shadow-purple-600/20' // <-- Warna aktif filter diganti ungu
                             : 'bg-[#151823] border-white/[0.06] text-slate-500 hover:text-slate-300'
                             }`}
                     >
@@ -158,7 +161,7 @@ export default function ShopClient() {
             <AnimatePresence mode="popLayout">
                 {isLoading ? (
                     <div className="flex flex-col items-center justify-center py-20 animate-pulse">
-                        <ShoppingBag className="w-12 h-12 text-slate-700 mb-4" />
+                        <Image src="/assets/logo/icon-shop.png" alt="Loading Shop" width={48} height={48} className="mb-4 opacity-50" />
                         <p className="text-slate-600 font-bold uppercase tracking-widest text-xs">Membuka Etalase...</p>
                     </div>
                 ) : filteredItems.length === 0 ? (
@@ -177,15 +180,16 @@ export default function ShopClient() {
                                     animate={{ opacity: 1, scale: 1 }}
                                     transition={{ delay: idx * 0.05 }}
                                 >
-                                    <Card className="bg-[#151823] border-white/[0.06] rounded-3xl overflow-hidden hover:border-amber-500/30 transition-all group flex flex-col h-full shadow-xl shadow-black/20">
+                                    {/* Hover border diganti ungu */}
+                                    <Card className="bg-[#151823] border-white/[0.06] rounded-3xl overflow-hidden hover:border-purple-500/30 transition-all group flex flex-col h-full shadow-xl shadow-black/20">
                                         <CardHeader className="pb-4 relative">
                                             <div className={`absolute top-4 right-4 px-2 py-0.5 rounded-full text-[8px] font-black border tracking-widest ${getRarityColor(item.rarity)}`}>
-                                                {getRarityLabel(item.rarity)}
+                                                {item.rarity.toUpperCase()}
                                             </div>
                                             <div className={`aspect-square rounded-2xl flex items-center justify-center text-5xl mb-4 bg-gradient-to-br transition-transform group-hover:scale-110 duration-500 ${getRarityColor(item.rarity)}`}>
                                                 {item.icon}
                                             </div>
-                                            <CardTitle className="text-lg font-bold text-white group-hover:text-amber-400 transition-colors">{item.name}</CardTitle>
+                                            <CardTitle className="text-lg font-bold text-white group-hover:text-purple-400 transition-colors">{item.name}</CardTitle>
                                             <p className="text-slate-500 text-xs mt-1 leading-relaxed line-clamp-2">{item.description}</p>
                                         </CardHeader>
 
@@ -193,7 +197,7 @@ export default function ShopClient() {
                                             {item.type === 'avatar_item' && (
                                                 <div className="flex items-center gap-2 mb-4">
                                                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">Slot:</span>
-                                                    <span className="text-[10px] font-black uppercase tracking-widest text-amber-500/80">{item.subType}</span>
+                                                    <span className="text-[10px] font-black uppercase tracking-widest text-purple-400">{item.subType}</span>
                                                 </div>
                                             )}
                                         </CardContent>
@@ -208,7 +212,7 @@ export default function ShopClient() {
                                                     onClick={() => handlePurchase(item)}
                                                     disabled={userGold < item.price}
                                                     className={`w-full h-12 rounded-xl font-bold flex items-center justify-between px-4 ${userGold >= item.price
-                                                        ? 'bg-amber-600 hover:bg-amber-500 text-white shadow-lg shadow-amber-600/20'
+                                                        ? 'bg-purple-600 hover:bg-purple-500 text-white shadow-lg shadow-purple-600/20' // <-- Tombol beli diganti ungu
                                                         : 'bg-white/[0.03] border border-white/[0.06] text-slate-600'
                                                         }`}
                                                 >

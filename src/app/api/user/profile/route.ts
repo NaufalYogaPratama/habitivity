@@ -13,7 +13,7 @@ export async function GET() {
         await connectDB();
 
         const user = await User.findById(session.user.id)
-            .select('username email regional team')
+            .select('username email regional team avatar stats')
             .lean();
 
         if (!user) {

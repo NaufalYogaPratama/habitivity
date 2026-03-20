@@ -22,7 +22,9 @@ export default function ProfilePage() {
         university: "",
         customUniversity: "",
         team: "",
-        avatar: null as any
+        avatar: null as any,
+        level: 1,
+        xp: 0
     });
 
     useEffect(() => {
@@ -45,7 +47,9 @@ export default function ProfilePage() {
                         university: isCustom ? "Lainnya" : dbUni,
                         customUniversity: isCustom ? dbUni : "",
                         team: data.team || "",
-                        avatar: data.avatar || null
+                        avatar: data.avatar || null,
+                        level: data.stats?.level || 1,
+                        xp: data.stats?.xp || 0
                     });
                 }
             } catch (error) {
@@ -117,125 +121,132 @@ export default function ProfilePage() {
                 </div>
             </div>
 
-            <div className="max-w-4xl space-y-6">
-                <Card className="bg-[#151823] border-white/[0.06]">
-                    <CardHeader className="border-b border-white/[0.04]">
-                        <CardTitle className="text-white text-base font-bold">Identitas Diri</CardTitle>
-                        <CardDescription className="text-slate-500 text-xs">Informasi dasar akun Anda.</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-6 pt-6">
-                        <div className="flex flex-col sm:flex-row items-center gap-6 pb-2">
-                            <UserAvatar avatar={profile.avatar} className="w-24 h-24 sm:w-28 sm:h-28" emojiSize="text-5xl" showEvolution={true} />
-                            <div className="flex flex-col gap-2 items-center sm:items-start">
-                                <p className="text-slate-400 text-xs">Avatar Karakter Kamu</p>
-                                <Link href="/dashboard/avatar">
-                                    <Button variant="outline" className="bg-white/[0.02] border-white/10 text-white text-xs h-8 hover:bg-white/5">
-                                        Kustomisasi Avatar
-                                    </Button>
-                                </Link>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+                {/* ---------------- LEFT: PLAYER IDENTITY CARD ---------------- */}
+                <div className="lg:col-span-4">
+                    <Card className="bg-gradient-to-b from-[#151823] to-[#12141d] border-white/[0.06] overflow-hidden relative shadow-2xl">
+                        {/* Immersive glow */}
+                        <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-indigo-500/20 to-transparent mix-blend-overlay"></div>
+
+                        <CardContent className="p-8 pt-12 flex flex-col items-center justify-center relative z-10">
+                            <UserAvatar avatar={profile.avatar} className="w-40 h-40 mb-5 ring-4 ring-white/10 shadow-2xl shadow-indigo-500/20" emojiSize="text-[80px]" showEvolution={true} />
+
+                            <h2 className="text-3xl font-black text-white text-center tracking-tight mb-2">{profile.username}</h2>
+                            <div className="flex items-center gap-2 mb-8">
+                                <span className="px-3 py-1 bg-fuchsia-500/10 border border-fuchsia-500/20 text-fuchsia-400 font-bold text-xs rounded-full uppercase tracking-wider">
+                                    Lv. {profile.level}
+                                </span>
+                                <span className="px-3 py-1 bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 font-bold font-mono text-xs rounded-full">
+                                    {profile.xp.toLocaleString()} XP
+                                </span>
                             </div>
-                        </div>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="email" className="text-slate-400 text-sm">Email</Label>
-                            <Input
-                                id="email"
-                                value={profile.email}
-                                disabled
-                                className="bg-white/[0.03] border-white/[0.08] text-slate-500 cursor-not-allowed"
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="username" className="text-slate-400 text-sm">Username</Label>
-                            <Input
-                                id="username"
-                                value={profile.username}
-                                onChange={(e) => handleChange("username", e.target.value)}
-                                placeholder="Masukkan username"
-                                className="bg-white/[0.03] border-white/[0.08] text-white placeholder:text-slate-600 focus:border-purple-500/40"
-                            />
-                        </div>
-                    </CardContent>
-                </Card>
+                            <Link href="/dashboard/avatar" className="w-full">
+                                <Button className="w-full h-12 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold transition-all shadow-none">
+                                    ⚙️ Kustomisasi Hero
+                                </Button>
+                            </Link>
+                        </CardContent>
+                    </Card>
+                </div>
 
-                <Card className="bg-[#151823] border-white/[0.06]">
-                    <CardHeader className="border-b border-white/[0.04]">
-                        <CardTitle className="text-white text-base font-bold">Regional & Kampus (Untuk Leaderboard)</CardTitle>
-                        <CardDescription className="text-slate-500 text-xs">Informasi ini akan digunakan untuk Regional dan University Leaderboard.</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-6 pt-6">
-                        <div className="space-y-2">
-                            <Label htmlFor="city" className="text-slate-400 text-sm">Asal Kota</Label>
-                            <Input
-                                id="city"
-                                value={profile.city}
-                                onChange={(e) => handleChange("city", e.target.value)}
-                                placeholder="Contoh: Semarang, Jakarta, Surabaya"
-                                className="bg-white/[0.03] border-white/[0.08] text-white placeholder:text-slate-600 focus:border-purple-500/40"
-                            />
-                        </div>
-
-                        <div className="space-y-2 flex flex-col pt-4">
-                            <Label htmlFor="university" className="text-slate-400 text-sm mb-2">Pilih Kampus / Universitas</Label>
-                            <Select
-                                value={profile.university}
-                                onValueChange={(value) => handleChange("university", value)}
-                            >
-                                <SelectTrigger className="bg-white/[0.03] border-white/[0.08] text-white">
-                                    <SelectValue placeholder="Pilih Kampus..." />
-                                </SelectTrigger>
-                                <SelectContent className="max-h-60 overflow-y-auto bg-[#151823] border-white/[0.08] text-white">
-                                    {indonesianUniversities.map((uni) => (
-                                        <SelectItem key={uni} value={uni} className="text-white hover:bg-white/[0.05]">
-                                            {uni}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                            <p className="text-sm text-slate-500 mt-1">
-                                Pilih "Lainnya" jika kampusmu tidak ada di daftar.
-                            </p>
-                        </div>
-
-                        {profile.university === "Lainnya" && (
-                            <div className="space-y-2 mt-4 animate-in fade-in slide-in-from-top-2">
-                                <Label htmlFor="customUniversity" className="text-slate-400 text-sm">Nama Kampus (Ketik Sendiri)</Label>
+                {/* ---------------- RIGHT: SETTINGS ---------------- */}
+                <div className="lg:col-span-8 flex flex-col gap-6">
+                    {/* Identitas Diri */}
+                    <Card className="bg-[#151823]/80 border-white/[0.06]">
+                        <CardHeader className="border-b border-white/[0.04]">
+                            <CardTitle className="text-white text-base font-bold flex items-center gap-2"><span>👤</span> Informasi Akun</CardTitle>
+                            <CardDescription className="text-slate-500 text-xs">Informasi dasar karakter Anda di Habitivity.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-5 pt-6">
+                            <div className="space-y-2">
+                                <Label htmlFor="email" className="text-slate-400 text-sm">Email Aktif</Label>
                                 <Input
-                                    id="customUniversity"
-                                    value={profile.customUniversity}
-                                    placeholder="Masukkan nama kampusmu yang tepat"
-                                    onChange={(e) => handleChange("customUniversity", e.target.value)}
-                                    className="bg-white/[0.03] border-white/[0.08] text-white placeholder:text-slate-600 focus:border-purple-500/40"
+                                    id="email"
+                                    value={profile.email}
+                                    disabled
+                                    className="bg-black/20 border-white/[0.05] text-slate-500 cursor-not-allowed h-12"
                                 />
-                                <p className="text-xs text-red-400 mb-2">
-                                    Pastikan teman kampusmu mengetik nama yang PERSIS SAMA agar poinnya bisa digabung di Leaderboard.
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="username" className="text-slate-400 text-sm">Nick Username</Label>
+                                <Input
+                                    id="username"
+                                    value={profile.username}
+                                    onChange={(e) => handleChange("username", e.target.value)}
+                                    placeholder="Masukkan nick game-mu"
+                                    className="bg-white/[0.03] border-white/[0.08] text-white placeholder:text-slate-600 focus:border-indigo-500/50 h-12 font-bold"
+                                />
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    {/* Regional & Kampus */}
+                    <Card className="bg-[#151823]/80 border-white/[0.06]">
+                        <CardHeader className="border-b border-white/[0.04]">
+                            <CardTitle className="text-white text-base font-bold flex items-center gap-2"><span>📍</span> Regional & Fraksi Kampus</CardTitle>
+                            <CardDescription className="text-slate-500 text-xs">Pilih tempatmu untuk mewakili wilayah/kampus di tabel Leaderboard regional.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-5 pt-6">
+                            <div className="space-y-2">
+                                <Label htmlFor="city" className="text-slate-400 text-sm">Asal Kota / Regional</Label>
+                                <Input
+                                    id="city"
+                                    value={profile.city}
+                                    onChange={(e) => handleChange("city", e.target.value)}
+                                    placeholder="Contoh: Semarang, Jakarta, Surabaya"
+                                    className="bg-white/[0.03] border-white/[0.08] text-white placeholder:text-slate-600 focus:border-indigo-500/50 h-12"
+                                />
+                            </div>
+
+                            <div className="space-y-2 pt-2">
+                                <Label htmlFor="university" className="text-slate-400 text-sm mb-1 block">Fraksi Kampus / Universitas</Label>
+                                <Select
+                                    value={profile.university}
+                                    onValueChange={(value) => handleChange("university", value)}
+                                >
+                                    <SelectTrigger className="bg-white/[0.03] border-white/[0.08] text-white h-12">
+                                        <SelectValue placeholder="Pilih Kampus Pembelamu..." />
+                                    </SelectTrigger>
+                                    <SelectContent className="max-h-60 overflow-y-auto bg-[#151823] border-white/[0.08] text-white">
+                                        {indonesianUniversities.map((uni) => (
+                                            <SelectItem key={uni} value={uni} className="text-white hover:bg-white/[0.05]">
+                                                {uni}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                <p className="text-xs text-slate-500 mt-1.5">
+                                    Pilih "Lainnya" jika kampus/sekolahmu belum masuk radar aliansi kami.
                                 </p>
                             </div>
-                        )}
-                    </CardContent>
-                </Card>
 
-                <Card className="bg-[#151823] border-white/[0.06]">
-                    <CardHeader className="border-b border-white/[0.04]">
-                        <CardTitle className="text-white text-base font-bold">Tim / Klan (Guild)</CardTitle>
-                        <CardDescription className="text-slate-500 text-xs">Sistem tim kini telah dipindahkan ke fitur Klan. Bergabung atau buat Markas Klan Anda sendiri!</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-6 pt-6">
-                        <p className="text-sm text-slate-400">
-                            Poin (XP) tim akan otomatis digabungkan dari semua anggota Klan. Silakan kelola di halaman Klan.
-                        </p>
-                        <Button type="button" variant="outline" onClick={() => window.location.href = '/dashboard/teams'}
-                            className="bg-white/[0.03] border-white/[0.08] text-white hover:bg-white/[0.06]">
-                            Buka Halaman Klan
+                            {profile.university === "Lainnya" && (
+                                <div className="space-y-2 mt-4 animate-in fade-in slide-in-from-top-2 p-4 bg-white/[0.02] rounded-xl border border-white/[0.04]">
+                                    <Label htmlFor="customUniversity" className="text-indigo-300 text-sm font-bold">Daftarkan Nama Fraksi Khusus</Label>
+                                    <Input
+                                        id="customUniversity"
+                                        value={profile.customUniversity}
+                                        placeholder="Ketik persis nama institusimu..."
+                                        onChange={(e) => handleChange("customUniversity", e.target.value)}
+                                        className="bg-black/20 border-white/[0.08] text-white placeholder:text-slate-600 focus:border-indigo-500/50 h-12 mt-1"
+                                    />
+                                    <p className="text-[11px] text-amber-400/80 leading-relaxed pt-1">
+                                        ⚠️ Peringatan: Pastikan teman satu institusimu mengetik nama yang <strong>PERSIS SAMA BAHKAN KAPITALNYA</strong> agar poin XP aliansi kalian bisa terakumulasi menjadi satu Fraksi kuat di Leaderboard!
+                                    </p>
+                                </div>
+                            )}
+                        </CardContent>
+                    </Card>
+
+                    {/* Simpan Button */}
+                    <div className="flex justify-end pt-4 pb-12">
+                        <Button onClick={handleSave} disabled={isSaving}
+                            className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold shadow-xl shadow-indigo-600/20 rounded-xl h-14 px-8 text-base">
+                            {isSaving ? "Menyimpan Data..." : "Simpan Formasi Profil"}
                         </Button>
-                    </CardContent>
-                </Card>
-
-                <div className="flex justify-end pb-12">
-                    <Button onClick={handleSave} disabled={isSaving}
-                        className="bg-purple-600 hover:bg-purple-500 text-white font-bold shadow-lg shadow-purple-600/20 rounded-xl h-11 px-6">
-                        {isSaving ? "Menyimpan..." : "Simpan Perubahan"}
-                    </Button>
+                    </div>
                 </div>
             </div>
         </div>

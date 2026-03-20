@@ -7,11 +7,34 @@ import { usePathname } from 'next/navigation';
 import { adminSignOutAction } from './actions';
 
 const adminNavItems = [
-    { href: '/admin/dashboard', icon: '📊', label: 'Overview' },
-    { href: '/admin/users', icon: '👥', label: 'Users' },
-    { href: '/admin/quests', icon: '⚔️', label: 'Global Quests' },
-    { href: '/admin/shop', icon: '🏪', label: 'Shop Items' },
-    { href: '/admin/analytics', icon: '📈', label: 'Analytics' },
+    {
+        href: '/admin/dashboard',
+        icon: <Image src="/assets/logo/icon-home1.png" alt="Dashboard" width={32} height={32} className="object-contain drop-shadow-md" />,
+        label: 'Dashboard'
+    },
+
+    {
+        href: '/admin/users',
+        icon: <Image src="/assets/logo/icon-profile.png" alt="Users" width={32} height={32} className="object-contain drop-shadow-md" />,
+        label: 'Users'
+    },
+    {
+        href: '/admin/quests',
+        icon: <Image src="/assets/logo/icon-quest.png" alt="Global Quests" width={32} height={32} className="object-contain drop-shadow-md" />,
+        label: 'Global Quests'
+    },
+    {
+        href: '/admin/shop',
+        icon: <Image src="/assets/logo/icon-shop.png" alt="Shop Items" width={32} height={32} className="object-contain drop-shadow-md" />,
+        label: 'Shop Items'
+    },
+    {
+        href: '/admin/analytics',
+        icon: <Image src="/assets/logo/icon-analytics.png" alt="Analytics" width={32} height={32} className="object-contain drop-shadow-md" />,
+        label: 'Analytics'
+    },
+
+
 ];
 
 function MobileHeader({ onToggle }: { onToggle: () => void }) {
@@ -88,12 +111,9 @@ function AdminSidebar({ user, open, onClose }: { user: { name?: string }; open: 
                         {/* Label Admin di bawah logo */}
                         <div className="mt-3 ml-1.5 flex items-center gap-1.5 opacity-80 group-hover:opacity-100 transition-opacity">
                             <span className="text-[10px] font-bold text-fuchsia-400 uppercase tracking-[0.2em]">Admin Panel</span>
-
                         </div>
                     </Link>
                 </div>
-
-
 
                 {/* Navigation */}
                 <nav className="flex-1 px-3 space-y-0.5 overflow-y-auto custom-scrollbar">
@@ -111,7 +131,9 @@ function AdminSidebar({ user, open, onClose }: { user: { name?: string }; open: 
                                         : 'text-slate-500 hover:text-white hover:bg-white/[0.03]'
                                     }`}
                             >
-                                <span className="text-lg group-hover:scale-110 transition-transform">{item.icon}</span>
+                                <div className="flex items-center justify-center w-6 h-6 text-lg group-hover:scale-110 transition-transform">
+                                    {item.icon}
+                                </div>
                                 {item.label}
                             </Link>
                         );

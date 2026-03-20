@@ -82,7 +82,7 @@ export default function LoginPage() {
                         alt="Habitivity Logo"
                         width={180}
                         height={45}
-                        className="object-contain drop-shadow-lg h-auto"
+                        className="object-contain drop-shadow-lg w-auto h-auto"
                         priority
                     />
                 </Link>

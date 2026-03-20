@@ -113,7 +113,7 @@ function MobileHeader({ onToggle }: { onToggle: () => void }) {
                         alt="Habitivity Logo"
                         width={110}
                         height={28}
-                        className="object-contain drop-shadow-lg h-auto"
+                        className="object-contain drop-shadow-lg h-auto w-auto"
                         priority
                     />
                 </div>
@@ -164,7 +164,7 @@ function Sidebar({ user, open, onClose }: { user: { name?: string; email?: strin
                                 alt="Habitivity Logo"
                                 width={120}
                                 height={20}
-                                className="object-contain drop-shadow-lg h-auto"
+                                className="object-contain drop-shadow-lg h-auto w-auto"
                                 priority
                             />
                         </div>

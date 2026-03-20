@@ -10,6 +10,7 @@ import Quest from '@/models/Quest';
 import FocusSession from '@/models/FocusSession';
 import LedgerEntry from '@/models/LedgerEntry';
 import { Sparkles } from 'lucide-react';
+import { UserAvatar } from '@/components/ui/UserAvatar';
 
 const CATEGORY_CONFIG: Record<string, { icon: string; gradient: string }> = {
     work: { icon: '💼', gradient: 'from-blue-500/30 via-indigo-500/20 to-violet-600/20' },
@@ -342,15 +343,7 @@ export default async function DashboardPage() {
                     <Card className="bg-[#151823] border-white/[0.06]">
                         <CardContent className="p-5">
                             <div className="flex items-center gap-4">
-                                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500/30 to-fuchsia-500/30 border border-white/10 flex items-center justify-center shadow-lg shadow-purple-500/10 overflow-hidden">
-                                    <Image
-                                        src="/assets/logo/icon-profile.png"
-                                        alt="Profile"
-                                        width={56}
-                                        height={56}
-                                        className="object-cover"
-                                    />
-                                </div>
+                                <UserAvatar avatar={currentUser?.avatar} className="w-14 h-14" emojiSize="text-2xl" />
                                 <div className="flex-1">
                                     <h3 className="font-bold text-white">{currentUser?.username || userSession?.name || 'Hero'}</h3>
                                     <p className="text-slate-500 text-xs">@{(currentUser?.username || userSession?.name || 'hero').toLowerCase().replace(/\s+/g, '')}</p>
@@ -454,15 +447,7 @@ export default async function DashboardPage() {
             <div className="w-[320px] flex-shrink-0 border-l border-white/[0.04] bg-[#0F1118]/60 backdrop-blur-xl p-5 space-y-6 overflow-y-auto min-h-0 hidden xl:block">
                 {/* User Profile Card - Desktop */}
                 <div className="text-center space-y-3">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500/30 to-fuchsia-500/30 border border-white/10 flex items-center justify-center mx-auto shadow-lg shadow-purple-500/10 overflow-hidden">
-                        <Image
-                            src="/assets/logo/icon-profile.png"
-                            alt="Profile"
-                            width={64}
-                            height={64}
-                            className="object-cover"
-                        />
-                    </div>
+                    <UserAvatar avatar={currentUser?.avatar} className="w-16 h-16 mx-auto" emojiSize="text-3xl" showEvolution={true} />
                     <div>
                         <h3 className="font-bold text-white">{currentUser?.username || userSession?.name || 'Hero'}</h3>
                         <p className="text-slate-500 text-xs">@{(currentUser?.username || userSession?.name || 'hero').toLowerCase().replace(/\s+/g, '')}</p>

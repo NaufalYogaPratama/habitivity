@@ -7,6 +7,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Lock, Sparkles, Zap, Shield, Sword, Eye } from "lucide-react";
+import { UserAvatar } from "@/components/ui/UserAvatar";
 
 const CHARACTERS = [
     { id: "CyberNinja", name: "CyberNinja", desc: "Karakter futuristik dengan tema cyberpunk", color: "from-blue-500 to-cyan-400" },
@@ -183,20 +184,14 @@ export default function AvatarCustomizationPage() {
                                 initial={{ scale: 0.8, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
                                 transition={{ type: "spring", bounce: 0.5 }}
-                                className="w-40 h-40 bg-white/10 backdrop-blur-md rounded-2xl border-2 border-white/20 shadow-2xl flex items-center justify-center text-7xl relative z-10"
+                                className="relative z-10"
                             >
-                                🧑‍🚀
-                                {/* Evolution Badge */}
-                                <div className="absolute -bottom-4 bg-black/80 border border-white/20 px-4 py-1.5 rounded-full text-xs font-black tracking-widest uppercase shadow-xl backdrop-blur-xl">
-                                    <span className={
-                                        avatar.evolution === 'Mythic' ? 'text-red-400' :
-                                            avatar.evolution === 'Legendary' ? 'text-yellow-400' :
-                                                avatar.evolution === 'Elite' ? 'text-purple-400' :
-                                                    avatar.evolution === 'Enhanced' ? 'text-blue-400' : 'text-slate-300'
-                                    }>
-                                        {avatar.evolution}
-                                    </span>
-                                </div>
+                                <UserAvatar
+                                    avatar={avatar}
+                                    className="w-40 h-40 border-4 border-white/20"
+                                    emojiSize="text-7xl"
+                                    showEvolution={true}
+                                />
                             </motion.div>
                         </div>
                         <CardContent className="p-6">
@@ -268,7 +263,7 @@ export default function AvatarCustomizationPage() {
                                             } rounded-2xl p-4 transition-all group overflow-hidden relative h-full`}
                                     >
                                         <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${char.color} mb-4 flex items-center justify-center text-xl shadow-lg`}>
-                                            🧑‍🚀
+                                            <UserAvatar avatar={{ base: char.id }} className="w-12 h-12 rounded-xl" emojiSize="text-2xl" />
                                         </div>
                                         <h4 className="font-bold text-white text-sm">{char.name}</h4>
                                         <p className="text-[10px] text-slate-500 mt-1 line-clamp-2">{char.desc}</p>

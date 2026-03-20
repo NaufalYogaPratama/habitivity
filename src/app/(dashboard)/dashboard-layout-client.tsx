@@ -3,14 +3,11 @@
 
 
 import { useState } from 'react';
-
 import Link from 'next/link';
-
 import Image from 'next/image';
-
 import { Button } from '@/components/ui/button';
-
 import { usePathname } from 'next/navigation';
+import { UserAvatar } from '@/components/ui/UserAvatar';
 
 
 
@@ -135,7 +132,7 @@ function MobileHeader({ onToggle }: { onToggle: () => void }) {
     );
 }
 
-function Sidebar({ user, open, onClose }: { user: { name?: string; email?: string }; open: boolean; onClose: () => void }) {
+function Sidebar({ user, open, onClose }: { user: { name?: string; email?: string; avatar?: any }; open: boolean; onClose: () => void }) {
     const pathname = usePathname();
     return (
         <>
@@ -202,7 +199,7 @@ function Sidebar({ user, open, onClose }: { user: { name?: string; email?: strin
                 {/* User Card Bottom */}
                 <div className="p-3 border-t border-white/[0.04]">
                     <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-white/[0.03] mb-1">
-
+                        <UserAvatar avatar={user.avatar} className="w-8 h-8 rounded-lg flex-shrink-0" emojiSize="text-sm" />
                         <div className="min-w-0 flex-1">
                             <p className="text-white font-semibold text-xs truncate">{user?.name || 'Hero'}</p>
                             <p className="text-slate-500 text-[10px] truncate">{user?.email}</p>
@@ -234,7 +231,7 @@ function SignOutForm() {
     );
 }
 
-export default function DashboardLayoutClient({ children, user }: { children: React.ReactNode; user: { name?: string; email?: string } }) {
+export default function DashboardLayoutClient({ children, user }: { children: React.ReactNode; user: { name?: string; email?: string; avatar?: any } }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     return (

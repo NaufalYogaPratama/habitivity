@@ -9,6 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import Image from "next/image";
 import { indonesianUniversities } from "@/data/universities";
+import { UserAvatar } from "@/components/ui/UserAvatar";
+import Link from "next/link";
 
 export default function ProfilePage() {
     const [isLoading, setIsLoading] = useState(true);
@@ -19,7 +21,8 @@ export default function ProfilePage() {
         city: "",
         university: "",
         customUniversity: "",
-        team: ""
+        team: "",
+        avatar: null as any
     });
 
     useEffect(() => {
@@ -41,7 +44,8 @@ export default function ProfilePage() {
                         city: data.regional?.city || "",
                         university: isCustom ? "Lainnya" : dbUni,
                         customUniversity: isCustom ? dbUni : "",
-                        team: data.team || ""
+                        team: data.team || "",
+                        avatar: data.avatar || null
                     });
                 }
             } catch (error) {
@@ -120,6 +124,18 @@ export default function ProfilePage() {
                         <CardDescription className="text-slate-500 text-xs">Informasi dasar akun Anda.</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6 pt-6">
+                        <div className="flex flex-col sm:flex-row items-center gap-6 pb-2">
+                            <UserAvatar avatar={profile.avatar} className="w-24 h-24 sm:w-28 sm:h-28" emojiSize="text-5xl" showEvolution={true} />
+                            <div className="flex flex-col gap-2 items-center sm:items-start">
+                                <p className="text-slate-400 text-xs">Avatar Karakter Kamu</p>
+                                <Link href="/dashboard/avatar">
+                                    <Button variant="outline" className="bg-white/[0.02] border-white/10 text-white text-xs h-8 hover:bg-white/5">
+                                        Kustomisasi Avatar
+                                    </Button>
+                                </Link>
+                            </div>
+                        </div>
+
                         <div className="space-y-2">
                             <Label htmlFor="email" className="text-slate-400 text-sm">Email</Label>
                             <Input

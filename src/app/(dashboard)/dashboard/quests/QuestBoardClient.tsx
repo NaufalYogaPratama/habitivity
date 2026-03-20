@@ -203,6 +203,86 @@ export default function QuestBoardClient() {
     }
   };
 
+  const renderQuestCard = (quest: Quest, idx: number) => (
+    <motion.div
+      layout
+      key={quest._id}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{ delay: idx * 0.05 }}
+    >
+      <Card className="bg-[#151823] border-white/[0.06] rounded-3xl overflow-hidden hover:border-purple-500/30 transition-all group flex flex-col h-full shadow-xl shadow-black/20">
+        <CardHeader className="pb-4">
+          <div className="flex justify-between items-start mb-3 gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              {quest.isAdmin && (
+                <div className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border text-yellow-400 bg-yellow-400/10 border-yellow-400/20 flex items-center gap-1 shadow-[0_0_10px_rgba(250,204,21,0.2)]">
+                  👑 GLOBAL
+                </div>
+              )}
+              <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${getDifficultyColor(quest.difficulty)}`}>
+                {quest.difficulty}
+              </div>
+            </div>
+            {getStatusBadge(quest.status)}
+          </div>
+          <CardTitle className="text-xl font-bold text-white group-hover:text-purple-400 transition-colors line-clamp-1">{quest.title}</CardTitle>
+          <CardDescription className="text-slate-500 mt-2 line-clamp-2 min-h-[40px] text-sm leading-relaxed">
+            {quest.description || "Tidak ada rincian misi khusus bagi pahlawan."}
+          </CardDescription>
+        </CardHeader>
+
+        <CardContent className="pb-6">
+          <div className="flex flex-wrap gap-4">
+            <div className="flex items-center gap-2 bg-fuchsia-500/5 px-3 py-2 rounded-xl border border-fuchsia-500/10">
+              <Star className="w-4 h-4 text-fuchsia-400" />
+              <span className="text-fuchsia-400 text-sm font-black">+{quest.rewards?.xp || 0}</span>
+            </div>
+            <div className="flex items-center gap-2 bg-amber-500/5 px-3 py-2 rounded-xl border border-amber-500/10">
+              <Coins className="w-4 h-4 text-amber-400" />
+              <span className="text-amber-400 text-sm font-black">+{quest.rewards?.gold || 0}</span>
+            </div>
+          </div>
+        </CardContent>
+
+        <CardFooter className="pt-0 pb-6 hidden group-hover:flex animate-in fade-in slide-in-from-bottom-2 duration-300">
+          <div className="grid grid-cols-2 gap-2 w-full">
+            {quest.status === 'pending' || quest.status === 'in_progress' ? (
+              <>
+                <Button
+                  onClick={() => router.push(`/dashboard/focus?questId=${quest._id}`)}
+                  className="bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl h-11"
+                >
+                  <Play className="w-4 h-4 mr-2" /> FOCUS
+                </Button>
+                <Button
+                  onClick={() => {
+                    if (confirm("Pahlawan sejati pantang berbohong! Yakin sudah menyelesaikan misi ini dengan jujur dan tuntas?")) {
+                      updateQuestStatus(quest._id, 'completed');
+                    }
+                  }}
+                  variant="outline"
+                  className="border-fuchsia-500/20 text-fuchsia-400 hover:bg-fuchsia-500/10 font-bold rounded-xl h-11"
+                >
+                  <CheckCircle2 className="w-4 h-4 mr-2" /> DONE
+                </Button>
+              </>
+            ) : (
+              <Button
+                onClick={() => deleteQuest(quest._id)}
+                variant="outline"
+                className="col-span-2 border-red-500/20 text-red-500 hover:bg-red-500/10 font-bold rounded-xl h-11"
+              >
+                <Trash2 className="w-4 h-4 mr-2" /> HAPUS JEJAK
+              </Button>
+            )}
+          </div>
+        </CardFooter>
+      </Card>
+    </motion.div>
+  );
+
   return (
     <div className="h-full overflow-y-auto p-4 sm:p-6 space-y-6 sm:space-y-7 min-w-0">
       {/* Header Section */}
@@ -339,87 +419,34 @@ export default function QuestBoardClient() {
             <p className="text-slate-500 text-sm mt-1 max-w-xs mx-auto">Tambahkan misi pertamamu untuk mulai petualangan mengumpulkan harta!</p>
           </motion.div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredQuests.map((quest, idx) => (
-              <motion.div
-                layout
-                key={quest._id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ delay: idx * 0.05 }}
-              >
-                <Card className="bg-[#151823] border-white/[0.06] rounded-3xl overflow-hidden hover:border-purple-500/30 transition-all group flex flex-col h-full shadow-xl shadow-black/20">
-                  <CardHeader className="pb-4">
-                    <div className="flex justify-between items-start mb-3 gap-2">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        {quest.isAdmin && (
-                          <div className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border text-yellow-400 bg-yellow-400/10 border-yellow-400/20 flex items-center gap-1 shadow-[0_0_10px_rgba(250,204,21,0.2)]">
-                            👑 GLOBAL
-                          </div>
-                        )}
-                        <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${getDifficultyColor(quest.difficulty)}`}>
-                          {quest.difficulty}
-                        </div>
-                      </div>
-                      {getStatusBadge(quest.status)}
-                    </div>
-                    <CardTitle className="text-xl font-bold text-white group-hover:text-purple-400 transition-colors line-clamp-1">{quest.title}</CardTitle>
-                    <CardDescription className="text-slate-500 mt-2 line-clamp-2 min-h-[40px] text-sm leading-relaxed">
-                      {quest.description || "Tidak ada rincian misi khusus bagi pahlawan."}
-                    </CardDescription>
-                  </CardHeader>
+          <div className="space-y-10">
+            {/* GLOBAL MISSIONS */}
+            {filteredQuests.some(q => q.isAdmin) && (
+              <div>
+                <h2 className="text-xl sm:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600 flex items-center gap-2 mb-4">
+                  <span>👑</span> Misi Global
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredQuests.filter(q => q.isAdmin).map((quest, idx) => renderQuestCard(quest, idx))}
+                </div>
+              </div>
+            )}
 
-                  <CardContent className="pb-6">
-                    <div className="flex flex-wrap gap-4">
-                      {/* Warna XP diganti ke fuchsia agar matching tapi kontras */}
-                      <div className="flex items-center gap-2 bg-fuchsia-500/5 px-3 py-2 rounded-xl border border-fuchsia-500/10">
-                        <Star className="w-4 h-4 text-fuchsia-400" />
-                        <span className="text-fuchsia-400 text-sm font-black">+{quest.rewards?.xp || 0}</span>
-                      </div>
-                      <div className="flex items-center gap-2 bg-amber-500/5 px-3 py-2 rounded-xl border border-amber-500/10">
-                        <Coins className="w-4 h-4 text-amber-400" />
-                        <span className="text-amber-400 text-sm font-black">+{quest.rewards?.gold || 0}</span>
-                      </div>
-                    </div>
-                  </CardContent>
-
-                  <CardFooter className="pt-0 pb-6 hidden group-hover:flex animate-in fade-in slide-in-from-bottom-2 duration-300">
-                    <div className="grid grid-cols-2 gap-2 w-full">
-                      {quest.status === 'pending' || quest.status === 'in_progress' ? (
-                        <>
-                          <Button
-                            onClick={() => router.push(`/dashboard/focus?questId=${quest._id}`)}
-                            className="bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl h-11"
-                          >
-                            <Play className="w-4 h-4 mr-2" /> FOCUS
-                          </Button>
-                          <Button
-                            onClick={() => {
-                              if (confirm("Pahlawan sejati pantang berbohong! Yakin sudah menyelesaikan misi ini dengan jujur dan tuntas?")) {
-                                updateQuestStatus(quest._id, 'completed');
-                              }
-                            }}
-                            variant="outline"
-                            className="border-fuchsia-500/20 text-fuchsia-400 hover:bg-fuchsia-500/10 font-bold rounded-xl h-11"
-                          >
-                            <CheckCircle2 className="w-4 h-4 mr-2" /> DONE
-                          </Button>
-                        </>
-                      ) : (
-                        <Button
-                          onClick={() => deleteQuest(quest._id)}
-                          variant="outline"
-                          className="col-span-2 border-red-500/20 text-red-500 hover:bg-red-500/10 font-bold rounded-xl h-11"
-                        >
-                          <Trash2 className="w-4 h-4 mr-2" /> HAPUS JEJAK
-                        </Button>
-                      )}
-                    </div>
-                  </CardFooter>
-                </Card>
-              </motion.div>
-            ))}
+            {/* PERSONAL MISSIONS */}
+            <div>
+              <h2 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2 mb-4">
+                <span>🎯</span> Misi Pribadi
+              </h2>
+              {filteredQuests.filter(q => !q.isAdmin).length === 0 ? (
+                <div className="text-center py-10 bg-[#151823]/50 border border-white/[0.06] rounded-2xl text-slate-500 text-sm">
+                  Tidak ada misi pribadi yang sedang aktif. Tambahkan misimu!
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredQuests.filter(q => !q.isAdmin).map((quest, idx) => renderQuestCard(quest, idx))}
+                </div>
+              )}
+            </div>
           </div>
         )}
       </AnimatePresence>

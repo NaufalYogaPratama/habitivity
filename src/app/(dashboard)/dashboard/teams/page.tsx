@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import Image from "next/image";
 import { Shield, Users, Search, Target, Award, UserPlus, LogOut } from "lucide-react";
+import { UserAvatar } from "@/components/ui/UserAvatar";
 
 export default function TeamsPage() {
     const [isLoading, setIsLoading] = useState(true);
@@ -185,9 +186,7 @@ export default function TeamsPage() {
                                 {myTeam.membersList?.map((member: any) => (
                                     <div key={member._id} className="bg-white/[0.02] border border-white/[0.04] p-4 rounded-2xl flex items-center justify-between hover:bg-white/[0.05] transition-colors">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-12 h-12 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-white/10 rounded-xl flex items-center justify-center text-xl">
-                                                🧑‍🚀
-                                            </div>
+                                            <UserAvatar avatar={member.avatar} className="w-12 h-12 rounded-xl" emojiSize="text-2xl" showEvolution={false} />
                                             <div>
                                                 <p className="text-white font-bold">{member.username}</p>
                                                 <p className="text-xs text-slate-500">Level {member.level} • {member.xp} XP</p>
@@ -293,7 +292,7 @@ export default function TeamsPage() {
                                                 className="h-8 text-[10px] uppercase font-bold tracking-wider px-3 bg-indigo-600/20 border border-indigo-500/30 text-indigo-300 hover:bg-indigo-600/30"
                                                 variant="outline"
                                             >
-                                                Join Klan
+                                                Punya Kode?
                                             </Button>
                                         </div>
                                     </Card>
@@ -321,7 +320,7 @@ export default function TeamsPage() {
                                             value={newTeam.icon}
                                             onChange={(e) => setNewTeam({ ...newTeam, icon: e.target.value })}
                                             className="text-4xl w-24 h-24 text-center p-0 rounded-2xl bg-white/5 border-white/10 mx-auto block cursor-pointer transition-colors focus:bg-white/10"
-                                            maxLength={2}
+                                            maxLength={10}
                                             title="Masukkan 1-2 emoji untuk identitas"
                                         />
                                         <p className="text-center text-xs text-slate-500 mt-2">Ketik emoji favorit Anda 🛡️ ⚔️ 🔥 🎯 🐺 dll</p>

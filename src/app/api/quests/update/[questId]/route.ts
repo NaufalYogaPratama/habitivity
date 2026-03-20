@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/db/mongodb";
 import Quest from "@/models/Quest";
 import User from "@/models/User";
+import Team from "@/models/Team";
 import { auth } from "@/auth";
 
 export async function PATCH(
@@ -35,13 +36,24 @@ export async function PATCH(
             const xpReward = quest.rewards?.xp || 0;
             const goldReward = quest.rewards?.gold || 0;
 
-            await User.findByIdAndUpdate(session.user.id, {
-                $inc: {
-                    "stats.xp": xpReward,
-                    "stats.gold": goldReward,
-                    "stats.streak": 1
-                }
-            });
+            const updatedUser = await User.findByIdAndUpdate(
+                session.user.id,
+                {
+                    $inc: {
+                        "stats.xp": xpReward,
+                        "stats.gold": goldReward,
+                        "stats.streak": 1
+                    }
+                },
+                { new: true }
+            );
+
+            // Sync Team XP in background
+            if (updatedUser?.teamId) {
+                await Team.findByIdAndUpdate(updatedUser.teamId, {
+                    $inc: { "stats.totalXp": xpReward }
+                });
+            }
         }
 
         await quest.save();

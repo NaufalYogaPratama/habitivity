@@ -202,17 +202,19 @@ export default function QuestBoardClient() {
   };
 
   return (
-    <div className="space-y-8 px-4 sm:px-6">
+    <div className="h-full overflow-y-auto p-4 sm:p-6 space-y-6 sm:space-y-7 min-w-0">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2.5">
-            <span className="text-2xl sm:text-3xl">⚔️</span> Quest Board
-          </h1>
-          <p className="text-slate-500 text-xs sm:text-sm mt-1">
-            Kelola misi harianmu, raih XP dan kumpulkan Gold.
-          </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2.5">
+              <span className="text-2xl sm:text-3xl">⚔️</span> Quest Board
+            </h1>
+            <p className="text-slate-500 text-xs sm:text-sm mt-1"> Kelola misi harianmu, raih XP dan kumpulkan Gold.</p>
+          </div>
         </div>
+
+
 
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>

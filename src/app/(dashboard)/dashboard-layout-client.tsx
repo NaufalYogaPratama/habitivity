@@ -63,11 +63,46 @@ const navItems = [
         label: 'Leaderboard'
 
     },
+    {
 
-    { href: '/dashboard/shop', icon: '🏪', label: 'Shop' },
-    { href: '/dashboard/avatar', icon: '🧑‍🚀', label: 'NFT Avatar' },
-    { href: '/dashboard/teams', icon: '🛡️', label: 'Clans' },
-    { href: '/dashboard/profile', icon: '👤', label: 'Profile' },
+        href: '/dashboard/shop',
+
+        icon: <Image src="/assets/logo/icon-shop.png" alt="Shop" width={32} height={32} className="object-contain" />,
+
+        label: 'Shop'
+
+    },
+    {
+
+        href: '/dashboard/avatar',
+
+        icon: <Image src="/assets/logo/icon-nft.png" alt="NFT Avatar" width={32} height={32} className="object-contain" />,
+
+        label: 'NFT Avatar'
+
+    },
+
+
+    {
+
+        href: '/dashboard/teams',
+
+        icon: <Image src="/assets/logo/icon-clans.png" alt="Teams" width={32} height={32} className="object-contain" />,
+
+        label: 'Teams'
+
+    },
+    {
+
+        href: '/dashboard/profile',
+
+        icon: <Image src="/assets/logo/icon-profile.png" alt="Profile" width={32} height={32} className="object-contain" />,
+
+        label: 'Profile'
+
+    },
+
+
 ];
 
 function MobileHeader({ onToggle }: { onToggle: () => void }) {

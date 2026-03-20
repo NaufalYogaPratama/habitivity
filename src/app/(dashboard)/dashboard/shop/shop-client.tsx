@@ -110,7 +110,7 @@ export default function ShopClient() {
     };
 
     return (
-        <div className="space-y-8 px-4 sm:px-6 min-h-screen pb-20">
+        <div className="h-full overflow-y-auto p-4 sm:p-6 space-y-6 sm:space-y-7 min-w-0">
             {/* Header Section */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
                 <div>

@@ -51,6 +51,7 @@ export default function QuestBoardClient() {
   const [quests, setQuests] = useState<Quest[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<TabType>("active");
+  const [questType, setQuestType] = useState<"personal" | "global">("personal");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // Form State
@@ -379,24 +380,46 @@ export default function QuestBoardClient() {
         </Dialog>
       </div>
 
-      {/* Tabs Section */}
-      <div className="flex bg-[#151823] border border-white/[0.06] rounded-2xl p-1 w-full sm:w-fit">
-        {[
-          { id: "active", label: "Misi Aktif", icon: <Target className="w-4 h-4" /> },
-          { id: "completed", label: "Riwayat", icon: <History className="w-4 h-4" /> },
-          { id: "all", label: "Semua", icon: <Filter className="w-4 h-4" /> },
-        ].map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id as TabType)}
-            className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold transition-all ${activeTab === tab.id
-              ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/20'
-              : 'text-slate-500 hover:text-slate-300'
-              }`}
-          >
-            {tab.icon} {tab.label}
-          </button>
-        ))}
+      {/* Tabs / Filters Section */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        {/* Quest Type Tabs */}
+        <div className="flex bg-[#151823] border border-white/[0.06] rounded-2xl p-1 w-full sm:w-fit">
+          {[
+            { id: "personal", label: "🎯 Misi Pribadi" },
+            { id: "global", label: "👑 Misi Global" },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setQuestType(tab.id as "personal" | "global")}
+              className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold transition-all ${questType === tab.id
+                ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/20'
+                : 'text-slate-500 hover:text-slate-300'
+                }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Status Tabs */}
+        <div className="flex bg-[#151823] border border-white/[0.06] rounded-2xl p-1 w-full sm:w-fit">
+          {[
+            { id: "active", label: "Misi Aktif", icon: <Target className="w-4 h-4" /> },
+            { id: "completed", label: "Riwayat", icon: <History className="w-4 h-4" /> },
+            { id: "all", label: "Semua", icon: <Filter className="w-4 h-4" /> },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as TabType)}
+              className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold transition-all ${activeTab === tab.id
+                ? 'bg-white/[0.08] text-white'
+                : 'text-slate-500 hover:text-slate-300'
+                }`}
+            >
+              {tab.icon} {tab.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Grid Quest Cards */}
@@ -419,34 +442,14 @@ export default function QuestBoardClient() {
             <p className="text-slate-500 text-sm mt-1 max-w-xs mx-auto">Tambahkan misi pertamamu untuk mulai petualangan mengumpulkan harta!</p>
           </motion.div>
         ) : (
-          <div className="space-y-10">
-            {/* GLOBAL MISSIONS */}
-            {filteredQuests.some(q => q.isAdmin) && (
-              <div>
-                <h2 className="text-xl sm:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600 flex items-center gap-2 mb-4">
-                  <span>👑</span> Misi Global
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredQuests.filter(q => q.isAdmin).map((quest, idx) => renderQuestCard(quest, idx))}
-                </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredQuests.filter(q => questType === "global" ? q.isAdmin : !q.isAdmin).length === 0 ? (
+              <div className="col-span-full text-center py-10 bg-[#151823]/50 border border-white/[0.06] rounded-2xl text-slate-500 text-sm">
+                Tidak ada {questType === "global" ? "misi global" : "misi pribadi"} di kategori ini.
               </div>
+            ) : (
+              filteredQuests.filter(q => questType === "global" ? q.isAdmin : !q.isAdmin).map((quest, idx) => renderQuestCard(quest, idx))
             )}
-
-            {/* PERSONAL MISSIONS */}
-            <div>
-              <h2 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2 mb-4">
-                <span>🎯</span> Misi Pribadi
-              </h2>
-              {filteredQuests.filter(q => !q.isAdmin).length === 0 ? (
-                <div className="text-center py-10 bg-[#151823]/50 border border-white/[0.06] rounded-2xl text-slate-500 text-sm">
-                  Tidak ada misi pribadi yang sedang aktif. Tambahkan misimu!
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredQuests.filter(q => !q.isAdmin).map((quest, idx) => renderQuestCard(quest, idx))}
-                </div>
-              )}
-            </div>
           </div>
         )}
       </AnimatePresence>

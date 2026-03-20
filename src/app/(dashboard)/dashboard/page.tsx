@@ -72,6 +72,7 @@ export default async function DashboardPage() {
     const trendingQuests = recentQuestsForTrending.map((q: any) => {
         const catCfg = CATEGORY_CONFIG[q.category] || CATEGORY_CONFIG.work;
         return {
+            id: q._id.toString(),
             icon: catCfg.icon,
             title: q.title,
             category: q.category?.charAt(0).toUpperCase() + q.category?.slice(1) || 'Work',
@@ -264,7 +265,7 @@ export default async function DashboardPage() {
                     ) : (
                         <div className="flex gap-3 sm:gap-4 overflow-x-auto pb-2 snap-x snap-mandatory lg:grid lg:grid-cols-4 lg:overflow-x-visible lg:pb-0">
                             {trendingQuests.map((quest) => (
-                                <Card key={quest.title} className="bg-[#151823] border-white/[0.06] hover:border-purple-500/20 transition-all group hover:-translate-y-1 duration-300 min-w-[200px] sm:min-w-[220px] lg:min-w-0 snap-start flex-shrink-0 lg:flex-shrink">
+                                <Card key={quest.id} className="bg-[#151823] border-white/[0.06] hover:border-purple-500/20 transition-all group hover:-translate-y-1 duration-300 min-w-[200px] sm:min-w-[220px] lg:min-w-0 snap-start flex-shrink-0 lg:flex-shrink">
                                     <CardContent className="p-0">
                                         <div className={`aspect-[4/3] rounded-t-xl bg-gradient-to-br ${quest.gradient} relative overflow-hidden flex items-center justify-center`}>
                                             <span className="text-4xl sm:text-5xl group-hover:scale-110 transition-transform duration-500 drop-shadow-lg">{quest.icon}</span>

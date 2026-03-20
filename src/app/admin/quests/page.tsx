@@ -28,6 +28,7 @@ export default async function AdminQuestsPage() {
         difficulty: q.difficulty,
         status: q.status,
         rewards: q.rewards || { xp: 0, gold: 0 },
+        isAdmin: q.isAdmin || false,
         user: q.userId ? {
             username: q.userId.username || 'Unknown',
             email: q.userId.email || '',

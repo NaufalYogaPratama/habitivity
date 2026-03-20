@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import Image from "next/image";
 import { toast } from "sonner";
@@ -30,6 +30,7 @@ interface QuestData {
     user: { username: string; email: string };
     createdAt: string;
     completedAt: string | null;
+    isAdmin: boolean;
 }
 
 interface QuestStats {
@@ -88,19 +89,22 @@ export default function AdminQuestsClient({ initialQuests, stats, users }: { ini
         }).format(new Date(date));
     };
 
-    const handleDelete = async (id: string) => {
-        if (!confirm('Are you sure you want to delete this quest?')) return;
+    const handleDeleteAction = async (quest: any) => {
+        if (!confirm(quest.isGroup ? `Delete global quest for ${quest.groupItems.length} users?` : 'Are you sure you want to delete this quest?')) return;
 
         try {
-            const res = await fetch(`/api/quests/update/${id}`, {
-                method: 'DELETE',
-            });
-            if (res.ok) {
-                setQuests(prev => prev.filter(q => q._id !== id));
-                toast.success('Quest deleted successfully.');
+            if (quest.isGroup) {
+                for (const item of quest.groupItems) {
+                    await fetch(`/api/quests/update/${item._id}`, { method: 'DELETE' });
+                }
+                setQuests(prev => prev.filter(q => !quest.groupItems.some((gi: any) => gi._id === q._id)));
             } else {
-                toast.error('Failed to delete quest');
+                const res = await fetch(`/api/quests/update/${quest._id}`, { method: 'DELETE' });
+                if (res.ok) {
+                    setQuests(prev => prev.filter(q => q._id !== quest._id));
+                }
             }
+            toast.success('Quest deleted successfully.');
         } catch (error) {
             console.error(error);
             toast.error('System error occurred.');
@@ -168,8 +172,42 @@ export default function AdminQuestsClient({ initialQuests, stats, users }: { ini
         }
     };
 
-    const filtered = quests.filter(q => {
-        const matchesStatus = filterStatus === 'all' || q.status === filterStatus;
+    const processed = useMemo(() => {
+        const ObjectGroups: Record<string, QuestData[]> = {};
+        const result: any[] = [];
+
+        quests.forEach(q => {
+            if (q.isAdmin && q.title) {
+                const dateKey = q.createdAt.substring(0, 16);
+                const key = `GLOBAL_${q.title}_${dateKey}`;
+                if (!ObjectGroups[key]) ObjectGroups[key] = [];
+                ObjectGroups[key].push(q);
+            } else {
+                result.push({ ...q, isGroup: false });
+            }
+        });
+
+        Object.values(ObjectGroups).forEach(group => {
+            if (group.length > 1) {
+                const completeCount = group.filter(i => i.status === 'completed').length;
+                result.push({
+                    ...group[0],
+                    isGroup: true,
+                    groupItems: group,
+                    status: completeCount === group.length ? 'completed' : 'in_progress', // aggregated status
+                    user: { username: `All Heroes (${group.length})`, email: `Completed: ${completeCount}/${group.length}` }
+                });
+            } else {
+                result.push({ ...group[0], isGroup: false });
+            }
+        });
+
+        result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        return result;
+    }, [quests]);
+
+    const filtered = processed.filter(q => {
+        const matchesStatus = filterStatus === 'all' || q.status === filterStatus || (q.isGroup && q.groupItems.some((i: any) => i.status === filterStatus));
         const matchesSearch = q.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             q.user.username.toLowerCase().includes(searchQuery.toLowerCase());
         return matchesStatus && matchesSearch;
@@ -373,9 +411,15 @@ export default function AdminQuestsClient({ initialQuests, stats, users }: { ini
                                                 <span className={`text-xs font-bold ${dCfg.color}`}>{dCfg.label}</span>
                                             </td>
                                             <td className="p-4 text-center">
-                                                <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border ${sCfg.bg} ${sCfg.color}`}>
-                                                    {sCfg.label}
-                                                </span>
+                                                {quest.isGroup ? (
+                                                    <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border border-purple-500/20 text-purple-400 bg-purple-500/10`}>
+                                                        Global
+                                                    </span>
+                                                ) : (
+                                                    <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border ${sCfg.bg} ${sCfg.color}`}>
+                                                        {sCfg.label}
+                                                    </span>
+                                                )}
                                             </td>
                                             <td className="p-4 text-center">
                                                 <div className="flex items-center justify-center gap-3">
@@ -388,7 +432,7 @@ export default function AdminQuestsClient({ initialQuests, stats, users }: { ini
                                             </td>
                                             <td className="p-4 text-right">
                                                 <button
-                                                    onClick={() => handleDelete(quest._id)}
+                                                    onClick={() => handleDeleteAction(quest)}
                                                     className="px-3 py-1.5 rounded-lg text-xs font-bold bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors border border-red-500/20 opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
                                                 >
                                                     Delete

@@ -19,7 +19,12 @@ export default function TeamsPage() {
     const [joinCode, setJoinCode] = useState("");
 
     // Create form
-    const [newTeam, setNewTeam] = useState({ name: "", description: "", icon: "🛡️" });
+    const [newTeam, setNewTeam] = useState({ name: "", description: "" });
+
+    // Modal state for joining specific team
+    const [openJoinModal, setOpenJoinModal] = useState(false);
+    const [targetTeamName, setTargetTeamName] = useState("");
+    const [targetJoinCode, setTargetJoinCode] = useState("");
 
     useEffect(() => {
         fetchMyTeam();
@@ -138,8 +143,8 @@ export default function TeamsPage() {
 
                         <CardContent className="p-8 flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
                             <div className="flex items-center gap-6">
-                                <div className="w-24 h-24 bg-white/10 rounded-3xl border border-white/20 flex items-center justify-center text-5xl shadow-2xl backdrop-blur-md">
-                                    {myTeam.icon}
+                                <div className="w-24 h-24 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-3xl border border-white/20 flex items-center justify-center shadow-2xl backdrop-blur-md">
+                                    <Image src="/assets/logo/icon-clans.png" alt="Clan Icon" width={64} height={64} className="object-contain drop-shadow-2xl" />
                                 </div>
                                 <div>
                                     <div className="flex items-center gap-3">
@@ -260,8 +265,8 @@ export default function TeamsPage() {
                                         <div>
                                             <div className="flex items-start justify-between mb-4">
                                                 <div className="flex items-center gap-4">
-                                                    <div className="w-14 h-14 bg-white/[0.03] border border-white/10 rounded-2xl flex items-center justify-center text-3xl group-hover:scale-110 transition-transform shadow-lg shadow-black/50">
-                                                        {team.icon}
+                                                    <div className="w-14 h-14 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-white/10 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-black/50">
+                                                        <Image src="/assets/logo/icon-clans.png" alt="Clan" width={32} height={32} className="object-contain drop-shadow" />
                                                     </div>
                                                     <div>
                                                         <h3 className="text-lg font-black text-white">{team.name}</h3>
@@ -286,8 +291,9 @@ export default function TeamsPage() {
                                             {/* Sebenarnya kalau sistem Clash of Clans, search klan bisa lgsg Click -> Join jika tipe klannya "Open". Di db kita belum pakai limit open. Kita asumsikan saat search bisa tap "Join?" tapi butuh code, jadi sementara buat pamer aja klan yg ada :D */}
                                             <Button
                                                 onClick={() => {
-                                                    const code = prompt("Masukkan kode join klan:");
-                                                    if (code) handleJoin(code);
+                                                    setTargetTeamName(team.name);
+                                                    setTargetJoinCode("");
+                                                    setOpenJoinModal(true);
                                                 }}
                                                 className="h-8 text-[10px] uppercase font-bold tracking-wider px-3 bg-indigo-600/20 border border-indigo-500/30 text-indigo-300 hover:bg-indigo-600/30"
                                                 variant="outline"
@@ -314,16 +320,8 @@ export default function TeamsPage() {
                                     <CardDescription>Buat nama dan deskripsi klan agar teman-teman Anda bisa bergabung.</CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-6">
-                                    <div className="space-y-2">
-                                        <label className="text-sm text-slate-400 font-medium">Ikon / Emoji Klan</label>
-                                        <Input
-                                            value={newTeam.icon}
-                                            onChange={(e) => setNewTeam({ ...newTeam, icon: e.target.value })}
-                                            className="text-4xl w-24 h-24 text-center p-0 rounded-2xl bg-white/5 border-white/10 mx-auto block cursor-pointer transition-colors focus:bg-white/10"
-                                            maxLength={10}
-                                            title="Masukkan 1-2 emoji untuk identitas"
-                                        />
-                                        <p className="text-center text-xs text-slate-500 mt-2">Ketik emoji favorit Anda 🛡️ ⚔️ 🔥 🎯 🐺 dll</p>
+                                    <div className="w-24 h-24 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-3xl border border-purple-500/30 flex items-center justify-center mx-auto mb-6 shadow-xl shadow-purple-500/5">
+                                        <Image src="/assets/logo/icon-clans.png" alt="Clan Icon" width={64} height={64} className="object-contain" />
                                     </div>
 
                                     <div className="space-y-2">
@@ -355,6 +353,44 @@ export default function TeamsPage() {
                             </Card>
                         </div>
                     )}
+                </div>
+            )}
+
+            {/* Custom Join Modal */}
+            {openJoinModal && (
+                <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+                    <div className="bg-[#151823] p-8 rounded-3xl border border-white/10 w-full max-w-md shadow-2xl relative overflow-hidden">
+                        {/* decoration */}
+                        <div className="absolute -top-20 -right-20 w-40 h-40 bg-indigo-500/20 blur-[50px] rounded-full point-events-none"></div>
+                        <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-purple-500/20 blur-[50px] rounded-full point-events-none"></div>
+
+                        <div className="relative z-10">
+                            <h2 className="text-2xl font-black text-white mb-2">Otorisasi Markas</h2>
+                            <p className="text-sm text-slate-400 mb-6">
+                                Anda meminta izin akses ke klan <span className="text-indigo-300 font-bold">{targetTeamName}</span>. Masukkan 6 digit Kode Rahasia dari ketua klan.
+                            </p>
+                            <Input
+                                autoFocus
+                                maxLength={6}
+                                className="uppercase mb-8 text-center font-mono text-3xl tracking-[0.2em] font-black h-16 bg-black/30 border-white/10 text-white focus-visible:ring-indigo-500 placeholder:text-slate-700 rounded-xl"
+                                placeholder="XXXXXX"
+                                value={targetJoinCode}
+                                onChange={(e) => setTargetJoinCode(e.target.value)}
+                            />
+                            <div className="flex gap-3">
+                                <Button variant="ghost" onClick={() => setOpenJoinModal(false)} className="flex-1 h-12 text-slate-300 hover:text-white hover:bg-white/5 rounded-xl">Batal</Button>
+                                <Button
+                                    onClick={() => {
+                                        handleJoin(targetJoinCode);
+                                        setOpenJoinModal(false);
+                                    }}
+                                    className="flex-1 h-12 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/20"
+                                >
+                                    Konfirmasi & Masuk
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             )}
         </div>

@@ -1,4 +1,5 @@
 'use client';
+import Image from 'next/image';
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
@@ -8,8 +9,17 @@ export default function AnalyticsClient({ chartData, statsOverview, totalUsers, 
     return (
         <div className="p-6 space-y-6">
             <div>
-                <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-                    <span>📈</span> Platform Analytics
+                <h1 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2.5">
+                    {/* PERUBAHAN: Emoji diganti gambar icon-shop */}
+                    <Image
+                        src="/assets/logo/icon-analytics.png"
+                        alt="Analytics"
+                        width={32}
+                        height={32}
+                        className="object-contain drop-shadow-md"
+                        priority
+                    />
+                    Platform Analytics
                 </h1>
                 <p className="text-slate-400 text-sm mt-1">Deep dive into Habitivity's growth and engagement metrics.</p>
             </div>

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
+import Image from "next/image";
 
 interface QuestData {
     _id: string;
@@ -90,7 +91,15 @@ export default function AdminQuestsClient({ initialQuests, stats }: { initialQue
             <div className="flex flex-col sm:flex-row justify-between sm:items-end gap-4">
                 <div>
                     <h1 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2.5">
-                        <span className="text-2xl sm:text-3xl">⚔️</span> Global Quests
+                        <Image
+                            src="/assets/logo/icon-quest.png"
+                            alt="Quests"
+                            width={32}
+                            height={32}
+                            className="object-contain drop-shadow-md"
+                            priority
+                        />
+                        Global Quest
                     </h1>
                     <p className="text-slate-400 text-sm mt-1">View and manage all quests across the platform.</p>
                 </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image'; // <-- Tambahkan import Image
 import { Card, CardContent } from '@/components/ui/card';
 
 export default function UsersClient({ initialUsers }: { initialUsers: any[] }) {
@@ -99,8 +100,10 @@ export default function UsersClient({ initialUsers }: { initialUsers: any[] }) {
         <div className="p-6 space-y-6 relative">
             <div className="flex justify-between items-end">
                 <div>
-                    <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-                        <span>👥</span> User Management
+                    <h1 className="text-2xl font-bold text-white flex items-center gap-2.5">
+                        {/* PERUBAHAN: Ikon judul diganti icon-profile */}
+                        <Image src="/assets/logo/icon-profile.png" alt="Users" width={32} height={32} className="drop-shadow-md" />
+                        User Management
                     </h1>
                     <p className="text-slate-400 text-sm mt-1">View and manage all registered heroes in Habitivity.</p>
                 </div>
@@ -129,8 +132,9 @@ export default function UsersClient({ initialUsers }: { initialUsers: any[] }) {
                                     <tr key={user._id.toString()} className="hover:bg-white/[0.02] transition-colors group">
                                         <td className="p-4 min-w-[200px]">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg shadow-inner bg-[#0B0E14] border border-white/5">
-                                                    🧑‍💻
+                                                {/* PERUBAHAN: Avatar user di tabel diganti icon-profile */}
+                                                <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-inner bg-[#0B0E14] border border-white/5 overflow-hidden">
+                                                    <Image src="/assets/logo/icon-profile.png" alt="Avatar" width={36} height={36} className="object-cover" />
                                                 </div>
                                                 <div>
                                                     <div className="flex items-center gap-2">

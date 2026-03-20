@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import Image from "next/image";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface ShopItem {
@@ -148,7 +149,18 @@ export default function AdminShopClient() {
         <main className="w-full p-6">
             <div className="flex justify-between items-center mb-6">
                 <div>
-                    <h1 className="text-2xl font-bold">Shop Management</h1>
+                    <h1 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2.5">
+                        {/* PERUBAHAN: Emoji diganti gambar icon-shop */}
+                        <Image
+                            src="/assets/logo/icon-shop.png"
+                            alt="Shop"
+                            width={32}
+                            height={32}
+                            className="object-contain drop-shadow-md"
+                            priority
+                        />
+                        Shop Management
+                    </h1>
                     <p className="text-slate-400 text-sm mt-1">Add, edit, or remove items from the global shop.</p>
                 </div>
             </div>

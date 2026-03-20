@@ -2,6 +2,7 @@ import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import { signOut } from '@/auth';
 import Link from 'next/link';
+import Image from 'next/image'; // <-- Pastikan ini ada
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
@@ -43,11 +44,24 @@ export default async function AdminDashboardPage() {
     ]);
     const totalGold = totalGoldResult[0]?.totalGold?.toLocaleString() || '0';
 
+    // PERUBAHAN: Memasukkan komponen <Image /> langsung ke dalam array data (kecuali icon jam)
     const analyticsCards = [
-        { icon: '👥', label: 'Total Users', value: totalUsers.toLocaleString(), sub: `+${usersThisWeek} this week`, color: 'text-purple-400', gradient: 'from-purple-500/20 via-purple-600/10 to-transparent', border: 'border-purple-500/15' },
-        { icon: '⏱️', label: 'Focus Hours', value: focusHours.toString(), sub: 'All users combined', color: 'text-emerald-400', gradient: 'from-emerald-500/20 via-emerald-600/10 to-transparent', border: 'border-emerald-500/15' },
-        { icon: '⚔️', label: 'Quests Done', value: questsDone.toLocaleString(), sub: 'All time total', color: 'text-amber-400', gradient: 'from-amber-500/20 via-amber-600/10 to-transparent', border: 'border-amber-500/15' },
-        { icon: '💰', label: 'Gold Earned', value: totalGold, sub: 'Community total', color: 'text-fuchsia-400', gradient: 'from-fuchsia-500/20 via-fuchsia-600/10 to-transparent', border: 'border-fuchsia-500/15' },
+        {
+            icon: <Image src="/assets/logo/icon-profile.png" alt="Users" width={32} height={32} className="drop-shadow-md" />,
+            label: 'Total Users', value: totalUsers.toLocaleString(), sub: `+${usersThisWeek} this week`, color: 'text-purple-400', gradient: 'from-purple-500/20 via-purple-600/10 to-transparent', border: 'border-purple-500/15'
+        },
+        {
+            icon: <span className="text-3xl drop-shadow-md">⏱️</span>, // <-- Jam tetap dipertahankan
+            label: 'Focus Hours', value: focusHours.toString(), sub: 'All users combined', color: 'text-emerald-400', gradient: 'from-emerald-500/20 via-emerald-600/10 to-transparent', border: 'border-emerald-500/15'
+        },
+        {
+            icon: <Image src="/assets/logo/icon-quest.png" alt="Quests" width={32} height={32} className="drop-shadow-md" />,
+            label: 'Quests Done', value: questsDone.toLocaleString(), sub: 'All time total', color: 'text-amber-400', gradient: 'from-amber-500/20 via-amber-600/10 to-transparent', border: 'border-amber-500/15'
+        },
+        {
+            icon: <Image src="/assets/logo/icon-gold.png" alt="Gold" width={32} height={32} className="drop-shadow-md" />,
+            label: 'Gold Earned', value: totalGold, sub: 'Community total', color: 'text-fuchsia-400', gradient: 'from-fuchsia-500/20 via-fuchsia-600/10 to-transparent', border: 'border-fuchsia-500/15'
+        },
     ];
 
     // ─── Recent Users ───
@@ -159,27 +173,33 @@ export default async function AdminDashboardPage() {
                 {/* Top Bar */}
                 <div className="flex items-center justify-between">
                     <div>
+                        {/* PERUBAHAN: Ikon Admin Dashboard pakai icon-home1 */}
                         <h1 className="text-2xl font-bold flex items-center gap-2.5">
-                            <span>📊</span> Admin Dashboard
+                            <Image src="/assets/logo/icon-home1.png" alt="Admin Dashboard" width={32} height={32} className="drop-shadow-md" />
+                            Admin Dashboard
                         </h1>
                         <p className="text-slate-500 text-sm mt-1">
                             Welcome back, <span className="text-white font-medium">{user?.name}</span>
                         </p>
                     </div>
                     <Link href="/admin/analytics">
-                        <Button size="sm" className="bg-purple-600 hover:bg-purple-500 text-white shadow-lg shadow-purple-600/20 border-none rounded-xl">
-                            <span>📈</span> View Analytics
+                        <Button size="sm" className="bg-purple-600 hover:bg-purple-500 text-white shadow-lg shadow-purple-600/20 border-none rounded-xl flex items-center gap-2">
+                            {/* PERUBAHAN: Tombol View Analytics pakai icon-analytics (jika belum ada filenya, ini bisa diganti emoji 📈 lagi) */}
+                            <Image src="/assets/logo/icon-analytics.png" alt="Analytics" width={16} height={16} />
+                            View Analytics
                         </Button>
                     </Link>
                 </div>
 
                 {/* Analytics Cards */}
                 <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
-                    {analyticsCards.map((card) => (
-                        <Card key={card.label} className={`bg-gradient-to-br ${card.gradient} bg-[#151823] border ${card.border} hover:border-purple-500/20 transition-all group hover:-translate-y-0.5 duration-200`}>
+                    {analyticsCards.map((card, idx) => (
+                        <Card key={idx} className={`bg-gradient-to-br ${card.gradient} bg-[#151823] border ${card.border} hover:border-purple-500/20 transition-all group hover:-translate-y-0.5 duration-200`}>
                             <CardContent className="p-5">
                                 <div className="flex items-center justify-between mb-3">
-                                    <span className="text-2xl">{card.icon}</span>
+                                    <div className="flex items-center justify-center w-8 h-8">
+                                        {card.icon}
+                                    </div>
                                     <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{card.sub}</span>
                                 </div>
                                 <div className={`text-3xl font-bold ${card.color} mb-1`}>{card.value}</div>
@@ -231,17 +251,17 @@ export default async function AdminDashboardPage() {
                         </CardHeader>
                         <CardContent className="p-4 space-y-2">
                             {[
-                                { icon: '⚔️', label: 'Manage Quests', desc: 'View all quests', href: '/admin/quests', hover: 'hover:border-purple-500/20' },
-                                { icon: '🏪', label: 'Manage Shop', desc: 'Add & edit items', href: '/admin/shop', hover: 'hover:border-emerald-500/20' },
-                                { icon: '👥', label: 'Manage Users', desc: 'View user DB', href: '/admin/users', hover: 'hover:border-blue-500/20' },
-                                { icon: '📈', label: 'Analytics', desc: 'View metrics', href: '/admin/analytics', hover: 'hover:border-amber-500/20' },
+                                { icon: <Image src="/assets/logo/icon-quest.png" alt="Quests" width={20} height={20} />, label: 'Manage Quests', desc: 'View all quests', href: '/admin/quests', hover: 'hover:border-purple-500/20' },
+                                { icon: <Image src="/assets/logo/icon-shop.png" alt="Shop" width={20} height={20} />, label: 'Manage Shop', desc: 'Add & edit items', href: '/admin/shop', hover: 'hover:border-emerald-500/20' },
+                                { icon: <Image src="/assets/logo/icon-profile.png" alt="Users" width={20} height={20} />, label: 'Manage Users', desc: 'View user DB', href: '/admin/users', hover: 'hover:border-blue-500/20' },
+                                { icon: <Image src="/assets/logo/icon-analytics.png" alt="Analytics" width={20} height={20} />, label: 'Analytics', desc: 'View metrics', href: '/admin/analytics', hover: 'hover:border-amber-500/20' },
                             ].map((action) => (
                                 <Link
                                     key={action.label}
                                     href={action.href}
                                     className={`flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/[0.04] ${action.hover} transition-all group hover:-translate-x-0.5 duration-200`}
                                 >
-                                    <div className="w-9 h-9 rounded-lg bg-[#0B0E14] flex items-center justify-center text-lg border border-white/[0.04]">
+                                    <div className="w-9 h-9 rounded-lg bg-[#0B0E14] flex items-center justify-center border border-white/[0.04]">
                                         {action.icon}
                                     </div>
                                     <div className="flex-1 min-w-0">
@@ -279,7 +299,9 @@ export default async function AdminDashboardPage() {
                 {/* Admin Stats */}
                 <div>
                     <h3 className="font-bold text-sm text-white mb-3 flex items-center gap-2">
-                        <span>📊</span> Overview
+                        {/* PERUBAHAN: Overview icon diganti ke icon-home1 */}
+                        <Image src="/assets/logo/icon-home1.png" alt="Overview" width={20} height={20} />
+                        Overview
                     </h3>
                     <div className="bg-gradient-to-br from-purple-900/40 to-fuchsia-900/30 border border-purple-500/15 rounded-2xl p-4 space-y-3">
                         <div className="grid grid-cols-2 gap-3">
@@ -320,8 +342,8 @@ export default async function AdminDashboardPage() {
                     <div className="space-y-2">
                         {recentUsers.map((u) => (
                             <div key={u.name} className="flex items-center gap-3 p-2.5 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] transition-colors">
-                                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500/20 to-fuchsia-500/20 flex items-center justify-center text-xs border border-white/5">
-                                    {u.name.charAt(0)}
+                                <div className="w-8 h-8 rounded-lg bg-[#0B0E14] flex items-center justify-center text-xs border border-white/[0.04]">
+                                    <Image src="/assets/logo/icon-profile.png" alt="User" width={16} height={16} />
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <p className="text-white text-xs font-semibold truncate">{u.name}</p>

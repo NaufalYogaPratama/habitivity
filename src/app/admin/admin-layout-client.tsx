@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image'; // <-- Tambahkan import Image
 import { usePathname } from 'next/navigation';
 import { adminSignOutAction } from './actions';
 
@@ -16,15 +17,21 @@ const adminNavItems = [
 function MobileHeader({ onToggle }: { onToggle: () => void }) {
     return (
         <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-[#0B0E14]/95 backdrop-blur-xl border-b border-white/[0.04] px-4 py-3 flex items-center justify-between">
-            <Link href="/admin/dashboard" className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-fuchsia-600 flex items-center justify-center shadow-lg shadow-purple-600/25">
-                    <span className="text-white text-xs">👑</span>
+            {/* Logo Mobile */}
+            <Link href="/admin/dashboard" className="flex flex-col group">
+                <div className="flex items-center transition-transform duration-300 group-hover:scale-105">
+                    <Image
+                        src="/assets/logo/logo-full1.png"
+                        alt="Habitivity Logo"
+                        width={110}
+                        height={28}
+                        className="object-contain drop-shadow-lg h-auto"
+                        priority
+                    />
                 </div>
-                <div className="leading-none">
-                    <span className="text-sm font-bold bg-gradient-to-r from-purple-400 to-fuchsia-400 bg-clip-text text-transparent block">
-                        Habitivity
-                    </span>
-                    <span className="text-[9px] text-slate-500 font-semibold uppercase tracking-widest">Admin</span>
+                <div className="ml-1 mt-0.5 flex items-center gap-1 opacity-80">
+                    <span className="text-[8px] font-bold text-fuchsia-400 uppercase tracking-widest">Admin Panel</span>
+                    <span className="text-[10px]">👑</span>
                 </div>
             </Link>
             <button
@@ -65,36 +72,28 @@ function AdminSidebar({ user, open, onClose }: { user: { name?: string }; open: 
                 transition-transform duration-300 ease-in-out
                 ${open ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
             `}>
-                {/* Logo */}
-                <div className="p-5 pb-6">
-                    <Link href="/admin/dashboard" className="flex items-center gap-2.5 group" onClick={onClose}>
-                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-600 to-fuchsia-600 flex items-center justify-center shadow-lg shadow-purple-600/25 group-hover:shadow-purple-600/40 transition-all group-hover:scale-105">
-                            <span className="text-white text-sm">👑</span>
+                {/* Logo Desktop */}
+                <div className="px-7 pt-6 pb-4">
+                    <Link href="/admin/dashboard" className="flex flex-col group" onClick={onClose}>
+                        <div className="flex items-center transition-transform duration-300 group-hover:scale-105">
+                            <Image
+                                src="/assets/logo/logo-full1.png"
+                                alt="Habitivity Logo"
+                                width={120}
+                                height={20}
+                                className="object-contain drop-shadow-lg h-auto"
+                                priority
+                            />
                         </div>
-                        <div className="leading-none">
-                            <span className="text-base font-bold bg-gradient-to-r from-purple-400 to-fuchsia-400 bg-clip-text text-transparent block">
-                                Habitivity
-                            </span>
-                            <span className="text-[10px] text-slate-500 font-semibold uppercase tracking-widest">Admin</span>
+                        {/* Label Admin di bawah logo */}
+                        <div className="mt-3 ml-1.5 flex items-center gap-1.5 opacity-80 group-hover:opacity-100 transition-opacity">
+                            <span className="text-[10px] font-bold text-fuchsia-400 uppercase tracking-[0.2em]">Admin Panel</span>
+
                         </div>
                     </Link>
                 </div>
 
-                {/* Admin User */}
-                <div className="px-3 mb-3">
-                    <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-white/[0.03]">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500/30 to-fuchsia-500/30 flex items-center justify-center text-sm border border-white/5">
-                            👑
-                        </div>
-                        <div className="min-w-0 flex-1">
-                            <p className="text-white font-semibold text-xs truncate">{user?.name || 'Admin'}</p>
-                            <div className="flex items-center gap-1.5">
-                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                <span className="text-[10px] text-slate-500">Admin • Online</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
 
                 {/* Navigation */}
                 <nav className="flex-1 px-3 space-y-0.5 overflow-y-auto custom-scrollbar">

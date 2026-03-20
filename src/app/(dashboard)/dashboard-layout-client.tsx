@@ -22,7 +22,7 @@ const navItems = [
 
         href: '/dashboard',
 
-        icon: <Image src="/assets/logo/icon-home.png" alt="Home" width={32} height={32} className="object-contain" />,
+        icon: <Image src="/assets/logo/icon-home1.png" alt="Home" width={32} height={32} className="object-contain" />,
 
         label: 'Home'
 
@@ -73,13 +73,18 @@ const navItems = [
 function MobileHeader({ onToggle }: { onToggle: () => void }) {
     return (
         <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-[#0B0E14]/95 backdrop-blur-xl border-b border-white/[0.04] px-4 py-3 flex items-center justify-between">
-            <Link href="/dashboard" className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-600 to-fuchsia-600 flex items-center justify-center shadow-lg shadow-purple-600/25">
-                    <span className="text-white text-xs font-black">⚡</span>
+            {/* Logo Mobile */}
+            <Link href="/dashboard" className="flex items-center group">
+                <div className="flex items-center transition-transform duration-300 group-hover:scale-105">
+                    <Image
+                        src="/assets/logo/logo-full1.png"
+                        alt="Habitivity Logo"
+                        width={110}
+                        height={28}
+                        className="object-contain drop-shadow-lg h-auto"
+                        priority
+                    />
                 </div>
-                <span className="text-sm font-bold bg-gradient-to-r from-purple-400 to-fuchsia-400 bg-clip-text text-transparent">
-                    Habitivity
-                </span>
             </Link>
             <button
                 onClick={onToggle}
@@ -118,15 +123,19 @@ function Sidebar({ user, open, onClose }: { user: { name?: string; email?: strin
                 transition-transform duration-300 ease-in-out
                 ${open ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
             `}>
-                {/* Logo */}
-                <div className="p-5 pb-6">
-                    <Link href="/dashboard" className="flex items-center gap-2.5 group" onClick={onClose}>
-                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-purple-600 to-fuchsia-600 flex items-center justify-center shadow-lg shadow-purple-600/25 group-hover:shadow-purple-600/40 transition-all group-hover:scale-105">
-                            <span className="text-white text-sm font-black">⚡</span>
+                {/* Logo Desktop */}
+                <div className="px-7 pt-6 pb-4">
+                    <Link href="/dashboard" className="flex items-center group" onClick={onClose}>
+                        <div className="flex items-center transition-transform duration-300 group-hover:scale-105">
+                            <Image
+                                src="/assets/logo/logo-full1.png"
+                                alt="Habitivity Logo"
+                                width={120}
+                                height={20}
+                                className="object-contain drop-shadow-lg h-auto"
+                                priority
+                            />
                         </div>
-                        <span className="text-base font-bold bg-gradient-to-r from-purple-400 to-fuchsia-400 bg-clip-text text-transparent">
-                            Habitivity
-                        </span>
                     </Link>
                 </div>
 

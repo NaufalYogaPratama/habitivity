@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image'; // <-- 1. Tambahkan import Image di sini
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -73,9 +74,17 @@ export default function LoginPage() {
 
     return (
         <div className="w-full max-w-md px-4 py-6 sm:py-0">
-            <div className="text-center mb-8">
-                <Link href="/" className="inline-block text-3xl font-bold font-mono tracking-tighter mb-2">
-                    <span className="text-gradient">Habitivity</span>
+            {/* 2. Bagian Header Login yang diubah */}
+            <div className="text-center mb-3">
+                <Link href="/" className="flex justify-center mb-3 transition-transform hover:scale-105 duration-300">
+                    <Image
+                        src="/assets/logo/logo-full1.png"
+                        alt="Habitivity Logo"
+                        width={180}
+                        height={45}
+                        className="object-contain drop-shadow-lg h-auto"
+                        priority
+                    />
                 </Link>
                 <p className="text-slate-400">Welcome back, Hero.</p>
             </div>

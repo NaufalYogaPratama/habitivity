@@ -41,6 +41,7 @@ interface Quest {
   difficulty: "easy" | "medium" | "hard" | "expert";
   status: "pending" | "in_progress" | "completed" | "failed";
   rewards?: { xp: number; gold: number };
+  isAdmin?: boolean;
 }
 
 type TabType = "active" | "completed" | "all";
@@ -350,9 +351,16 @@ export default function QuestBoardClient() {
               >
                 <Card className="bg-[#151823] border-white/[0.06] rounded-3xl overflow-hidden hover:border-purple-500/30 transition-all group flex flex-col h-full shadow-xl shadow-black/20">
                   <CardHeader className="pb-4">
-                    <div className="flex justify-between items-start mb-3">
-                      <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${getDifficultyColor(quest.difficulty)}`}>
-                        {quest.difficulty}
+                    <div className="flex justify-between items-start mb-3 gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        {quest.isAdmin && (
+                          <div className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border text-yellow-400 bg-yellow-400/10 border-yellow-400/20 flex items-center gap-1 shadow-[0_0_10px_rgba(250,204,21,0.2)]">
+                            👑 GLOBAL
+                          </div>
+                        )}
+                        <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${getDifficultyColor(quest.difficulty)}`}>
+                          {quest.difficulty}
+                        </div>
                       </div>
                       {getStatusBadge(quest.status)}
                     </div>
@@ -387,7 +395,11 @@ export default function QuestBoardClient() {
                             <Play className="w-4 h-4 mr-2" /> FOCUS
                           </Button>
                           <Button
-                            onClick={() => updateQuestStatus(quest._id, 'completed')}
+                            onClick={() => {
+                              if (confirm("Pahlawan sejati pantang berbohong! Yakin sudah menyelesaikan misi ini dengan jujur dan tuntas?")) {
+                                updateQuestStatus(quest._id, 'completed');
+                              }
+                            }}
                             variant="outline"
                             className="border-fuchsia-500/20 text-fuchsia-400 hover:bg-fuchsia-500/10 font-bold rounded-xl h-11"
                           >

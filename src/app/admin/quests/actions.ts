@@ -40,6 +40,7 @@ export async function createAdminQuestAction(data: {
                 category: data.category || "work",
                 difficulty: data.difficulty || "medium",
                 rewards: baseRewards,
+                isAdmin: true,
             }));
             if (questsToInsert.length > 0) {
                 await Quest.insertMany(questsToInsert);
@@ -53,6 +54,7 @@ export async function createAdminQuestAction(data: {
                 category: data.category || "work",
                 difficulty: data.difficulty || "medium",
                 rewards: baseRewards,
+                isAdmin: true,
             });
         }
 

@@ -20,6 +20,7 @@ export interface IQuest extends Document {
     gold: number;
   };
   timerUsed: boolean;
+  isAdmin?: boolean;
   completedAt?: Date;
   createdAt: Date;
 }
@@ -65,6 +66,10 @@ const QuestSchema = new Schema<IQuest>({
     gold: { type: Number, default: 0 }
   },
   timerUsed: {
+    type: Boolean,
+    default: false
+  },
+  isAdmin: {
     type: Boolean,
     default: false
   },

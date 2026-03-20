@@ -80,6 +80,7 @@ export default async function DashboardPage() {
             gold: `${q.rewards?.gold || 20}g`,
             rarity: DIFFICULTY_LABEL[q.difficulty] || 'Rare',
             gradient: catCfg.gradient,
+            isAdmin: q.isAdmin || false,
         };
     });
 
@@ -268,6 +269,11 @@ export default async function DashboardPage() {
                                 <Card key={quest.id} className="bg-[#151823] border-white/[0.06] hover:border-purple-500/20 transition-all group hover:-translate-y-1 duration-300 min-w-[200px] sm:min-w-[220px] lg:min-w-0 snap-start flex-shrink-0 lg:flex-shrink">
                                     <CardContent className="p-0">
                                         <div className={`aspect-[4/3] rounded-t-xl bg-gradient-to-br ${quest.gradient} relative overflow-hidden flex items-center justify-center`}>
+                                            {quest.isAdmin && (
+                                                <div className="absolute top-2 left-2 sm:top-2.5 sm:left-2.5 bg-yellow-500/20 backdrop-blur-md px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg text-[9px] sm:text-[10px] font-black border border-yellow-500/30 text-yellow-400 uppercase tracking-wider flex items-center gap-1 shadow-lg">
+                                                    <span>👑</span> GLOBAL
+                                                </div>
+                                            )}
                                             <span className="text-4xl sm:text-5xl group-hover:scale-110 transition-transform duration-500 drop-shadow-lg">{quest.icon}</span>
                                             <div className="absolute top-2 right-2 sm:top-2.5 sm:right-2.5 bg-black/40 backdrop-blur-md px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg text-[9px] sm:text-[10px] font-bold border border-white/10 text-white uppercase tracking-wider">
                                                 {quest.rarity}

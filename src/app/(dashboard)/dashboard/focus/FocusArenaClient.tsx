@@ -413,6 +413,14 @@ export default function FocusArenaClient() {
     // ─── Load stats from DB ────────────────
     useEffect(() => {
         store.loadStats();
+
+        // Cek URL params untuk questId
+        const params = new URLSearchParams(window.location.search);
+        const qid = params.get('questId');
+        if (qid) {
+            store.setQuestId(qid);
+        }
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 

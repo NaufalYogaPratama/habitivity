@@ -59,12 +59,16 @@ interface FocusStore {
     hp: number;
     hpPenaltyCount: number;
 
+    // Quest Association
+    questId: string | null;
+
     // Stats (loaded from DB)
     sessionsCompleted: number;
     totalFocusTime: number;
     currentStreak: number;
 
     // Actions
+    setQuestId: (id: string | null) => void;
     selectMode: (mode: FocusMode) => void;
     startSession: () => void;
     pauseSession: () => void;
@@ -87,9 +91,13 @@ export const useFocusStore = create<FocusStore>((set, get) => ({
     hp: 100,
     hpPenaltyCount: 0,
 
+    questId: null,
+
     sessionsCompleted: 0,
     totalFocusTime: 0,
     currentStreak: 0,
+
+    setQuestId: (id) => set({ questId: id }),
 
     selectMode: (mode) => {
         const config = FOCUS_MODES.find((m) => m.id === mode)!;
@@ -150,12 +158,12 @@ export const useFocusStore = create<FocusStore>((set, get) => ({
     penalizeHP: async () => {
         const state = get();
         if (state.sessionState !== 'running') return;
-        
+
         const newHP = Math.max(0, state.hp - 5);
-        
+
         // 1. Update UI secara instan (Optimistic UI Update)
         set({ hp: newHP, hpPenaltyCount: state.hpPenaltyCount + 1 });
-        
+
         // 2. Tembak API untuk simpan HP ke Database permanen
         try {
             await fetch('/api/user/stats', {
@@ -182,6 +190,7 @@ export const useFocusStore = create<FocusStore>((set, get) => ({
             sessionState: 'idle',
             hp: 100,
             hpPenaltyCount: 0,
+            questId: null,
         });
     },
 
@@ -224,8 +233,8 @@ export const useFocusStore = create<FocusStore>((set, get) => ({
             // 2. BARU: Jika sesi sukses, Update XP, Gold, dan Streak user di Database Global!
             if (status === 'completed') {
                 // Misal: Gold reward adalah 20% dari XP Reward
-                const goldEarned = Math.floor(config.xpReward * 0.2); 
-                
+                const goldEarned = Math.floor(config.xpReward * 0.2);
+
                 await fetch('/api/user/stats', {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
@@ -235,6 +244,15 @@ export const useFocusStore = create<FocusStore>((set, get) => ({
                         streakToAdd: 1
                     }),
                 });
+
+                // 3. Jika membawa quest yang harus diselesaikan
+                if (state.questId) {
+                    await fetch(`/api/quests/update/${state.questId}`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ status: 'completed' })
+                    });
+                }
             }
 
         } catch (err) {

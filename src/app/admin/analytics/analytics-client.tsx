@@ -24,44 +24,64 @@ export default function AnalyticsClient({ chartData, statsOverview, totalUsers, 
                 <p className="text-slate-400 text-sm mt-1">Deep dive into Habitivity's growth and engagement metrics.</p>
             </div>
 
-            <div className="grid xl:grid-cols-4 gap-6">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-6">
                 <Card className="bg-[#151823] border-emerald-500/20 shadow-lg shadow-emerald-500/5">
-                    <CardHeader className="pb-2">
-                        <CardDescription className="font-bold text-slate-500 uppercase tracking-widest text-[10px]">User Base</CardDescription>
-                        <CardTitle className="text-3xl font-black text-emerald-400">{totalUsers.toLocaleString()}</CardTitle>
+                    <CardHeader className="pb-1 p-4">
+                        <CardDescription className="font-bold text-slate-500 uppercase tracking-widest text-[9px]">Hero Roster</CardDescription>
+                        <CardTitle className="text-2xl font-black text-emerald-400">{totalUsers.toLocaleString()}</CardTitle>
                     </CardHeader>
-                    <CardContent>
-                        <p className="text-xs text-slate-400">Total registered players</p>
+                    <CardContent className="p-4 pt-0">
+                        <p className="text-[10px] text-slate-400">Registered</p>
                     </CardContent>
                 </Card>
 
                 <Card className="bg-[#151823] border-blue-500/20 shadow-lg shadow-blue-500/5">
-                    <CardHeader className="pb-2">
-                        <CardDescription className="font-bold text-slate-500 uppercase tracking-widest text-[10px]">Focus Output (30 Days)</CardDescription>
-                        <CardTitle className="text-3xl font-black text-blue-400">{Math.floor(totalFocusMins / 60)}h</CardTitle>
+                    <CardHeader className="pb-1 p-4">
+                        <CardDescription className="font-bold text-slate-500 uppercase tracking-widest text-[9px]">Deep Work (30d)</CardDescription>
+                        <CardTitle className="text-2xl font-black text-blue-400">{Math.floor(totalFocusMins / 60)}h</CardTitle>
                     </CardHeader>
-                    <CardContent>
-                        <p className="text-xs text-slate-400">Total deep work hours</p>
+                    <CardContent className="p-4 pt-0">
+                        <p className="text-[10px] text-slate-400">Total Focus</p>
                     </CardContent>
                 </Card>
 
                 <Card className="bg-[#151823] border-amber-500/20 shadow-lg shadow-amber-500/5">
-                    <CardHeader className="pb-2">
-                        <CardDescription className="font-bold text-slate-500 uppercase tracking-widest text-[10px]">Economy Gold</CardDescription>
-                        <CardTitle className="text-3xl font-black text-amber-400">{statsOverview.totalGold.toLocaleString()}</CardTitle>
+                    <CardHeader className="pb-1 p-4">
+                        <CardDescription className="font-bold text-slate-500 uppercase tracking-widest text-[9px]">Gold Economy</CardDescription>
+                        <CardTitle className="text-2xl font-black text-amber-400">{statsOverview.totalGold.toLocaleString()}g</CardTitle>
                     </CardHeader>
-                    <CardContent>
-                        <p className="text-xs text-slate-400">Total gold in circulation</p>
+                    <CardContent className="p-4 pt-0">
+                        <p className="text-[10px] text-slate-400">Circulation</p>
                     </CardContent>
                 </Card>
 
                 <Card className="bg-[#151823] border-fuchsia-500/20 shadow-lg shadow-fuchsia-500/5">
-                    <CardHeader className="pb-2">
-                        <CardDescription className="font-bold text-slate-500 uppercase tracking-widest text-[10px]">Shop Purchases</CardDescription>
-                        <CardTitle className="text-3xl font-black text-fuchsia-400">{statsOverview.totalPurchases.toLocaleString()}</CardTitle>
+                    <CardHeader className="pb-1 p-4">
+                        <CardDescription className="font-bold text-slate-500 uppercase tracking-widest text-[9px]">Shop Volume</CardDescription>
+                        <CardTitle className="text-2xl font-black text-fuchsia-400">{statsOverview.totalPurchases.toLocaleString()}</CardTitle>
                     </CardHeader>
-                    <CardContent>
-                        <p className="text-xs text-slate-400">Items bought by players</p>
+                    <CardContent className="p-4 pt-0">
+                        <p className="text-[10px] text-slate-400">Items Sold</p>
+                    </CardContent>
+                </Card>
+
+                <Card className="bg-[#151823] border-cyan-500/20 shadow-lg shadow-cyan-500/5">
+                    <CardHeader className="pb-1 p-4">
+                        <CardDescription className="font-bold text-slate-500 uppercase tracking-widest text-[9px]">Quests Beaten</CardDescription>
+                        <CardTitle className="text-2xl font-black text-cyan-400">{statsOverview.completedQuests.toLocaleString()}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-4 pt-0">
+                        <p className="text-[10px] text-slate-400">Victories</p>
+                    </CardContent>
+                </Card>
+
+                <Card className="bg-[#151823] border-rose-500/20 shadow-lg shadow-rose-500/5">
+                    <CardHeader className="pb-1 p-4">
+                        <CardDescription className="font-bold text-slate-500 uppercase tracking-widest text-[9px]">Active Quests</CardDescription>
+                        <CardTitle className="text-2xl font-black text-rose-400">{statsOverview.activeQuests.toLocaleString()}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="p-4 pt-0">
+                        <p className="text-[10px] text-slate-400">On-going</p>
                     </CardContent>
                 </Card>
             </div>

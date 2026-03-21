@@ -2,9 +2,10 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image'; // <-- Tambahkan import Image
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { adminSignOutAction } from './actions';
+import { UserAvatar } from '@/components/ui/UserAvatar';
 
 const adminNavItems = [
     {
@@ -71,7 +72,7 @@ function MobileHeader({ onToggle }: { onToggle: () => void }) {
     );
 }
 
-function AdminSidebar({ user, open, onClose }: { user: { name?: string }; open: boolean; onClose: () => void }) {
+function AdminSidebar({ user, open, onClose }: { user: any; open: boolean; onClose: () => void }) {
     const pathname = usePathname();
 
     return (
@@ -141,7 +142,16 @@ function AdminSidebar({ user, open, onClose }: { user: { name?: string }; open: 
                 </nav>
 
                 {/* Bottom */}
-                <div className="p-3 border-t border-white/[0.04]">
+                <div className="p-3 border-t border-white/[0.04] space-y-2">
+                    {/* Admin Mini Profile */}
+                    <div className="flex items-center gap-3 px-3 py-2 bg-white/[0.02] rounded-xl border border-white/[0.04]">
+                        <UserAvatar avatar={user?.avatar as any} className="w-8 h-8 rounded-lg shadow-md" emojiSize="text-xs" />
+                        <div className="flex-1 min-w-0">
+                            <p className="text-white text-xs font-bold truncate">{user?.name || 'Administrator'}</p>
+                            <p className="text-fuchsia-400 text-[10px] font-bold uppercase tracking-widest">Supreme</p>
+                        </div>
+                    </div>
+
                     <form action={adminSignOutAction}>
                         <button
                             type="submit"
@@ -157,7 +167,7 @@ function AdminSidebar({ user, open, onClose }: { user: { name?: string }; open: 
     );
 }
 
-export default function AdminLayoutClient({ children, user }: { children: React.ReactNode; user: { name?: string } }) {
+export default function AdminLayoutClient({ children, user }: { children: React.ReactNode; user: any }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     return (

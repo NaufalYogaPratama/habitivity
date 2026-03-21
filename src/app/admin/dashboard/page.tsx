@@ -2,9 +2,10 @@ import { auth } from '@/auth';
 import { redirect } from 'next/navigation';
 import { signOut } from '@/auth';
 import Link from 'next/link';
-import Image from 'next/image'; // <-- Pastikan ini ada
+import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { UserAvatar } from '@/components/ui/UserAvatar';
 
 import connectDB from '@/lib/db/mongodb';
 import User from '@/models/User';
@@ -51,7 +52,7 @@ export default async function AdminDashboardPage() {
             label: 'Total Users', value: totalUsers.toLocaleString(), sub: `+${usersThisWeek} this week`, color: 'text-purple-400', gradient: 'from-purple-500/20 via-purple-600/10 to-transparent', border: 'border-purple-500/15'
         },
         {
-            icon: <span className="text-3xl drop-shadow-md">⏱️</span>, // <-- Jam tetap dipertahankan
+            icon: <Image src="/assets/logo/icon-fokus.png" alt="Focus Hours" width={32} height={32} className="drop-shadow-md" />,
             label: 'Focus Hours', value: focusHours.toString(), sub: 'All users combined', color: 'text-emerald-400', gradient: 'from-emerald-500/20 via-emerald-600/10 to-transparent', border: 'border-emerald-500/15'
         },
         {
@@ -68,13 +69,14 @@ export default async function AdminDashboardPage() {
     const recentUsersRaw = await User.find({ role: 'user' })
         .sort({ createdAt: -1 })
         .limit(4)
-        .select('username email stats.level createdAt')
+        .select('username email stats.level createdAt avatar')
         .lean();
 
     const recentUsers = recentUsersRaw.map(u => ({
         name: u.username,
         email: u.email,
         level: u.stats?.level || 1,
+        avatar: u.avatar,
         // Calculate a simple online status based on recent activity (mocked as online if they joined very recently)
         status: (new Date().getTime() - new Date(u.createdAt).getTime() < 3600000) ? 'online' : 'offline',
     }));
@@ -342,9 +344,7 @@ export default async function AdminDashboardPage() {
                     <div className="space-y-2">
                         {recentUsers.map((u) => (
                             <div key={u.name} className="flex items-center gap-3 p-2.5 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] transition-colors">
-                                <div className="w-8 h-8 rounded-lg bg-[#0B0E14] flex items-center justify-center text-xs border border-white/[0.04]">
-                                    <Image src="/assets/logo/icon-profile.png" alt="User" width={16} height={16} />
-                                </div>
+                                <UserAvatar avatar={u.avatar as any} className="w-8 h-8 rounded-lg shadow-sm" emojiSize="text-xs" />
                                 <div className="flex-1 min-w-0">
                                     <p className="text-white text-xs font-semibold truncate">{u.name}</p>
                                     <p className="text-slate-600 text-[10px] truncate">{u.email}</p>

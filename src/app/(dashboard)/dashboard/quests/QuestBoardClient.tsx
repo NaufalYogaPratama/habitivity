@@ -53,6 +53,7 @@ export default function QuestBoardClient() {
   const [activeTab, setActiveTab] = useState<TabType>("active");
   const [questType, setQuestType] = useState<"personal" | "global">("personal");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [questToComplete, setQuestToComplete] = useState<Quest | null>(null);
 
   // Form State
   const [title, setTitle] = useState("");
@@ -258,11 +259,7 @@ export default function QuestBoardClient() {
                   <Play className="w-4 h-4 mr-2" /> FOCUS
                 </Button>
                 <Button
-                  onClick={() => {
-                    if (confirm("Pahlawan sejati pantang berbohong! Yakin sudah menyelesaikan misi ini dengan jujur dan tuntas?")) {
-                      updateQuestStatus(quest._id, 'completed');
-                    }
-                  }}
+                  onClick={() => setQuestToComplete(quest)}
                   variant="outline"
                   className="border-fuchsia-500/20 text-fuchsia-400 hover:bg-fuchsia-500/10 font-bold rounded-xl h-11"
                 >
@@ -470,6 +467,42 @@ export default function QuestBoardClient() {
           </div>
         )}
       </AnimatePresence>
+
+      {/* Confirmation Dialog for Completing Quest */}
+      <Dialog open={!!questToComplete} onOpenChange={(open) => !open && setQuestToComplete(null)}>
+        <DialogContent className="sm:max-w-[400px] overflow-hidden bg-[#0F1118]/95 backdrop-blur-3xl border-white/[0.08] text-white rounded-3xl p-6 sm:p-8 text-center shadow-2xl shadow-black/50">
+          <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-fuchsia-500/10 to-transparent pointer-events-none" />
+          <div className="relative z-10">
+            <div className="w-20 h-20 bg-gradient-to-br from-fuchsia-500/20 to-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-5 border border-fuchsia-500/20 shadow-[0_0_20px_rgba(217,70,239,0.15)]">
+              <Swords className="w-10 h-10 text-fuchsia-400" />
+            </div>
+            <h2 className="text-xl sm:text-2xl font-black mb-2 text-transparent bg-clip-text bg-gradient-to-br from-white to-slate-400">
+              Pahlawan Pantang Bohong!
+            </h2>
+            <p className="text-slate-400 text-sm mb-8 leading-relaxed">
+              Yakin sudah menyelesaikan misi <strong className="text-white">"{questToComplete?.title}"</strong> dengan jujur dan tuntas?
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 w-full">
+              <Button
+                variant="outline"
+                onClick={() => setQuestToComplete(null)}
+                className="flex-1 bg-white/[0.03] border-white/[0.08] hover:bg-white/[0.08] hover:border-white/[0.1] text-slate-300 rounded-xl h-12 font-bold transition-all"
+              >
+                Belum
+              </Button>
+              <Button
+                onClick={() => {
+                  if (questToComplete) updateQuestStatus(questToComplete._id, 'completed');
+                  setQuestToComplete(null);
+                }}
+                className="flex-1 bg-gradient-to-r from-fuchsia-600 to-purple-600 hover:from-fuchsia-500 hover:to-purple-500 text-white rounded-xl h-12 font-bold shadow-lg shadow-fuchsia-600/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+              >
+                Ya, Selesai! <CheckCircle2 className="w-4 h-4 ml-2" />
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

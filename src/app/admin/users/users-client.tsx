@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image'; // <-- Tambahkan import Image
+import Image from 'next/image';
+import { toast } from 'sonner';
 import { Card, CardContent } from '@/components/ui/card';
 
 export default function UsersClient({ initialUsers }: { initialUsers: any[] }) {
@@ -57,11 +58,14 @@ export default function UsersClient({ initialUsers }: { initialUsers: any[] }) {
                     if (u._id === id) return { ...u, accountStatus: action === 'ban' ? 'banned' : 'active' };
                     return u;
                 }));
+                toast.success(`User successfully ${action === 'ban' ? 'banned' : 'unbanned'}!`);
             } else {
-                alert('Action failed');
+                const data = await res.json();
+                toast.error(data.error || 'Action failed');
             }
         } catch (error) {
             console.error(error);
+            toast.error('Gagal terhubung ke server');
         }
     };
 
@@ -88,11 +92,14 @@ export default function UsersClient({ initialUsers }: { initialUsers: any[] }) {
                 // Update selected user view directly
                 setSelectedUser({ ...selectedUser, stats: { ...selectedUser.stats, level: editLevel, hp: editHp, gold: editGold } });
                 setIsEditing(false);
+                toast.success('User stats updated successfully! 🚀');
             } else {
-                alert('Edit failed');
+                const data = await res.json();
+                toast.error(data.error || 'Edit failed');
             }
         } catch (error) {
             console.error(error);
+            toast.error('Gagal terhubung ke server');
         }
     };
 

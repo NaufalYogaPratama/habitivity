@@ -18,7 +18,6 @@ import { toast } from 'sonner';
 
 const resetSchema = z.object({
     email: z.string().email('Format email tidak valid'),
-    username: z.string().min(3, 'Username minimal 3 karakter'),
     newPassword: z.string().min(6, 'Password baru minimal 6 karakter'),
 });
 
@@ -32,7 +31,6 @@ export default function ForgotPasswordPage() {
         resolver: zodResolver(resetSchema),
         defaultValues: {
             email: '',
-            username: '',
             newPassword: '',
         },
     });
@@ -53,7 +51,7 @@ export default function ForgotPasswordPage() {
                 toast.success('Password berhasil direset! Silakan login kemari. 🚀');
                 router.push('/login');
             } else {
-                toast.error(result.error || 'Verifikasi gagal. Pastikan Email & Hero Name cocok.');
+                toast.error(result.error || 'Verifikasi gagal. Pastikan Email terdaftar.');
             }
         } catch (error) {
             toast.error('Gagal terhubung ke server.');
@@ -83,7 +81,7 @@ export default function ForgotPasswordPage() {
                 <CardHeader>
                     <CardTitle className="text-2xl text-center text-white">Reset Password</CardTitle>
                     <CardDescription className="text-center text-slate-400">
-                        Verifikasi identitas Hero Anda untuk melanjutkan.
+                        Masukkan email Anda untuk mereset sandi.
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -98,23 +96,6 @@ export default function ForgotPasswordPage() {
                                         <FormControl>
                                             <Input
                                                 placeholder="hero@habitivity.id"
-                                                {...field}
-                                                className="bg-white/5 border-white/10 text-white placeholder:text-slate-600 focus-visible:ring-violet-500/50"
-                                            />
-                                        </FormControl>
-                                        <FormMessage className="text-red-400" />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="username"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="text-slate-300">Hero Name (Username)</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                placeholder="Cth: Naufal_Yoga"
                                                 {...field}
                                                 className="bg-white/5 border-white/10 text-white placeholder:text-slate-600 focus-visible:ring-violet-500/50"
                                             />

@@ -1,10 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image'; // <-- 1. Tambahkan import Image di sini
+import Image from 'next/image';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,69 +11,60 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 
-const loginSchema = z.object({
-    email: z.string().email('Invalid email address'),
-    password: z.string().min(6, 'Password must be at least 6 characters'),
+const resetSchema = z.object({
+    email: z.string().email('Format email tidak valid'),
+    username: z.string().min(3, 'Username minimal 3 karakter'),
+    newPassword: z.string().min(6, 'Password baru minimal 6 karakter'),
 });
 
-type LoginForm = z.infer<typeof loginSchema>;
+type ResetForm = z.infer<typeof resetSchema>;
 
-export default function LoginPage() {
+export default function ForgotPasswordPage() {
     const router = useRouter();
-    const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const form = useForm<LoginForm>({
-        resolver: zodResolver(loginSchema),
+    const form = useForm<ResetForm>({
+        resolver: zodResolver(resetSchema),
         defaultValues: {
             email: '',
-            password: '',
+            username: '',
+            newPassword: '',
         },
     });
 
-    const onSubmit = async (data: LoginForm) => {
+    const onSubmit = async (data: ResetForm) => {
         setLoading(true);
-        setError('');
 
         try {
-            const result = await signIn('credentials', {
-                email: data.email,
-                password: data.password,
-                redirect: false,
+            const res = await fetch('/api/auth/reset-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
             });
 
-            if (result?.error) {
-                setError('Invalid email or password. Please try again.');
-                setLoading(false);
-                return;
-            }
+            const result = await res.json();
 
-            // Fetch session to determine role-based redirect
-            const res = await fetch('/api/auth/session');
-            const session = await res.json();
-            const role = session?.user?.role;
-            const accountStatus = session?.user?.accountStatus;
-
-            if (accountStatus === 'banned') {
-                router.push('/banned');
-            } else if (role === 'admin') {
-                router.push('/admin/dashboard');
+            if (res.ok) {
+                toast.success('Password berhasil direset! Silakan login kemari. 🚀');
+                router.push('/login');
             } else {
-                router.push('/dashboard');
+                toast.error(result.error || 'Verifikasi gagal. Pastikan Email & Hero Name cocok.');
             }
-        } catch {
-            setError('Something went wrong. Please try again.');
+        } catch (error) {
+            toast.error('Gagal terhubung ke server.');
+        } finally {
             setLoading(false);
         }
     };
 
     return (
         <div className="w-full max-w-md px-4 py-6 sm:py-0">
-            {/* 2. Bagian Header Login yang diubah */}
+            {/* Header Login */}
             <div className="text-center mb-3">
                 <Link href="/" className="flex justify-center mb-3 transition-transform hover:scale-105 duration-300">
                     <Image
@@ -86,23 +76,17 @@ export default function LoginPage() {
                         priority
                     />
                 </Link>
-                <p className="text-slate-400">Welcome back, Hero.</p>
+                <p className="text-slate-400">Memory Recovery Module.</p>
             </div>
 
             <Card className="glass border-white/10 bg-black/40 backdrop-blur-xl shadow-2xl">
                 <CardHeader>
-                    <CardTitle className="text-2xl text-center text-white">Sign In</CardTitle>
+                    <CardTitle className="text-2xl text-center text-white">Reset Password</CardTitle>
                     <CardDescription className="text-center text-slate-400">
-                        Enter your credentials to access your dashboard
+                        Verifikasi identitas Hero Anda untuk melanjutkan.
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    {error && (
-                        <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3 text-red-400 text-sm flex items-center gap-2 mb-6">
-                            <span>⚠️</span> {error}
-                        </div>
-                    )}
-
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                             <FormField
@@ -110,7 +94,7 @@ export default function LoginPage() {
                                 name="email"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel className="text-slate-300">Email</FormLabel>
+                                        <FormLabel className="text-slate-300">Registered Email</FormLabel>
                                         <FormControl>
                                             <Input
                                                 placeholder="hero@habitivity.id"
@@ -124,15 +108,27 @@ export default function LoginPage() {
                             />
                             <FormField
                                 control={form.control}
-                                name="password"
+                                name="username"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <div className="flex items-center justify-between">
-                                            <FormLabel className="text-slate-300">Password</FormLabel>
-                                            <Link href="/forgot-password" className="text-xs text-violet-400 hover:text-violet-300 transition-colors font-medium">
-                                                Lupa Password?
-                                            </Link>
-                                        </div>
+                                        <FormLabel className="text-slate-300">Hero Name (Username)</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                placeholder="Cth: Naufal_Yoga"
+                                                {...field}
+                                                className="bg-white/5 border-white/10 text-white placeholder:text-slate-600 focus-visible:ring-violet-500/50"
+                                            />
+                                        </FormControl>
+                                        <FormMessage className="text-red-400" />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="newPassword"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-slate-300">New Password</FormLabel>
                                         <FormControl>
                                             <Input
                                                 type="password"
@@ -147,29 +143,28 @@ export default function LoginPage() {
                             />
                             <Button
                                 type="submit"
-                                className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white font-bold shadow-lg shadow-violet-500/25 h-11"
+                                className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold shadow-lg shadow-emerald-500/25 h-11 mt-2"
                                 disabled={loading}
                             >
                                 {loading ? (
                                     <>
                                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                        Signing In...
+                                        Verifying...
                                     </>
                                 ) : (
-                                    'Sign In'
+                                    'Reset Password'
                                 )}
                             </Button>
                         </form>
                     </Form>
-                </CardContent>
-                <CardFooter>
-                    <div className="text-center text-sm w-full text-slate-400">
-                        Don&apos;t have an account?{' '}
-                        <Link href="/register" className="text-violet-400 hover:text-violet-300 font-bold hover:underline">
-                            Sign up
+
+                    <div className="mt-6 text-center text-sm text-slate-400">
+                        Memori sudah pulih?{' '}
+                        <Link href="/login" className="text-violet-400 hover:text-violet-300 transition-colors font-medium">
+                            Kembali ke Sign In
                         </Link>
                     </div>
-                </CardFooter>
+                </CardContent>
             </Card>
         </div>
     );

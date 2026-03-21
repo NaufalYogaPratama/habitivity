@@ -143,14 +143,7 @@ function AdminSidebar({ user, open, onClose }: { user: any; open: boolean; onClo
 
                 {/* Bottom */}
                 <div className="p-3 border-t border-white/[0.04] space-y-2">
-                    {/* Admin Mini Profile */}
-                    <div className="flex items-center gap-3 px-3 py-2 bg-white/[0.02] rounded-xl border border-white/[0.04]">
-                        <UserAvatar avatar={user?.avatar as any} className="w-8 h-8 rounded-lg shadow-md" emojiSize="text-xs" />
-                        <div className="flex-1 min-w-0">
-                            <p className="text-white text-xs font-bold truncate">{user?.name || 'Administrator'}</p>
-                            <p className="text-fuchsia-400 text-[10px] font-bold uppercase tracking-widest">Supreme</p>
-                        </div>
-                    </div>
+
 
                     <form action={adminSignOutAction}>
                         <button

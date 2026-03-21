@@ -8,6 +8,13 @@ const CHARACTERS_CONFIG: Record<string, { emoji: string; color: string }> = {
     ForestMage: { emoji: "🧙‍♂️", color: "from-teal-500 to-lime-400" }
 };
 
+const KNOWN_EQUIPMENT_ICONS: Record<string, string> = {
+    "Basic Helm": "🪖", "Cyber Visor": "🥽", "Void Crown": "👑", "Infinity Halo": "😇",
+    "Standard Suit": "👕", "Stealth Vest": "🦺", "Plasma Core": "🛡️", "Quantum Shield": "🔮",
+    "Training Blade": "🗡️", "Laser Dagger": "🔪", "Void Saber": "⚔️", "Excalibur NG": "🗡️",
+    "Power Glove": "🧤", "Hologram Wing": "🦋", "Time Ring": "💍", "Infinity Gauntlet": "🧤",
+};
+
 interface AvatarProps {
     avatar?: {
         base: string;
@@ -29,8 +36,10 @@ export function UserAvatar({ avatar, className = "w-10 h-10", emojiSize = "text-
     const config = CHARACTERS_CONFIG[baseId] || CHARACTERS_CONFIG["CosmicTraveler"];
 
     // Equipments
-    const hasHelm = !!avatar?.equipment?.helm;
-    const hasWeapon = !!avatar?.equipment?.weapon;
+    const helm = avatar?.equipment?.helm;
+    const weapon = avatar?.equipment?.weapon;
+    const armor = avatar?.equipment?.armor;
+    const accessory = avatar?.equipment?.accessory;
 
     return (
         <div className={`relative flex items-center justify-center bg-gradient-to-br ${config.color} rounded-2xl shadow-lg border border-white/20 overflow-visible ${className}`}>
@@ -38,14 +47,24 @@ export function UserAvatar({ avatar, className = "w-10 h-10", emojiSize = "text-
                 {config.emoji}
             </span>
 
-            {hasHelm && (
-                <span className="absolute -top-1 -right-1 text-[10px] bg-black/50 rounded-full w-4 h-4 flex items-center justify-center border border-white/10 z-20" title="Equipped Helm">
-                    🪖
+            {helm && (
+                <span className="absolute -top-1.5 -right-1.5 text-[10px] bg-black/60 rounded-full w-5 h-5 flex items-center justify-center border border-white/20 z-20 shadow-sm" title={helm}>
+                    {KNOWN_EQUIPMENT_ICONS[helm] || "🪖"}
                 </span>
             )}
-            {hasWeapon && (
-                <span className="absolute -bottom-1 -left-1 text-[10px] bg-black/50 rounded-full w-4 h-4 flex items-center justify-center border border-white/10 z-20" title="Equipped Weapon">
-                    ⚔️
+            {armor && (
+                <span className="absolute -top-1.5 -left-1.5 text-[10px] bg-black/60 rounded-full w-5 h-5 flex items-center justify-center border border-white/20 z-20 shadow-sm" title={armor}>
+                    {KNOWN_EQUIPMENT_ICONS[armor] || "👕"}
+                </span>
+            )}
+            {weapon && (
+                <span className="absolute -bottom-1.5 -left-1.5 text-[10px] bg-black/60 rounded-full w-5 h-5 flex items-center justify-center border border-white/20 z-20 shadow-sm" title={weapon}>
+                    {KNOWN_EQUIPMENT_ICONS[weapon] || "⚔️"}
+                </span>
+            )}
+            {accessory && (
+                <span className="absolute -bottom-1.5 -right-1.5 text-[10px] bg-black/60 rounded-full w-5 h-5 flex items-center justify-center border border-white/20 z-20 shadow-sm" title={accessory}>
+                    {KNOWN_EQUIPMENT_ICONS[accessory] || "💍"}
                 </span>
             )}
 

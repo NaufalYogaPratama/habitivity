@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { toast } from 'sonner';
 import { Card, CardContent } from '@/components/ui/card';
+import { UserAvatar } from '@/components/ui/UserAvatar';
 
 export default function UsersClient({ initialUsers }: { initialUsers: any[] }) {
     const [users, setUsers] = useState(initialUsers);
@@ -140,9 +141,7 @@ export default function UsersClient({ initialUsers }: { initialUsers: any[] }) {
                                         <td className="p-4 min-w-[200px]">
                                             <div className="flex items-center gap-3">
                                                 {/* PERUBAHAN: Avatar user di tabel diganti icon-profile */}
-                                                <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-inner bg-[#0B0E14] border border-white/5 overflow-hidden">
-                                                    <Image src="/assets/logo/icon-profile.png" alt="Avatar" width={36} height={36} className="object-cover" />
-                                                </div>
+                                                <UserAvatar avatar={user.avatar} className="w-10 h-10 shadow-sm" emojiSize="text-xl" />
                                                 <div>
                                                     <div className="flex items-center gap-2">
                                                         <p className={`font-bold text-sm transition-colors ${isBanned ? 'text-red-400 line-through opacity-70' : 'text-white group-hover:text-purple-400'}`}>
@@ -230,10 +229,27 @@ export default function UsersClient({ initialUsers }: { initialUsers: any[] }) {
                         <div className="p-5 space-y-4">
                             {!isEditing ? (
                                 <>
-                                    <div>
-                                        <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Identity</p>
-                                        <p className="text-white text-lg font-bold">{selectedUser.username}</p>
-                                        <p className="text-slate-400 text-sm">{selectedUser.email}</p>
+                                    <div className="flex items-center gap-4">
+                                        <UserAvatar avatar={selectedUser.avatar} className="w-16 h-16 shadow-lg" emojiSize="text-3xl" showEvolution />
+                                        <div>
+                                            <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Identity</p>
+                                            <p className="text-white text-xl font-bold">{selectedUser.username}</p>
+                                            <p className="text-slate-400 text-sm">{selectedUser.email}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="bg-white/[0.02] border border-white/[0.06] rounded-xl p-3">
+                                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Real-World Profile</p>
+                                        <div className="grid grid-cols-2 gap-2 text-sm">
+                                            <div>
+                                                <p className="text-slate-500 text-[10px] font-bold uppercase">Kampus</p>
+                                                <p className="font-medium text-white truncate max-w-full" title={selectedUser.regional?.university || 'Belum diisi'}>{selectedUser.regional?.university || '-'}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-slate-500 text-[10px] font-bold uppercase">Kota</p>
+                                                <p className="font-medium text-white truncate max-w-full" title={selectedUser.regional?.city || 'Belum diisi'}>{selectedUser.regional?.city || '-'}</p>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div className="grid grid-cols-3 gap-3">
                                         <div className="bg-[#0B0E14] p-3 rounded-xl border border-white/[0.04] text-center">

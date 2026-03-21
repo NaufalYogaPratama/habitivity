@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Card, CardContent } from '@/components/ui/card';
 import Image from "next/image";
 import { toast } from "sonner";
@@ -62,9 +63,14 @@ const categoryIcons: Record<string, string> = {
     finance: '💰',
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function AdminQuestsClient({ initialQuests, stats, users }: { initialQuests: QuestData[]; stats: QuestStats; users: { _id: string, username: string, email: string }[] }) {
+    const router = useRouter();
     const [quests, setQuests] = useState(initialQuests);
+
+    useEffect(() => {
+        setQuests(initialQuests);
+    }, [initialQuests]);
+
     const [filterStatus, setFilterStatus] = useState<string>('all');
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -132,6 +138,7 @@ export default function AdminQuestsClient({ initialQuests, stats, users }: { ini
                 setDescription("");
                 setTargetUserId("all");
                 setHasAnalyzed(false);
+                router.refresh();
             } else {
                 toast.error(res.error || "Gagal menambahkan misi");
             }

@@ -380,38 +380,55 @@ export default function QuestBoardClient() {
         </Dialog>
       </div>
 
-      {/* Tabs / Filters Section */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        {/* Quest Type Tabs */}
-        <div className="flex bg-[#151823] border border-white/[0.06] rounded-2xl p-1 w-full sm:w-fit">
-          {[
-            { id: "personal", label: "🎯 Misi Pribadi" },
-            { id: "global", label: "👑 Misi Global" },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setQuestType(tab.id as "personal" | "global")}
-              className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold transition-all ${questType === tab.id
-                ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/20'
-                : 'text-slate-500 hover:text-slate-300'
-                }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+      {/* Primary Navigation (Quest Type) */}
+      <div className="flex bg-[#151823] border border-white/[0.06] rounded-2xl p-1 w-full sm:w-fit">
+        {[
+          { id: "personal", label: "🎯 Misi Pribadi" },
+          { id: "global", label: "👑 Misi Global" },
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setQuestType(tab.id as "personal" | "global")}
+            className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 sm:px-8 py-3 rounded-xl text-sm font-bold transition-all ${questType === tab.id
+              ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/20'
+              : 'text-slate-500 hover:text-slate-300 hover:bg-white/[0.02]'
+              }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Header for Current Tab + Secondary Filter */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center py-2 gap-4 border-b border-white/[0.06] pb-5">
+        <div>
+          <h2 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2">
+            {questType === "global" ? (
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600 flex items-center gap-2">
+                👑 Kumpulan Misi Global
+              </span>
+            ) : (
+              <span className="flex items-center gap-2">🎯 Daftar Misi Pribadi</span>
+            )}
+          </h2>
+          <p className="text-slate-500 text-xs sm:text-sm mt-1.5">
+            {questType === "global"
+              ? "Misi spesial yang diturunkan langsung oleh admin untuk diselesaikan."
+              : "Misi harian yang kamu buat sendiri untuk melatih kedisiplinan."}
+          </p>
         </div>
 
-        {/* Status Tabs */}
-        <div className="flex bg-[#151823] border border-white/[0.06] rounded-2xl p-1 w-full sm:w-fit">
+        {/* Status Tabs (Smaller Filter) */}
+        <div className="flex bg-[#151823] border border-white/[0.06] rounded-xl p-1 w-full md:w-fit shrink-0">
           {[
-            { id: "active", label: "Misi Aktif", icon: <Target className="w-4 h-4" /> },
-            { id: "completed", label: "Riwayat", icon: <History className="w-4 h-4" /> },
-            { id: "all", label: "Semua", icon: <Filter className="w-4 h-4" /> },
+            { id: "active", label: "Aktif", icon: <Target className="w-3.5 h-3.5" /> },
+            { id: "completed", label: "Riwayat", icon: <History className="w-3.5 h-3.5" /> },
+            { id: "all", label: "Semua", icon: <Filter className="w-3.5 h-3.5" /> },
           ].map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as TabType)}
-              className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold transition-all ${activeTab === tab.id
+              className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg text-[11px] font-bold transition-all uppercase tracking-wider ${activeTab === tab.id
                 ? 'bg-white/[0.08] text-white'
                 : 'text-slate-500 hover:text-slate-300'
                 }`}

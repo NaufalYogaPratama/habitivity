@@ -9,7 +9,7 @@ import User from '@/models/User';
 import Quest from '@/models/Quest';
 import FocusSession from '@/models/FocusSession';
 import LedgerEntry from '@/models/LedgerEntry';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Trophy, Skull, Wallet } from 'lucide-react';
 import { UserAvatar } from '@/components/ui/UserAvatar';
 
 const CATEGORY_CONFIG: Record<string, { icon: string; gradient: string }> = {
@@ -85,8 +85,9 @@ export default async function DashboardPage() {
     });
 
     // Leaderboard: top 5 users by XP
+    // Leaderboard: top 5 users by XP
     const topUsersRaw = await User.find({ role: 'user' })
-        .select('username stats.xp stats.level stats.streak')
+        .select('username stats.xp stats.level stats.streak avatar')
         .sort({ 'stats.xp': -1 })
         .limit(5)
         .lean();
@@ -96,6 +97,7 @@ export default async function DashboardPage() {
         xp: `${(u.stats?.xp || 0).toLocaleString()} XP`,
         level: u.stats?.level || 1,
         streak: u.stats?.streak || 0,
+        avatar: u.avatar,
     }));
 
     // Recent activity: last 6 focus sessions + expenses across all users
@@ -127,7 +129,7 @@ export default async function DashboardPage() {
         .lean() as unknown as LedgerEntryDoc[];
 
     // Merge & sort recent activities
-    type Activity = { user: string; action: string; quest: string; time: string; icon: string; sortDate: Date };
+    type Activity = { user: string; action: string; quest: string; time: string; icon: React.ReactNode; sortDate: Date };
     const recentActivity: Activity[] = [];
 
     for (const fs of recentFocusSessions) {
@@ -137,7 +139,7 @@ export default async function DashboardPage() {
             action: fs.status === 'completed' ? 'menyelesaikan' : 'menyerah di',
             quest: `${MODE_LABELS[fs.mode] || fs.mode} (+${fs.xpEarned} XP)`,
             time: timeAgo(new Date(fs.completedAt)),
-            icon: fs.status === 'completed' ? '🏆' : '💀',
+            icon: fs.status === 'completed' ? <Trophy className="w-5 h-5 text-amber-400" /> : <Skull className="w-5 h-5 text-slate-500" />,
             sortDate: new Date(fs.completedAt),
         });
     }
@@ -146,10 +148,10 @@ export default async function DashboardPage() {
         const username = le.userId?.username || 'Hero';
         recentActivity.push({
             user: username,
-            action: 'mencatat',
+            action: 'mencatat pengeluaran',
             quest: `${formatRupiah(le.amount)} (${le.category})`,
             time: timeAgo(new Date(le.date)),
-            icon: '💸',
+            icon: <Wallet className="w-5 h-5 text-emerald-400" />,
             sortDate: new Date(le.date),
         });
     }
@@ -545,8 +547,11 @@ export default async function DashboardPage() {
                         ) : (
                             topHeroes.map((hero, idx) => (
                                 <div key={hero.name} className="flex items-center gap-3 p-2.5 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] transition-colors">
-                                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black ${idx === 0 ? 'bg-amber-500/20 text-amber-400' : idx === 1 ? 'bg-slate-400/20 text-slate-300' : 'bg-orange-500/20 text-orange-400'}`}>
-                                        {idx + 1}
+                                    <div className="relative">
+                                        <UserAvatar avatar={hero.avatar} className="w-8 h-8 rounded-lg shadow-md" emojiSize="text-sm" />
+                                        <div className={`absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-black z-10 shadow-sm border border-[#151823] ${idx === 0 ? 'bg-amber-400 text-amber-950' : idx === 1 ? 'bg-slate-300 text-slate-800' : idx === 2 ? 'bg-orange-400 text-orange-950' : 'bg-slate-700 text-white'}`}>
+                                            {idx + 1}
+                                        </div>
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <p className="text-white text-xs font-semibold truncate">{hero.name}</p>
@@ -572,7 +577,9 @@ export default async function DashboardPage() {
                         ) : (
                             limitedActivity.map((act, idx) => (
                                 <div key={idx} className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/[0.02] transition-colors">
-                                    <span className="text-base mt-0.5">{act.icon}</span>
+                                    <div className="mt-0.5 p-1.5 bg-white/[0.03] rounded-lg border border-white/[0.06]">
+                                        {act.icon}
+                                    </div>
                                     <div className="flex-1 min-w-0">
                                         <p className="text-xs">
                                             <span className="text-white font-semibold">{act.user}</span>{' '}

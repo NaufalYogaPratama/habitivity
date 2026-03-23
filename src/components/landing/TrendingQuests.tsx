@@ -51,8 +51,8 @@ export default function TrendingQuests() {
     return (
         <section
             ref={ref}
-            id="explore"
-            className="py-20 sm:py-32"
+            id="quests"
+            className="py-20 sm:py-32 relative overflow-hidden"
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6">
                 {/* Header */}

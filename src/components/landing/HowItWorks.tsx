@@ -40,7 +40,7 @@ export default function HowItWorks() {
     const isInView = useInView(ref, { once: true, amount: 0.2 });
 
     return (
-        <section ref={ref} className="py-20 sm:py-32">
+        <section ref={ref} id="community" className="py-20 sm:py-32">
             <div className="max-w-7xl mx-auto px-4 sm:px-6">
                 {/* Header */}
                 <motion.h2

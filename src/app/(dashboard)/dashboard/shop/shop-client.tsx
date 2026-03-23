@@ -15,6 +15,14 @@ import {
 } from "lucide-react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
 
 interface ShopItem {
     _id: string;
@@ -33,6 +41,9 @@ export default function ShopClient() {
     const [ownedItems, setOwnedItems] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [filter, setFilter] = useState<string>("all");
+    const [subFilter, setSubFilter] = useState<string>("all");
+    const [selectedItem, setSelectedItem] = useState<ShopItem | null>(null);
+    const [isPurchasing, setIsPurchasing] = useState(false);
 
     useEffect(() => {
         fetchData();
@@ -61,6 +72,7 @@ export default function ShopClient() {
     };
 
     const handlePurchase = async (item: ShopItem) => {
+        setIsPurchasing(true);
         if (userGold < item.price) {
             toast.error("Gold tidak cukup! Kumpulkan lebih banyak dari misi.");
             return;
@@ -79,18 +91,34 @@ export default function ShopClient() {
                 toast.success(`Berhasil membeli ${item.name}! 🚀`);
                 setUserGold(data.userStats.gold);
                 setOwnedItems(prev => [...prev, item.name]);
+                setSelectedItem(null); // Tutup modal setelah sukses
             } else {
                 toast.error(data.error || "Gagal melakukan pembelian");
             }
         } catch (error) {
             toast.error("Terjadi kesalahan sistem");
+        } finally {
+            setIsPurchasing(false);
         }
     };
 
     const filteredItems = items.filter(item => {
-        if (filter === "all") return true;
-        if (filter === "equipment") return item.type === "avatar_item";
-        return item.type === filter;
+        let matchesMainFilter = true;
+        if (filter !== "all") {
+            if (filter === "equipment") {
+                matchesMainFilter = item.type === "avatar_item";
+            } else {
+                matchesMainFilter = item.type === filter;
+            }
+        }
+
+        let matchesSubFilter = true;
+        // Hanya aplikasikan filter tipe pada Equipment
+        if (filter === "equipment" && subFilter !== "all" && item.type === "avatar_item") {
+            matchesSubFilter = item.subType === subFilter;
+        }
+
+        return matchesMainFilter && matchesSubFilter;
     });
 
     const getRarityColor = (rarity: string) => {
@@ -137,24 +165,57 @@ export default function ShopClient() {
             </div>
 
             {/* Filters */}
-            <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
-                {[
-                    { id: "all", label: "Semua", icon: <Sparkles className="w-4 h-4" /> },
-                    { id: "equipment", label: "Equipment", icon: <ShieldCheck className="w-4 h-4" /> },
-                    { id: "boost", label: "Boosters", icon: <Zap className="w-4 h-4" /> },
-                    { id: "exclusive", label: "Eksklusif", icon: <Crown className="w-4 h-4" /> },
-                ].map((t) => (
-                    <button
-                        key={t.id}
-                        onClick={() => setFilter(t.id)}
-                        className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all border whitespace-nowrap ${filter === t.id
-                            ? 'bg-purple-600 border-purple-500 text-white shadow-lg shadow-purple-600/20' // <-- Warna aktif filter diganti ungu
-                            : 'bg-[#151823] border-white/[0.06] text-slate-500 hover:text-slate-300'
-                            }`}
+            <div className="flex flex-col gap-3">
+                <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+                    {[
+                        { id: "all", label: "Semua", icon: <Sparkles className="w-4 h-4" /> },
+                        { id: "equipment", label: "Equipment", icon: <ShieldCheck className="w-4 h-4" /> },
+                        { id: "boost", label: "Boosters", icon: <Zap className="w-4 h-4" /> },
+                        { id: "exclusive", label: "Eksklusif", icon: <Crown className="w-4 h-4" /> },
+                    ].map((t) => (
+                        <button
+                            key={t.id}
+                            onClick={() => {
+                                setFilter(t.id);
+                                if (t.id !== "equipment") setSubFilter("all");
+                            }}
+                            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all border whitespace-nowrap ${filter === t.id
+                                ? 'bg-purple-600 border-purple-500 text-white shadow-lg shadow-purple-600/20' // <-- Warna aktif filter diganti ungu
+                                : 'bg-[#151823] border-white/[0.06] text-slate-500 hover:text-slate-300'
+                                }`}
+                        >
+                            {t.icon} {t.label}
+                        </button>
+                    ))}
+                </div>
+
+                {/* Sub-filters KHUSUS untuk Equipment */}
+                {filter === "equipment" && (
+                    <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        className="flex gap-2 mb-2 overflow-x-auto no-scrollbar"
                     >
-                        {t.icon} {t.label}
-                    </button>
-                ))}
+                        {[
+                            { id: "all", label: "Semua Slot" },
+                            { id: "helm", label: "🪖 Helm" },
+                            { id: "armor", label: "👕 Armor" },
+                            { id: "weapon", label: "⚔️ Weapon" },
+                            { id: "accessory", label: "💍 Accessory" },
+                        ].map((sub) => (
+                            <button
+                                key={sub.id}
+                                onClick={() => setSubFilter(sub.id)}
+                                className={`px-4 py-1.5 rounded-lg text-[11px] font-bold transition-all border whitespace-nowrap ${subFilter === sub.id
+                                    ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400'
+                                    : 'bg-transparent border-white/[0.04] text-slate-500 hover:text-slate-400 hover:bg-white/[0.02]'
+                                    }`}
+                            >
+                                {sub.label}
+                            </button>
+                        ))}
+                    </motion.div>
+                )}
             </div>
 
             {/* Grid Shop Items */}
@@ -209,7 +270,7 @@ export default function ShopClient() {
                                                 </div>
                                             ) : (
                                                 <Button
-                                                    onClick={() => handlePurchase(item)}
+                                                    onClick={() => setSelectedItem(item)}
                                                     disabled={userGold < item.price}
                                                     className={`w-full h-12 rounded-xl font-bold flex items-center justify-between px-4 ${userGold >= item.price
                                                         ? 'bg-purple-600 hover:bg-purple-500 text-white shadow-lg shadow-purple-600/20' // <-- Tombol beli diganti ungu
@@ -234,6 +295,56 @@ export default function ShopClient() {
                     </div>
                 )}
             </AnimatePresence>
+
+            {/* Purchase Confirmation Dialog */}
+            <Dialog open={!!selectedItem} onOpenChange={(open) => !open && setSelectedItem(null)}>
+                <DialogContent className="sm:max-w-md bg-[#151823]/95 backdrop-blur-xl border border-white/[0.06] shadow-2xl shadow-black">
+                    <DialogHeader>
+                        <DialogTitle className="text-xl font-bold text-white flex items-center gap-2">
+                            Konfirmasi Pembelian
+                        </DialogTitle>
+                        <DialogDescription className="text-slate-400">
+                            Apakah kamu yakin ingin menukarkan Gold milikmu dengan item ini?
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    {selectedItem && (
+                        <div className="flex flex-col items-center py-6">
+                            <div className={`w-24 h-24 rounded-2xl flex items-center justify-center text-6xl shadow-lg mb-4 bg-gradient-to-br ${getRarityColor(selectedItem.rarity)}`}>
+                                {selectedItem.icon}
+                            </div>
+                            <h3 className="text-lg font-black text-white">{selectedItem.name}</h3>
+                            <p className="text-sm text-slate-500 mb-4">{selectedItem.type.replace('_', ' ').toUpperCase()}</p>
+
+                            <div className="flex items-center gap-2 px-6 py-3 bg-[#0B0E14] border border-white/[0.04] rounded-xl">
+                                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-none">Harga:</span>
+                                <div className="flex items-center gap-1.5 ml-2">
+                                    <Coins className="w-5 h-5 text-amber-400" />
+                                    <span className="text-xl font-black text-white leading-none">{selectedItem.price.toLocaleString()}</span>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    <DialogFooter className="flex gap-3 sm:justify-center border-t border-white/[0.04] pt-4">
+                        <Button
+                            variant="outline"
+                            onClick={() => setSelectedItem(null)}
+                            disabled={isPurchasing}
+                            className="flex-1 bg-transparent border-white/[0.1] text-white hover:bg-white/[0.05]"
+                        >
+                            Batal
+                        </Button>
+                        <Button
+                            onClick={() => selectedItem && handlePurchase(selectedItem)}
+                            disabled={isPurchasing || (selectedItem ? userGold < selectedItem.price : true)}
+                            className="flex-1 bg-purple-600 hover:bg-purple-500 text-white font-bold shadow-lg shadow-purple-600/20"
+                        >
+                            {isPurchasing ? "Memproses..." : "Beli Sekarang"}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

@@ -24,6 +24,19 @@ export default function Navbar() {
         return () => window.removeEventListener('scroll', onScroll);
     }, []);
 
+    const handleScroll = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>, href: string) => {
+        if (href.startsWith('#')) {
+            e.preventDefault();
+            const element = document.querySelector(href);
+            if (element) {
+                // Adjust scroll position for fixed header (subtracting 80px approx)
+                const y = element.getBoundingClientRect().top + window.scrollY - 80;
+                window.scrollTo({ top: y, behavior: 'smooth' });
+                setMobileOpen(false);
+            }
+        }
+    };
+
     return (
         <nav
             className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${isScrolled
@@ -55,6 +68,7 @@ export default function Navbar() {
                             <motion.div key={item.label} variants={fadeDown}>
                                 <Link
                                     href={item.href}
+                                    onClick={(e) => handleScroll(e, item.href)}
                                     className="text-sm font-medium text-[var(--hv-text-secondary)] hover:text-[var(--hv-text-primary)] transition-colors duration-200"
                                     style={{ fontFamily: 'var(--font-dm-sans)' }}
                                 >
@@ -121,7 +135,7 @@ export default function Navbar() {
                                 >
                                     <Link
                                         href={item.href}
-                                        onClick={() => setMobileOpen(false)}
+                                        onClick={(e) => handleScroll(e, item.href)}
                                         className="block py-3 text-sm font-medium text-[var(--hv-text-secondary)] hover:text-[var(--hv-text-primary)] transition-colors"
                                         style={{ fontFamily: 'var(--font-dm-sans)' }}
                                     >

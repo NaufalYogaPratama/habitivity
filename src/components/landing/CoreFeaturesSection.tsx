@@ -306,7 +306,7 @@ export default function CoreFeaturesSection() {
     const isInView = useInView(sectionRef, { once: true, amount: 0.15 });
 
     return (
-        <section
+        <section id="explore"
             ref={sectionRef}
             className="relative overflow-hidden"
             style={{

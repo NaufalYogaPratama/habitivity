@@ -3,7 +3,7 @@ import HeroSection from '@/components/landing/HeroSection';
 import CoreFeaturesSection from '@/components/landing/CoreFeaturesSection';
 import TrendingQuests from '@/components/landing/TrendingQuests';
 import TopCollections from '@/components/landing/TopCollections';
-import HowItWorks from '@/components/landing/HowItWorks';
+import HowItWorksSection from '@/components/landing/HowItWorksSection';
 import CtaSection from '@/components/landing/CtaSection';
 import Footer from '@/components/landing/Footer';
 
@@ -20,9 +20,9 @@ export default function LandingPage() {
       <main>
         <HeroSection />
         <CoreFeaturesSection />
+        <HowItWorksSection />
         <TrendingQuests />
         <TopCollections />
-        <HowItWorks />
         <CtaSection />
       </main>
       <Footer />

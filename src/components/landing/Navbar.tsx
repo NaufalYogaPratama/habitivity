@@ -8,10 +8,10 @@ import { Search, Menu, X } from 'lucide-react';
 import { fadeDown, staggerContainerFast } from '@/lib/animations';
 
 const navItems = [
-    { label: 'Explore', href: '#explore' },
+    { label: 'Features', href: '#explore' },
     { label: 'Quests', href: '#quests' },
     { label: 'Collections', href: '#collections' },
-    { label: 'Community', href: '#community' },
+    { label: 'How it Works', href: '#community' },
 ];
 
 export default function Navbar() {

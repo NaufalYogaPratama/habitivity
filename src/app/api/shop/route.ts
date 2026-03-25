@@ -46,12 +46,12 @@ export async function GET() {
 
         await connectDB();
 
-        let items = await ShopItem.find({ isActive: true });
+        let items = await ShopItem.find({ isActive: true }).lean();
 
         // Seed if empty
         if (items.length === 0) {
             await ShopItem.insertMany(INITIAL_ITEMS);
-            items = await ShopItem.find({ isActive: true });
+            items = await ShopItem.find({ isActive: true }).lean();
         }
 
         return NextResponse.json({ items });

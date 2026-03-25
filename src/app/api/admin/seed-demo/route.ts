@@ -7,6 +7,7 @@ import Quest from '@/models/Quest';
 import FocusSession from '@/models/FocusSession';
 import LedgerConfig from '@/models/LedgerConfig';
 import LedgerEntry from '@/models/LedgerEntry';
+import ShopItem from '@/models/ShopItem';
 
 export async function GET() {
     try {
@@ -19,6 +20,7 @@ export async function GET() {
         await FocusSession.deleteMany({});
         await LedgerConfig.deleteMany({});
         await LedgerEntry.deleteMany({});
+        await ShopItem.deleteMany({});
 
         // 2. Create impressive Gaming/Habit Clans
         const ghostLeader = new mongoose.Types.ObjectId();
@@ -62,6 +64,23 @@ export async function GET() {
             { userId: adminId, title: 'Code Refactoring Session', category: 'learning', difficulty: 'hard', status: 'pending', rewards: { xp: 300, gold: 100 }, isAdmin: true },
             { userId: adminId, title: '2 Hours Deep Work', category: 'finance', difficulty: 'medium', status: 'pending', rewards: { xp: 150, gold: 40 }, isAdmin: true },
             { userId: adminId, title: 'Daily Workout', category: 'health', difficulty: 'easy', status: 'pending', rewards: { xp: 50, gold: 15 }, isAdmin: true },
+        ]);
+
+        // 5. Create Beautiful ShopItems
+        await ShopItem.insertMany([
+            { name: 'Cyber Visor', description: 'Visor HUD dengan fitur AI tracking yang menaikkan aura kepintaranmu.', type: 'avatar_item', subType: 'helm', rarity: 'rare', price: 150, icon: '🥽', isActive: true },
+            { name: 'Neon Samurai Helm', description: 'Helm replika shogun yang memancarkan neon cyberpunk mematikan.', type: 'avatar_item', subType: 'helm', rarity: 'legendary', price: 800, icon: '🪖', isActive: true },
+            { name: 'Mecha Suit V.1', description: 'Armor tebal tahan radiasi radiasi layar monitor semalaman.', type: 'avatar_item', subType: 'armor', rarity: 'epic', price: 500, icon: '🦿', isActive: true },
+            { name: 'Quantum Cloak', description: 'Jubah rahasia untuk bekerja diam-diam namun tiba-tiba kelar.', type: 'avatar_item', subType: 'armor', rarity: 'legendary', price: 1200, icon: '🧥', isActive: true },
+            { name: 'Void Saber', description: 'Pedang cahaya murni penembus bug code.', type: 'avatar_item', subType: 'weapon', rarity: 'epic', price: 450, icon: '🗡️', isActive: true },
+            { name: 'Staff of Wisdom', description: 'Tongkat mistis yang memberi inspirasi logika programming.', type: 'avatar_item', subType: 'weapon', rarity: 'rare', price: 200, icon: '🪄', isActive: true },
+            { name: 'Aether Shield', description: 'Perisai ajaib penangkal drama kampus dan bug tidak jelas.', type: 'avatar_item', subType: 'weapon', rarity: 'epic', price: 400, icon: '🛡️', isActive: true },
+            { name: 'Time Ring', description: 'Cincin manipulasi waktu, memberikan kesan deadline masih jauh.', type: 'avatar_item', subType: 'accessory', rarity: 'epic', price: 300, icon: '💍', isActive: true },
+            { name: 'Floating Robot', description: 'Drone pintar yang menemani perjalanan akademismu.', type: 'avatar_item', subType: 'accessory', rarity: 'legendary', price: 1500, icon: '🤖', isActive: true },
+
+            // Boosters (Consumables)
+            { name: 'XP Potion', description: 'Gunakan ini untuk menggandakan hasil panen XP-mu selama 12 jam!', type: 'boost', rarity: 'epic', price: 250, icon: '🧪', stats: { xpMultiplier: 1.5 }, isActive: true },
+            { name: 'Focus Jammer', description: 'Melindungi HP-mu dari serangan sosial media selama 1 jam penuh.', type: 'boost', rarity: 'rare', price: 100, icon: '📡', stats: { shieldDuration: 60 }, isActive: true }
         ]);
 
         return NextResponse.json({ success: true, message: 'Habitivity Demo DB Seeded Successfully!' });

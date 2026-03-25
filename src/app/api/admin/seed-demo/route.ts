@@ -21,11 +21,12 @@ export async function GET() {
         await LedgerEntry.deleteMany({});
 
         // 2. Create impressive University Teams (Clans)
+        const ghostLeader = new mongoose.Types.ObjectId();
         const teams = await Team.insertMany([
-            { name: 'Institut Teknologi Bandung', icon: '⚙️', description: 'In Harmonia Progressio', stats: { totalXp: 18400, level: 15 }, maxMembers: 50 },
-            { name: 'Universitas Indonesia', icon: '🦅', description: 'Kampus Perjuangan', stats: { totalXp: 15200, level: 12 }, maxMembers: 50 },
-            { name: 'Universitas Gadjah Mada', icon: '🎓', description: 'Mengakar dan Menjulang', stats: { totalXp: 14100, level: 11 }, maxMembers: 50 },
-            { name: 'Binus University', icon: '💻', description: 'Tech Elites', stats: { totalXp: 12500, level: 9 }, maxMembers: 50 },
+            { name: 'Institut Teknologi Bandung', icon: '⚙️', description: 'In Harmonia Progressio', stats: { totalXp: 18400, level: 15 }, maxMembers: 50, leaderId: ghostLeader, joinCode: 'ITB123' },
+            { name: 'Universitas Indonesia', icon: '🦅', description: 'Kampus Perjuangan', stats: { totalXp: 15200, level: 12 }, maxMembers: 50, leaderId: ghostLeader, joinCode: 'UI1234' },
+            { name: 'Universitas Gadjah Mada', icon: '🎓', description: 'Mengakar dan Menjulang', stats: { totalXp: 14100, level: 11 }, maxMembers: 50, leaderId: ghostLeader, joinCode: 'UGM123' },
+            { name: 'Binus University', icon: '💻', description: 'Tech Elites', stats: { totalXp: 12500, level: 9 }, maxMembers: 50, leaderId: ghostLeader, joinCode: 'BINUS1' },
         ]);
 
         // 3. Create dummy users for the Leaderboard

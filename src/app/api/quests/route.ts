@@ -18,14 +18,15 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const statusFilter = searchParams.get("status");
 
-    // Siapkan query filter
-    const query: any = { userId: session.user.id };
+    // Siapkan query filter: Ambil quest milik user ATAU quest global (isAdmin: true)
+    const query: any = { $or: [{ userId: session.user.id }, { isAdmin: true }] };
     if (statusFilter) {
+      // Jika ada statusFilter, pastikan status cocok juga
       query.status = statusFilter;
     }
 
     // Cari quest berdasarkan userId, urutkan dari yang terbaru
-    const quests = await Quest.find(query).sort({ createdAt: -1 });
+    const quests = await Quest.find(query).sort({ createdAt: -1 }).lean();
 
     return NextResponse.json({ quests }, { status: 200 });
   } catch (error: any) {

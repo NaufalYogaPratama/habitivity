@@ -201,26 +201,7 @@ export default function HeroSection() {
                         className="space-y-7 text-center lg:text-left relative z-10"
                         style={{ y: textY }}
                     >
-                        {/* [1] Badge pill */}
-                        <motion.div
-                            custom={0.2}
-                            variants={fadeUp}
-                            initial="hidden"
-                            animate={isInView ? 'visible' : 'hidden'}
-                            className="inline-block"
-                        >
-                            <span
-                                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[12px] tracking-[0.03em] font-medium border"
-                                style={{
-                                    borderColor: 'rgba(124,90,246,0.3)',
-                                    background: 'rgba(124,90,246,0.1)',
-                                    color: '#A78BFA',
-                                    fontFamily: 'var(--font-dm-sans)',
-                                }}
-                            >
-                                ✦ The #1 Gamified Habit OS
-                            </span>
-                        </motion.div>
+                        {/* [1] Badge pill - removed by user request */}
 
                         {/* [2] Headline H1 — line reveal animation */}
                         <h1
@@ -472,7 +453,7 @@ export default function HeroSection() {
                                     className="text-[12px] font-bold mb-0.5"
                                     style={{ fontFamily: 'var(--font-syne)', color: '#F8F8FF' }}
                                 >
-                                    Morning Zen Master
+                                    Focus Arena
                                 </p>
                                 <p
                                     className="text-[10px] mb-2"
@@ -665,7 +646,7 @@ export default function HeroSection() {
                             >
                                 {/* Header */}
                                 <div className="flex items-center justify-between mb-1.5">
-                                    <span className="text-base">🏃</span>
+                                    <span className="text-base">💻</span>
                                     <span
                                         className="text-[9px]"
                                         style={{
@@ -681,7 +662,7 @@ export default function HeroSection() {
                                     className="text-[11px] font-bold mb-2"
                                     style={{ fontFamily: 'var(--font-dm-sans)', color: '#F8F8FF' }}
                                 >
-                                    5k Runner
+                                    Coding
                                 </p>
                                 {/* Progress bar */}
                                 <div

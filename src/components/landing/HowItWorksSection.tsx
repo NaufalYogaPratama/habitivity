@@ -285,6 +285,7 @@ export default function HowItWorksSection() {
     return (
         <section
             ref={sectionRef}
+            id="how-it-works"
             className="relative overflow-hidden"
             style={{
                 background: '#05050F',

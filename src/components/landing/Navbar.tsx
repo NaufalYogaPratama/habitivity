@@ -9,9 +9,9 @@ import { fadeDown, staggerContainerFast } from '@/lib/animations';
 
 const navItems = [
     { label: 'Features', href: '#explore' },
+    { label: 'How it Works', href: '#how-it-works' },
     { label: 'Quests', href: '#quests' },
     { label: 'Collections', href: '#collections' },
-    { label: 'How it Works', href: '#community' },
 ];
 
 export default function Navbar() {

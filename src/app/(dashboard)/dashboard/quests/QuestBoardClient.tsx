@@ -219,8 +219,8 @@ export default function QuestBoardClient() {
           <div className="flex justify-between items-start mb-3 gap-2">
             <div className="flex items-center gap-2 flex-wrap">
               {quest.isAdmin && (
-                <div className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border text-yellow-400 bg-yellow-400/10 border-yellow-400/20 flex items-center gap-1 shadow-[0_0_10px_rgba(250,204,21,0.2)]">
-                  👑 GLOBAL
+                <div className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border text-cyan-400 bg-cyan-400/10 border-cyan-400/20 flex items-center gap-1 shadow-[0_0_10px_rgba(34,211,238,0.15)]">
+                  🌍 GLOBAL
                 </div>
               )}
               <div className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${getDifficultyColor(quest.difficulty)}`}>
@@ -381,7 +381,7 @@ export default function QuestBoardClient() {
       <div className="flex bg-[#151823] border border-white/[0.06] rounded-2xl p-1 w-full sm:w-fit">
         {[
           { id: "personal", label: "🎯 Misi Pribadi" },
-          { id: "global", label: "👑 Misi Global" },
+          { id: "global", label: "🌍 Misi Global" },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -401,8 +401,8 @@ export default function QuestBoardClient() {
         <div>
           <h2 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2">
             {questType === "global" ? (
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600 flex items-center gap-2">
-                👑 Kumpulan Misi Global
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 flex items-center gap-2">
+                🌍 Kumpulan Misi Global
               </span>
             ) : (
               <span className="flex items-center gap-2">🎯 Daftar Misi Pribadi</span>

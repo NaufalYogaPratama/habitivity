@@ -272,8 +272,8 @@ export default async function DashboardPage() {
                                     <CardContent className="p-0">
                                         <div className={`aspect-[4/3] rounded-t-xl bg-gradient-to-br ${quest.gradient} relative overflow-hidden flex items-center justify-center`}>
                                             {quest.isAdmin && (
-                                                <div className="absolute top-2 left-2 sm:top-2.5 sm:left-2.5 bg-yellow-500/20 backdrop-blur-md px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg text-[9px] sm:text-[10px] font-black border border-yellow-500/30 text-yellow-400 uppercase tracking-wider flex items-center gap-1 shadow-lg">
-                                                    <span>👑</span> GLOBAL
+                                                <div className="absolute top-2 left-2 sm:top-2.5 sm:left-2.5 bg-cyan-400/10 backdrop-blur-md px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg text-[9px] sm:text-[10px] font-black border border-cyan-400/20 text-cyan-400 uppercase tracking-wider flex items-center gap-1 shadow-[0_0_10px_rgba(34,211,238,0.15)]">
+                                                    <span>🌍</span> GLOBAL
                                                 </div>
                                             )}
                                             <span className="text-4xl sm:text-5xl group-hover:scale-110 transition-transform duration-500 drop-shadow-lg">{quest.icon}</span>

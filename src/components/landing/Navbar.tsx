@@ -81,16 +81,7 @@ export default function Navbar() {
 
                 {/* Right: Search + CTA + Hamburger */}
                 <div className="flex items-center gap-3">
-                    {/* Search bar (desktop) */}
-                    <div className="hidden lg:flex items-center bg-[var(--hv-bg-surface)] border border-[var(--hv-border)] rounded-full px-4 py-2 w-56 focus-within:border-[var(--hv-primary)]/50 transition-colors">
-                        <Search className="w-4 h-4 text-[var(--hv-text-muted)]" />
-                        <input
-                            type="text"
-                            placeholder="Search quests..."
-                            className="bg-transparent border-none outline-none text-sm ml-2 w-full text-[var(--hv-text-primary)] placeholder:text-[var(--hv-text-muted)]"
-                            style={{ fontFamily: 'var(--font-dm-sans)' }}
-                        />
-                    </div>
+
 
                     {/* CTA button */}
                     <Link

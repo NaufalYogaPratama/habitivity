@@ -20,6 +20,7 @@ export default async function AdminUsersPage() {
     const serializedUsers = users.map((user: any) => ({
         ...user,
         _id: user._id.toString(),
+        teamId: user.teamId ? user.teamId.toString() : undefined,
         createdAt: user.createdAt?.toISOString(),
         updatedAt: user.updatedAt?.toISOString()
     }));

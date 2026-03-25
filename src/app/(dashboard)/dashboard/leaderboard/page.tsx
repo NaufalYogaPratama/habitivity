@@ -56,6 +56,17 @@ export default function LeaderboardPage() {
     const [data, setData] = useState<LeaderboardItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [currentUsername, setCurrentUsername] = useState<string>('');
+
+    // Ambil username user yang sedang login agar bisa di-highlight
+    useEffect(() => {
+        fetch('/api/user/stats')
+            .then(res => res.json())
+            .then(data => {
+                if (data.username) setCurrentUsername(data.username);
+            })
+            .catch(err => console.error("Gagal mendapatkan username", err));
+    }, []);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -222,59 +233,69 @@ export default function LeaderboardPage() {
                                         </td>
                                     </tr>
                                 ) : (
-                                    filteredData.map((item, idx) => (
-                                        <motion.tr
-                                            key={item.username}
-                                            initial={{ opacity: 0, y: 10 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            transition={{ delay: idx * 0.05 }}
-                                            className="group hover:bg-white/[0.02] transition-colors"
-                                        >
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-2">
-                                                    <span className={`text-sm font-black ${item.rank <= 3 ? 'text-purple-400' : 'text-slate-600'
-                                                        }`}>
-                                                        #{item.rank}
-                                                    </span>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-3">
-                                                    {category === 'team' ? (
-                                                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center border border-white/10 group-hover:scale-110 transition-transform">
-                                                            <Image src="/assets/logo/icon-clans.png" alt="Team" width={24} height={24} className="object-contain" />
-                                                        </div>
-                                                    ) : category === 'regional' ? (
-                                                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center border border-white/10 group-hover:scale-110 transition-transform text-xl">
-                                                            🎓
-                                                        </div>
-                                                    ) : (
-                                                        <UserAvatar avatar={item.avatar} className="w-10 h-10 rounded-xl shadow-lg border border-white/5 group-hover:scale-110 transition-transform" emojiSize="text-xl" showEvolution={false} />
-                                                    )}
-                                                    <div>
-                                                        <p className="text-sm font-bold text-white group-hover:text-purple-300 transition-colors">
-                                                            {item.username}
-                                                        </p>
-                                                        {item.region && (
-                                                            <p className="text-[10px] text-slate-500 flex items-center gap-1">
-                                                                <MapPin className="w-2 h-2" /> {item.region}
-                                                            </p>
-                                                        )}
+                                    filteredData.map((item, idx) => {
+                                        const isMe = item.username === currentUsername;
+                                        return (
+                                            <motion.tr
+                                                key={item.username}
+                                                initial={{ opacity: 0, y: 10 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ delay: idx * 0.05 }}
+                                                className={`group transition-colors ${isMe
+                                                    ? 'bg-purple-900/20 border-l-4 border-l-purple-500 hover:bg-purple-900/30'
+                                                    : 'hover:bg-white/[0.02]'
+                                                    }`}
+                                            >
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className={`text-sm font-black ${item.rank <= 3 ? 'text-purple-400' : 'text-slate-600'
+                                                            }`}>
+                                                            #{item.rank}
+                                                        </span>
                                                     </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <span className="px-3 py-1 bg-purple-500/10 border border-purple-500/20 rounded-full text-[10px] font-bold text-purple-400">
-                                                    Level {item.level}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4 text-right">
-                                                <span className="text-sm font-mono font-bold text-white tracking-tight">
-                                                    {item.displayValue}
-                                                </span>
-                                            </td>
-                                        </motion.tr>
-                                    ))
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center gap-3">
+                                                        {isMe && <span className="absolute -translate-x-4 w-1.5 h-full bg-purple-500 rounded-r-md opacity-0 hidden" />}
+                                                        {category === 'team' ? (
+                                                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center border border-white/10 group-hover:scale-110 transition-transform">
+                                                                <Image src="/assets/logo/icon-clans.png" alt="Team" width={24} height={24} className="object-contain" />
+                                                            </div>
+                                                        ) : category === 'regional' ? (
+                                                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-cyan-500/20 flex items-center justify-center border border-white/10 group-hover:scale-110 transition-transform text-xl">
+                                                                🎓
+                                                            </div>
+                                                        ) : (
+                                                            <UserAvatar avatar={item.avatar} className="w-10 h-10 rounded-xl shadow-lg border border-white/5 group-hover:scale-110 transition-transform" emojiSize="text-xl" showEvolution={false} />
+                                                        )}
+                                                        <div>
+                                                            <p className={`text-sm font-bold group-hover:text-purple-300 transition-colors flex items-center gap-2 ${isMe ? 'text-purple-300' : 'text-white'}`}>
+                                                                {item.username} {isMe && <span className="text-[9px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-400 uppercase tracking-wider hidden sm:inline-block">You</span>}
+                                                            </p>
+                                                            {item.region && (
+                                                                <p className="text-[10px] text-slate-500 flex items-center gap-1">
+                                                                    <MapPin className="w-2 h-2" /> {item.region}
+                                                                </p>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <span className="px-3 py-1 bg-purple-500/10 border border-purple-500/20 rounded-full text-[10px] font-bold text-purple-400">
+                                                        Level {item.level}
+                                                    </span>
+                                                </td>
+                                                <td className={`px-6 py-4 text-right ${isMe ? 'text-purple-300' : 'text-white'}`}>
+                                                    <span className="text-sm font-mono font-bold tracking-tight">
+                                                        {item.displayValue}
+                                                    </span>
+                                                    <span className={`text-[10px] ml-1 uppercase tracking-widest ${isMe ? 'text-purple-500/80' : 'text-slate-500'}`}>
+                                                        {item.rank === 1 ? '🥇' : item.rank === 2 ? '🥈' : item.rank === 3 ? '🥉' : ''}
+                                                    </span>
+                                                </td>
+                                            </motion.tr>
+                                        );
+                                    })
                                 )}
                             </tbody>
                         </table>

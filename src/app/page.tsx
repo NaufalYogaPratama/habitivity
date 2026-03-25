@@ -21,7 +21,7 @@ export default function LandingPage() {
         <HeroSection />
         <CoreFeaturesSection />
         <HowItWorksSection />
-        <TrendingQuests />
+        {/* <TrendingQuests /> */}
         <TopCollections />
         <CtaSection />
       </main>

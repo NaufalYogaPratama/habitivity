@@ -1,201 +1,187 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import Link from 'next/link';
-import { ArrowUp, Users, Zap } from 'lucide-react';
-import { fadeLeft, staggerContainerFast } from '@/lib/animations';
+import Image from 'next/image';
+import { fadeUp } from '@/lib/animations';
 
-interface TeamData {
-    name: string;
-    icon: string;
-    totalXp: number;
-    level: number;
-    members: number;
-}
+const mockUsers = [
+    { rank: 1, name: 'AlexTheGreat', level: 42, score: 125000, badges: ['🔥', '⚔️'] },
+    { rank: 2, name: 'CyberNinja', level: 38, score: 98400, badges: ['🌌'] },
+    { rank: 3, name: 'PixelQueen', level: 35, score: 87200, badges: ['💎', '✨'] },
+    { rank: 4, name: 'NeonRider', level: 31, score: 76000, badges: [] },
+    { rank: 5, name: 'QuantumBit', level: 29, score: 65300, badges: ['⚡'] },
+    { rank: 6, name: 'VoidWalker', level: 27, score: 54100, badges: ['🔮'] },
+];
 
-// Fallback when DB has no teams yet
-const FALLBACK_TEAMS: TeamData[] = [
-    { name: 'Fitness Freaks', icon: '💪', totalXp: 2400, level: 5, members: 8 },
-    { name: 'Code Warriors', icon: '⚔️', totalXp: 3100, level: 7, members: 12 },
-    { name: 'Mindful Monks', icon: '🧘', totalXp: 1800, level: 4, members: 6 },
-    { name: 'Artistic Souls', icon: '🎨', totalXp: 4200, level: 9, members: 15 },
-    { name: 'Wealth Builders', icon: '💰', totalXp: 5600, level: 11, members: 10 },
-    { name: 'Social Butterflies', icon: '🦋', totalXp: 1200, level: 3, members: 4 },
+const mockGuilds = [
+    { rank: 1, name: 'Neon Vanguard', level: 12, score: 1250000, badges: ['🛡️', '⚡'] },
+    { rank: 2, name: 'Cyber Syndicate', level: 11, score: 984000, badges: ['🌐'] },
+    { rank: 3, name: 'Quantum Core', level: 9, score: 872000, badges: ['💠'] },
+    { rank: 4, name: 'Starlight Order', level: 8, score: 760000, badges: ['✨'] },
 ];
 
 export default function TopCollections() {
+    const [activeTab, setActiveTab] = useState<'users' | 'guilds'>('users');
     const ref = useRef<HTMLElement>(null);
-    const isInView = useInView(ref, { once: true, amount: 0.15 });
-    const [teams, setTeams] = useState<TeamData[]>([]);
+    const isInView = useInView(ref, { once: true, amount: 0.1 });
 
-    useEffect(() => {
-        const fetchTeams = async () => {
-            try {
-                const res = await fetch('/api/landing/stats');
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data.topCollections?.length > 0) {
-                        setTeams(data.topCollections);
-                        return;
-                    }
-                }
-            } catch (e) {
-                console.error('Failed to fetch top collections:', e);
-            }
-            // Fallback to sample data if DB is empty or fetch fails
-            setTeams(FALLBACK_TEAMS);
-        };
-        fetchTeams();
-    }, []);
+    const data = activeTab === 'users' ? mockUsers : mockGuilds;
 
     return (
-        <section ref={ref} id="collections" className="py-20 sm:py-32">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6">
-                {/* Header */}
-                <div className="mb-10 sm:mb-14">
-                    <h2
-                        className="text-2xl sm:text-3xl md:text-4xl font-[800] tracking-[-0.02em] text-[var(--hv-text-primary)]"
-                        style={{ fontFamily: 'var(--font-syne)' }}
-                    >
-                        Top Guilds{' '}
-                        <span
-                            className="border-b border-dotted"
-                            style={{
-                                color: 'var(--hv-primary-light)',
-                                borderColor: 'var(--hv-primary-light)',
-                            }}
-                        >
-                            by XP
-                        </span>
-                    </h2>
-                </div>
+        <section ref={ref} className="relative py-24 sm:py-32 overflow-hidden w-full max-w-[1240px] mx-auto px-4 sm:px-6">
+            {/* Background ambient light */}
+            <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-[#38BDF8] opacity-[0.07] blur-[150px] rounded-full pointer-events-none" />
 
-                {/* Table header (desktop) */}
-                <div
-                    className="hidden sm:grid grid-cols-[40px_1fr_120px_100px_100px] gap-4 px-4 pb-3 mb-2 text-xs uppercase tracking-[0.1em] border-b"
-                    style={{
-                        color: 'var(--hv-text-muted)',
-                        borderColor: 'var(--hv-border)',
-                        fontFamily: 'var(--font-dm-sans)',
-                    }}
-                >
-                    <span>#</span>
-                    <span>Guild</span>
-                    <span className="text-right">Total XP</span>
-                    <span className="text-right">Level</span>
-                    <span className="text-right">Members</span>
-                </div>
-
-                {/* Rows */}
-                <motion.div
-                    variants={staggerContainerFast}
+            {/* Header Area */}
+            <div className="max-w-[1280px] mx-auto text-center mb-16">
+                <motion.h2
+                    custom={0.1}
+                    variants={fadeUp}
                     initial="hidden"
                     animate={isInView ? 'visible' : 'hidden'}
+                    className="font-[800] tracking-[-0.03em] mb-5"
+                    style={{
+                        fontFamily: 'var(--font-syne)',
+                        fontSize: 'clamp(42px, 5vw, 64px)',
+                        color: '#A78BFA',
+                    }}
                 >
-                    {teams.map((team, idx) => (
-                        <motion.div
-                            key={idx}
-                            variants={fadeLeft}
-                            className="group grid grid-cols-[40px_1fr_auto] sm:grid-cols-[40px_1fr_120px_100px_100px] gap-4 px-4 py-4 items-center cursor-pointer transition-colors duration-200 border-b hover:bg-[var(--hv-bg-surface)]"
-                            style={{ borderColor: 'rgba(124,90,246,0.08)' }}
-                        >
-                            {/* Rank */}
-                            <span
-                                className="text-sm"
-                                style={{
-                                    color: 'var(--hv-text-muted)',
-                                    fontFamily: 'var(--font-mono)',
-                                }}
-                            >
-                                {idx + 1}
-                            </span>
+                    Leaderboard.
+                </motion.h2>
 
-                            {/* Name + Icon */}
-                            <div className="flex items-center gap-3 min-w-0">
-                                <div
-                                    className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg flex-shrink-0 border transition-colors group-hover:border-[var(--hv-border-hover)] flex items-center justify-center text-xl"
-                                    style={{
-                                        background: `linear-gradient(135deg, hsl(${260 + idx * 15}, 50%, 25%) 0%, hsl(${280 + idx * 15}, 60%, 35%) 100%)`,
-                                        borderColor: 'var(--hv-border)',
-                                    }}
-                                >
-                                    {team.icon}
+                <motion.p
+                    custom={0.25}
+                    variants={fadeUp}
+                    initial="hidden"
+                    animate={isInView ? 'visible' : 'hidden'}
+                    className="mx-auto"
+                    style={{
+                        maxWidth: 480,
+                        fontSize: 16,
+                        lineHeight: 1.75,
+                        color: '#A1A1C7',
+                        fontFamily: 'var(--font-dm-sans)',
+                        fontWeight: 300,
+                    }}
+                >
+                    See who is rising to the top. Climb the ranks to etch your name in the immutable ledger.
+                </motion.p>
+            </div>
+            <motion.div
+                variants={fadeUp}
+                initial="hidden"
+                animate={isInView ? 'visible' : 'hidden'}
+                className="flex flex-col items-center text-center mb-16 relative z-10"
+            >
+                {/* Title Box */}
+
+
+                {/* Tab Switcher */}
+                <div className="flex items-center p-1.5 rounded-full bg-[rgba(13,13,32,0.8)] border border-[rgba(255,255,255,0.08)] backdrop-blur-sm shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
+                    <button
+                        onClick={() => setActiveTab('users')}
+                        className={`px-10 py-3 rounded-full text-sm font-bold tracking-widest transition-all duration-300 uppercase ${activeTab === 'users' ? 'bg-[#A78BFA] text-[#05050F] shadow-[0_0_20px_rgba(56,189,248,0.4)]' : 'text-[#A1A1C7] hover:text-white'}`}
+                        style={{ fontFamily: 'var(--font-dm-sans)' }}
+                    >
+                        Top Users
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('guilds')}
+                        className={`px-10 py-3 rounded-full text-sm font-bold tracking-widest transition-all duration-300 uppercase ${activeTab === 'guilds' ? 'bg-[#F0ABFC] text-[#05050F] shadow-[0_0_20px_rgba(167,139,250,0.4)]' : 'text-[#A1A1C7] hover:text-white'}`}
+                        style={{ fontFamily: 'var(--font-dm-sans)' }}
+                    >
+                        Top Guilds
+                    </button>
+                </div>
+            </motion.div>
+
+            {/* Leaderboard Table Container */}
+            <motion.div
+                variants={fadeUp}
+                initial="hidden"
+                animate={isInView ? 'visible' : 'hidden'}
+                className="relative z-10 w-full max-w-[1000px] mx-auto rounded-[32px] p-[1.5px] overflow-hidden"
+                style={{
+                    background: 'linear-gradient(180deg, #A78BFA 0%, rgba(167,139,250,0.3) 50%, rgba(255,255,255,0.02) 100%)',
+                    boxShadow: '0 30px 100px -20px #F0ABFC'
+                }}
+            >
+                <div className="w-full h-full bg-[#070714] backdrop-blur-xl rounded-[30px] overflow-hidden">
+
+                    {/* Table Header */}
+                    <div className="grid grid-cols-[80px_1fr_120px_180px] text-[12px] font-bold tracking-[0.2em] uppercase text-[#6B7280] border-b border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.02)]">
+                        <div className="text-center py-6 border-r border-[rgba(255,255,255,0.05)]">Rank</div>
+                        <div className="py-6 px-8 border-r border-[rgba(255,255,255,0.05)]">{activeTab === 'users' ? 'Player' : 'Guild'}</div>
+                        <div className="text-center py-6 border-r border-[rgba(255,255,255,0.05)]">Level</div>
+                        <div className="text-center py-6">Score</div>
+                    </div>
+
+                    {/* Table Body */}
+                    <div className="flex flex-col min-h-[400px]">
+                        {data.map((item, idx) => (
+                            <motion.div
+                                key={item.name}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: idx * 0.1 }}
+                                className="grid grid-cols-[80px_1fr_120px_180px] border-b border-[rgba(255,255,255,0.03)] last:border-0 items-center hover:bg-[rgba(255,255,255,0.02)] transition-colors group"
+                            >
+                                {/* Rank (Col 1) */}
+                                <div className="flex justify-center py-6 border-r border-[rgba(255,255,255,0.05)] h-full">
+                                    {item.rank <= 3 ? (
+                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-base bg-gradient-to-br ${item.rank === 1 ? 'from-[#FDE047] to-[#F59E0B] text-[#451A03] shadow-[0_0_20px_rgba(253,224,71,0.6)]' : item.rank === 2 ? 'from-[#E2E8F0] to-[#94A3B8] text-[#0F172A]' : 'from-[#FDBA74] to-[#B45309] text-[#451A03]'}`}>
+                                            {item.rank}
+                                        </div>
+                                    ) : (
+                                        <div className="text-[#A1A1C7] font-bold font-mono text-xl">{item.rank}</div>
+                                    )}
                                 </div>
-                                <div className="min-w-0">
-                                    <h4
-                                        className="font-bold text-sm truncate transition-colors group-hover:text-[var(--hv-primary-light)]"
+
+                                {/* Name (Col 2) */}
+                                <div className="flex items-center gap-4 py-6 px-8 border-r border-[rgba(255,255,255,0.05)] h-full">
+                                    <div
+                                        className="w-12 h-12 rounded-full border border-[rgba(255,255,255,0.1)] flex items-center justify-center transition-all overflow-hidden relative group-hover:scale-110"
                                         style={{
-                                            color: 'var(--hv-text-primary)',
-                                            fontFamily: 'var(--font-dm-sans)',
+                                            background: activeTab === 'users' ? `hsla(${190 + idx * 45}, 80%, 50%, 0.15)` : `hsla(${270 + idx * 45}, 80%, 50%, 0.15)`,
+                                            borderColor: activeTab === 'users' ? `hsla(${190 + idx * 45}, 80%, 50%, 0.3)` : `hsla(${270 + idx * 45}, 80%, 50%, 0.3)`
                                         }}
                                     >
-                                        {team.name}
-                                    </h4>
-                                    <p
-                                        className="text-xs sm:hidden"
-                                        style={{ color: 'var(--hv-text-muted)' }}
-                                    >
-                                        {team.totalXp.toLocaleString()} XP • Lv.{team.level}
-                                    </p>
+                                        <Image
+                                            src={activeTab === 'users' ? '/assets/logo/icon-profile.png' : '/assets/logo/icon-clans.png'}
+                                            alt={activeTab === 'users' ? 'Profile Icon' : 'Clan Icon'}
+                                            fill
+                                            className="object-contain p-2"
+                                            style={{ filter: `hue-rotate(${idx * 70}deg) brightness(1.2)` }}
+                                        />
+                                    </div>
+                                    <div>
+                                        <div className="font-bold text-[#F8F8FF] text-xl tracking-wide group-hover:text-[#38BDF8] transition-colors" style={{ fontFamily: 'var(--font-syne)' }}>{item.name}</div>
+                                        <div className="flex gap-2 mt-1">
+                                            {item.badges.map((b, i) => <span key={i} className="text-sm">{b}</span>)}
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
 
-                            {/* Total XP (desktop) */}
-                            <span
-                                className="hidden sm:block text-right text-sm font-medium"
-                                style={{
-                                    color: 'var(--hv-text-primary)',
-                                    fontFamily: 'var(--font-mono)',
-                                }}
-                            >
-                                {team.totalXp.toLocaleString()} XP
-                            </span>
+                                {/* Level (Col 3) */}
+                                <div className="flex justify-center items-center py-6 border-r border-[rgba(255,255,255,0.05)] h-full">
+                                    <div className="px-4 py-1.5 rounded-full bg-[rgba(167,139,250,0.1)] border border-[rgba(167,139,250,0.3)] text-[#A78BFA] font-mono text-base font-bold">
+                                        Lv.{item.level}
+                                    </div>
+                                </div>
 
-                            {/* Level */}
-                            <div className="flex items-center justify-end gap-1">
-                                <span
-                                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold"
-                                    style={{
-                                        background: 'rgba(74, 222, 128, 0.1)',
-                                        color: 'var(--hv-accent-green, #4ade80)',
-                                    }}
-                                >
-                                    <Zap className="w-3 h-3" />
-                                    Lv.{team.level}
-                                </span>
-                            </div>
+                                {/* Score (Col 4) */}
+                                <div className="flex justify-center items-center py-6 h-full">
+                                    <div className="font-mono text-[#38BDF8] text-2xl font-bold tracking-tight">
+                                        {item.score.toLocaleString()} <span className="text-[#6B7280] text-sm tracking-normal uppercase ml-1">XP</span>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </div>
 
-                            {/* Members (desktop) */}
-                            <span
-                                className="hidden sm:flex items-center justify-end gap-1 text-right text-sm"
-                                style={{
-                                    color: 'var(--hv-text-secondary)',
-                                    fontFamily: 'var(--font-mono)',
-                                }}
-                            >
-                                <Users className="w-3 h-3" />
-                                {team.members}
-                            </span>
-                        </motion.div>
-                    ))}
-                </motion.div>
-
-                {/* CTA */}
-                <div className="text-center mt-10 sm:mt-14">
-                    <Link
-                        href="/register"
-                        className="inline-flex items-center px-7 py-3 rounded-full text-sm font-bold transition-all duration-300 border hover:bg-[var(--hv-primary)]/10"
-                        style={{
-                            borderColor: 'var(--hv-border)',
-                            color: 'var(--hv-text-primary)',
-                            fontFamily: 'var(--font-dm-sans)',
-                        }}
-                    >
-                        Join a Guild →
-                    </Link>
                 </div>
-            </div>
+            </motion.div>
         </section>
     );
 }

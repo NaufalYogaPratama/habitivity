@@ -15,14 +15,7 @@ interface QuestData {
     category: string;
 }
 
-// Fallback when DB has no quests yet
-const FALLBACK_QUESTS: QuestData[] = [
-    { emoji: '🏃‍♂️', name: '5k Runner', xp: 50, gold: 20, rarity: 'Epic', gradient: 'from-emerald-500/30 to-teal-600/20', category: 'Health' },
-    { emoji: '📚', name: 'Read 30 Pages', xp: 100, gold: 30, rarity: 'Rare', gradient: 'from-orange-500/30 to-amber-600/20', category: 'Learning' },
-    { emoji: '💧', name: 'Hydration Hit', xp: 150, gold: 50, rarity: 'Common', gradient: 'from-blue-500/30 to-cyan-600/20', category: 'Health' },
-    { emoji: '🎨', name: 'Create Art', xp: 200, gold: 80, rarity: 'Legendary', gradient: 'from-pink-500/30 to-rose-600/20', category: 'Personal' },
-];
-
+// No dummy data, pull directly from DB Global Quests
 export default function TrendingQuests() {
     const ref = useRef<HTMLElement>(null);
     const isInView = useInView(ref, { once: true, amount: 0.2 });
@@ -34,16 +27,14 @@ export default function TrendingQuests() {
                 const res = await fetch('/api/landing/stats');
                 if (res.ok) {
                     const data = await res.json();
-                    if (data.trendingQuests?.length > 0) {
-                        setQuests(data.trendingQuests);
-                        return;
-                    }
+                    setQuests(data.trendingQuests || []);
+                    return;
                 }
             } catch (e) {
                 console.error('Failed to fetch trending quests:', e);
             }
-            // Fallback to sample data if DB is empty or fetch fails
-            setQuests(FALLBACK_QUESTS);
+            // Fallback to empty if fails
+            setQuests([]);
         };
         fetchQuests();
     }, []);

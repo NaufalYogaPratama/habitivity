@@ -8,8 +8,8 @@ export async function GET() {
     try {
         await connectDB();
 
-        // Trending Quests: 4 most recent active quests
-        const recentQuests = await Quest.find({ status: { $in: ['pending', 'in_progress'] } })
+        // Trending Quests: up to 4 global quests (isAdmin: true)
+        const recentQuests = await Quest.find({ isAdmin: true })
             .sort({ createdAt: -1 })
             .limit(4)
             .select('title category difficulty rewards createdAt')

@@ -31,6 +31,9 @@ export const metadata: Metadata = {
   title: "Habitivity",
   description:
     "The ultimate NFT-styled gamification platform for your habits and productivity. Complete quests, earn XP, and mint your achievements.",
+  icons: {
+    icon: "/assets/logo/logo-icon.png",
+  },
 };
 
 export default function RootLayout({

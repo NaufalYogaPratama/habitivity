@@ -20,13 +20,13 @@ export async function GET() {
         await LedgerConfig.deleteMany({});
         await LedgerEntry.deleteMany({});
 
-        // 2. Create impressive University Teams (Clans)
+        // 2. Create impressive Gaming/Habit Clans
         const ghostLeader = new mongoose.Types.ObjectId();
         const teams = await Team.insertMany([
-            { name: 'Institut Teknologi Bandung', icon: '⚙️', description: 'In Harmonia Progressio', stats: { totalXp: 18400, level: 15 }, maxMembers: 50, leaderId: ghostLeader, joinCode: 'ITB123' },
-            { name: 'Universitas Indonesia', icon: '🦅', description: 'Kampus Perjuangan', stats: { totalXp: 15200, level: 12 }, maxMembers: 50, leaderId: ghostLeader, joinCode: 'UI1234' },
-            { name: 'Universitas Gadjah Mada', icon: '🎓', description: 'Mengakar dan Menjulang', stats: { totalXp: 14100, level: 11 }, maxMembers: 50, leaderId: ghostLeader, joinCode: 'UGM123' },
-            { name: 'Binus University', icon: '💻', description: 'Tech Elites', stats: { totalXp: 12500, level: 9 }, maxMembers: 50, leaderId: ghostLeader, joinCode: 'BINUS1' },
+            { name: 'Code Warriors', icon: '💻', description: 'Commit early, push often.', stats: { totalXp: 18400, level: 15 }, maxMembers: 50, leaderId: ghostLeader, joinCode: 'CODE123' },
+            { name: 'Night Owls', icon: '🦉', description: 'Productivity when the world sleeps.', stats: { totalXp: 15200, level: 12 }, maxMembers: 50, leaderId: ghostLeader, joinCode: 'OWL456' },
+            { name: 'Fitness Freaks', icon: '💪', description: 'No pain no gain.', stats: { totalXp: 14100, level: 11 }, maxMembers: 50, leaderId: ghostLeader, joinCode: 'FIT789' },
+            { name: 'Zen Masters', icon: '🧘', description: 'Mind over matter.', stats: { totalXp: 12500, level: 9 }, maxMembers: 50, leaderId: ghostLeader, joinCode: 'ZEN000' },
         ]);
 
         // 3. Create dummy users for the Leaderboard

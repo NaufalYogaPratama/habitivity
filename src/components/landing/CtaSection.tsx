@@ -90,7 +90,7 @@ export default function CtaSection() {
                             fontWeight: 300,
                         }}
                     >
-                        Join 98,000+ others turning their productivity into a game worth
+                        Turn your productivity into a game worth
                         playing. Claim your avatar, complete quests, and unlock a new dimension of focus.
                     </p>
 
@@ -103,7 +103,7 @@ export default function CtaSection() {
                             fontFamily: 'var(--font-dm-sans)',
                         }}
                     >
-                        <span className="relative z-10">Initialize Sequence</span>
+                        <span className="relative z-10">Let's Begin</span>
                         <ArrowRight size={20} className="relative z-10" />
 
                         {/* Interactive hover overlay */}

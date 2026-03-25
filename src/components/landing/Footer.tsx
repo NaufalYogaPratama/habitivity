@@ -2,29 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Twitter, Github, MessageCircle } from 'lucide-react';
-
-const productLinks = [
-    { label: 'Explore', href: '#explore' },
-    { label: 'Quests', href: '#quests' },
-    { label: 'Collections', href: '#collections' },
-    { label: 'Leaderboard', href: '#' },
-    { label: 'Marketplace', href: '#' },
-];
-
-const communityLinks = [
-    { label: 'Discord', href: '#' },
-    { label: 'Twitter', href: '#' },
-    { label: 'Blog', href: '#' },
-    { label: 'Help Center', href: '#' },
-    { label: 'Suggest Feature', href: '#' },
-];
-
-const socialIcons = [
-    { Icon: Twitter, href: '#', label: 'Twitter' },
-    { Icon: MessageCircle, href: '#', label: 'Discord' },
-    { Icon: Github, href: '#', label: 'Github' },
-];
+import { Github } from 'lucide-react';
 
 export default function Footer() {
     return (
@@ -36,153 +14,110 @@ export default function Footer() {
             }}
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6">
-                {/* Main grid */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-10 sm:gap-12 mb-12 sm:mb-16">
-                    {/* Column 1: Logo + Tagline + Social */}
-                    <div className="col-span-2 md:col-span-1">
-                        <Image
-                            src="/assets/logo/logo-full.png"
-                            alt="Habitivity"
-                            width={130}
-                            height={34}
-                            className="h-54 w-auto mb-4"
-                        />
-                        <p
-                            className="text-sm mb-5 leading-relaxed"
-                            style={{
-                                color: 'var(--hv-text-muted)',
-                                fontFamily: 'var(--font-dm-sans)',
-                            }}
-                        >
-                            Gamify your life. Mint your legacy.
-                        </p>
-                        <div className="flex items-center gap-3">
-                            {socialIcons.map(({ Icon, href, label }) => (
+                {/* Main 3-column layout */}
+                <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-12 mb-16 sm:mb-20">
+
+                    {/* Left: Logo */}
+                    <div className="flex flex-col items-center md:items-start w-full md:w-1/3">
+                        <Link href="#home">
+                            <Image
+                                src="/assets/logo/logo-full1.png"
+                                alt="Habitivity Logo"
+                                width={160}
+                                height={2}
+                                className="h-8 sm:h-14 w-auto"
+                            />
+                        </Link>
+                    </div>
+
+                    {/* Center: Navigation Links */}
+                    <div className="flex items-center justify-center text-center w-full md:w-1/3">
+                        <ul className="flex flex-wrap justify-center gap-6 sm:gap-8">
+                            <li>
                                 <Link
-                                    key={label}
-                                    href={href}
-                                    aria-label={label}
-                                    className="w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200 border hover:bg-[var(--hv-primary)]/10 hover:border-[var(--hv-border-hover)]"
+                                    href="#home"
+                                    className="text-sm sm:text-base font-medium transition-colors duration-200 hover:text-white"
                                     style={{
-                                        borderColor: 'var(--hv-border)',
                                         color: 'var(--hv-text-muted)',
+                                        fontFamily: 'var(--font-dm-sans)',
                                     }}
                                 >
-                                    <Icon className="w-4 h-4" />
+                                    Home
                                 </Link>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Column 2: Product */}
-                    <div>
-                        <h4
-                            className="text-xs font-bold uppercase tracking-[0.12em] mb-4"
-                            style={{
-                                color: 'var(--hv-text-secondary)',
-                                fontFamily: 'var(--font-dm-sans)',
-                            }}
-                        >
-                            Product
-                        </h4>
-                        <ul className="space-y-2.5">
-                            {productLinks.map((link) => (
-                                <li key={link.label}>
-                                    <Link
-                                        href={link.href}
-                                        className="text-sm transition-colors duration-200 hover:text-[var(--hv-text-primary)]"
-                                        style={{
-                                            color: 'var(--hv-text-muted)',
-                                            fontFamily: 'var(--font-dm-sans)',
-                                        }}
-                                    >
-                                        {link.label}
-                                    </Link>
-                                </li>
-                            ))}
+                            </li>
+                            <li>
+                                <Link
+                                    href="#explore"
+                                    className="text-sm sm:text-base font-medium transition-colors duration-200 hover:text-white"
+                                    style={{
+                                        color: 'var(--hv-text-muted)',
+                                        fontFamily: 'var(--font-dm-sans)',
+                                    }}
+                                >
+                                    Features
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href="#how-it-works"
+                                    className="text-sm sm:text-base font-medium transition-colors duration-200 hover:text-white"
+                                    style={{
+                                        color: 'var(--hv-text-muted)',
+                                        fontFamily: 'var(--font-dm-sans)',
+                                    }}
+                                >
+                                    How it works
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href="#leaderboard"
+                                    className="text-sm sm:text-base font-medium transition-colors duration-200 hover:text-white"
+                                    style={{
+                                        color: 'var(--hv-text-muted)',
+                                        fontFamily: 'var(--font-dm-sans)',
+                                    }}
+                                >
+                                    Leaderboard
+                                </Link>
+                            </li>
                         </ul>
                     </div>
 
-                    {/* Column 3: Community */}
-                    <div>
-                        <h4
-                            className="text-xs font-bold uppercase tracking-[0.12em] mb-4"
-                            style={{
-                                color: 'var(--hv-text-secondary)',
-                                fontFamily: 'var(--font-dm-sans)',
-                            }}
-                        >
-                            Community
-                        </h4>
-                        <ul className="space-y-2.5">
-                            {communityLinks.map((link) => (
-                                <li key={link.label}>
-                                    <Link
-                                        href={link.href}
-                                        className="text-sm transition-colors duration-200 hover:text-[var(--hv-text-primary)]"
-                                        style={{
-                                            color: 'var(--hv-text-muted)',
-                                            fontFamily: 'var(--font-dm-sans)',
-                                        }}
-                                    >
-                                        {link.label}
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-
-                    {/* Column 4: Newsletter */}
-                    <div>
-                        <h4
-                            className="text-xs font-bold uppercase tracking-[0.12em] mb-4"
-                            style={{
-                                color: 'var(--hv-text-secondary)',
-                                fontFamily: 'var(--font-dm-sans)',
-                            }}
-                        >
-                            Stay Updated
-                        </h4>
+                    {/* Right: Tagline & Github */}
+                    <div className="flex flex-col items-center md:items-end text-center md:text-right w-full md:w-1/3">
                         <p
-                            className="text-xs mb-3 leading-relaxed"
+                            className="text-base sm:text-sm mb-6 leading-relaxed max-w-[220px]"
                             style={{
                                 color: 'var(--hv-text-muted)',
                                 fontFamily: 'var(--font-dm-sans)',
                             }}
                         >
-                            Get the latest updates on new quests and features.
+                            Gamify your life, mint your legacy.
                         </p>
-                        <div className="flex">
-                            <input
-                                type="email"
-                                placeholder="your@email.com"
-                                className="flex-1 min-w-0 px-3 py-2 rounded-l-lg text-xs bg-[var(--hv-bg-surface)] border border-r-0 text-[var(--hv-text-primary)] placeholder:text-[var(--hv-text-muted)] outline-none focus:border-[var(--hv-primary)]"
-                                style={{
-                                    borderColor: 'var(--hv-border)',
-                                    fontFamily: 'var(--font-dm-sans)',
-                                }}
-                            />
-                            <button
-                                className="px-3 py-2 rounded-r-lg text-xs font-bold text-white flex-shrink-0 transition-opacity hover:opacity-90"
-                                style={{
-                                    background:
-                                        'linear-gradient(135deg, var(--hv-primary) 0%, var(--hv-accent) 100%)',
-                                    fontFamily: 'var(--font-dm-sans)',
-                                }}
-                            >
-                                Subscribe
-                            </button>
-                        </div>
+                        <Link
+                            href="https://github.com/NaufalYogaPratama/habitivity"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 border border-[rgba(255,255,255,0.1)] hover:border-[#38BDF8] hover:bg-[rgba(56,189,248,0.1)] hover:scale-110 hover:shadow-[0_0_20px_rgba(56,189,248,0.3)] group"
+                            style={{
+                                backgroundColor: 'rgba(255,255,255,0.03)',
+                            }}
+                            aria-label="GitHub Repository"
+                        >
+                            <Github className="w-6 h-6 text-[#A1A1C7] group-hover:text-[#38BDF8] transition-colors" />
+                        </Link>
                     </div>
+
                 </div>
 
-                {/* Bottom bar */}
+                {/* Bottom line */}
                 <div
-                    className="pt-8 border-t flex flex-col sm:flex-row items-center justify-between gap-4"
+                    className="pt-8 border-t flex items-center justify-center md:justify-start"
                     style={{ borderColor: 'var(--hv-border)' }}
                 >
                     <p
-                        className="text-xs"
+                        className="text-sm"
                         style={{
                             color: 'var(--hv-text-muted)',
                             fontFamily: 'var(--font-dm-sans)',
@@ -190,39 +125,6 @@ export default function Footer() {
                     >
                         © 2026 Habitivity. All rights reserved.
                     </p>
-                    <div className="flex items-center gap-4 sm:gap-6">
-                        <span
-                            className="text-xs px-2 py-0.5 rounded border"
-                            style={{
-                                borderColor: 'var(--hv-border)',
-                                color: 'var(--hv-text-muted)',
-                                fontFamily: 'var(--font-mono)',
-                                fontSize: '10px',
-                            }}
-                        >
-                            Built on Web3
-                        </span>
-                        <Link
-                            href="#"
-                            className="text-xs transition-colors hover:text-[var(--hv-text-primary)]"
-                            style={{
-                                color: 'var(--hv-text-muted)',
-                                fontFamily: 'var(--font-dm-sans)',
-                            }}
-                        >
-                            Privacy
-                        </Link>
-                        <Link
-                            href="#"
-                            className="text-xs transition-colors hover:text-[var(--hv-text-primary)]"
-                            style={{
-                                color: 'var(--hv-text-muted)',
-                                fontFamily: 'var(--font-dm-sans)',
-                            }}
-                        >
-                            Terms
-                        </Link>
-                    </div>
                 </div>
             </div>
         </footer>

@@ -28,7 +28,7 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Habitivity — Gamify Your Life",
+  title: "Habitivity",
   description:
     "The ultimate NFT-styled gamification platform for your habits and productivity. Complete quests, earn XP, and mint your achievements.",
 };

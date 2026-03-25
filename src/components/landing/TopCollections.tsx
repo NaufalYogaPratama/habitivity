@@ -29,7 +29,7 @@ export default function TopCollections() {
     const data = activeTab === 'users' ? mockUsers : mockGuilds;
 
     return (
-        <section ref={ref} className="relative py-24 sm:py-32 overflow-hidden w-full max-w-[1240px] mx-auto px-4 sm:px-6">
+        <section id="leaderboard" ref={ref} className="relative py-24 sm:py-32 overflow-hidden w-full max-w-[1240px] mx-auto px-4 sm:px-6">
             {/* Background ambient light */}
             <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-[#38BDF8] opacity-[0.07] blur-[150px] rounded-full pointer-events-none" />
 

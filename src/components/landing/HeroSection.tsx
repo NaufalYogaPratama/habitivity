@@ -269,8 +269,7 @@ export default function HeroSection() {
                                 lineHeight: 1.75,
                             }}
                         >
-                            Turn your daily routine into a high-value digital asset collection.
-                            Complete quests, earn XP, and mint your achievements.
+                            Ubah rutinitas harianmu menjadi koleksi aset digital yang bernilai tinggi. Selesaikan misi, kumpulkan XP, dan cetak pencapaianmu.
                         </motion.p>
 
                         {/* [4] CTA Buttons */}
@@ -300,7 +299,7 @@ export default function HeroSection() {
                             >
                                 Start Collecting
                             </Link>
-                            <Link
+                            {/* <Link
                                 href="/login"
                                 className="px-7 py-3 rounded-full font-bold text-sm transition-all duration-300 border hover:bg-[rgba(124,90,246,0.1)] hover:border-[rgba(124,90,246,0.5)]"
                                 style={{
@@ -310,7 +309,7 @@ export default function HeroSection() {
                                 }}
                             >
                                 View Demo
-                            </Link>
+                            </Link> */}
                         </motion.div>
 
                         {/* [5] Stats bar */}

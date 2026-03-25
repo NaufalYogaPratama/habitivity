@@ -88,7 +88,7 @@ export default function RegisterPage() {
                         priority
                     />
                 </Link>
-                <p className="text-slate-400">Join the revolution.</p>
+                {/* <p className="text-slate-400">Join the revolution.</p> */}
             </div>
 
             <Card className="glass border-white/10 bg-black/40 backdrop-blur-xl shadow-2xl">

@@ -173,22 +173,20 @@ export default async function AdminDashboardPage() {
             {/* Center Feed */}
             <div className="flex-1 p-4 sm:p-6 space-y-7 min-w-0">
                 {/* Top Bar */}
-                <div className="flex items-center justify-between">
-                    <div>
-                        {/* PERUBAHAN: Ikon Admin Dashboard pakai icon-home1 */}
+                <div className="flex items-center justify-between gap-3">
+                    <div className="min-w-0">
                         <h1 className="text-2xl font-bold flex items-center gap-2.5">
-                            <Image src="/assets/logo/icon-home1.png" alt="Admin Dashboard" width={32} height={32} className="drop-shadow-md" />
+                            <Image src="/assets/logo/icon-home1.png" alt="Admin Dashboard" width={32} height={32} className="drop-shadow-md shrink-0" />
                             Admin Dashboard
                         </h1>
                         <p className="text-slate-500 text-sm mt-1">
                             Welcome back, <span className="text-white font-medium">{user?.name}</span>
                         </p>
                     </div>
-                    <Link href="/admin/analytics">
+                    <Link href="/admin/analytics" className="shrink-0">
                         <Button size="sm" className="bg-purple-600 hover:bg-purple-500 text-white shadow-lg shadow-purple-600/20 border-none rounded-xl flex items-center gap-2">
-                            {/* PERUBAHAN: Tombol View Analytics pakai icon-analytics (jika belum ada filenya, ini bisa diganti emoji 📈 lagi) */}
                             <Image src="/assets/logo/icon-analytics.png" alt="Analytics" width={16} height={16} />
-                            View Analytics
+                            <span className="hidden sm:inline">View Analytics</span>
                         </Button>
                     </Link>
                 </div>

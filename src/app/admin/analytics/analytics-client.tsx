@@ -24,7 +24,7 @@ export default function AnalyticsClient({ chartData, statsOverview, totalUsers, 
                 <p className="text-slate-400 text-sm mt-1">Deep dive into Habitivity's growth and engagement metrics.</p>
             </div>
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
                 <Card className="bg-[#151823] border-emerald-500/20 shadow-lg shadow-emerald-500/5">
                     <CardHeader className="pb-1 p-4">
                         <CardDescription className="font-bold text-slate-500 uppercase tracking-widest text-[9px]">Hero Roster</CardDescription>

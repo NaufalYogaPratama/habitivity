@@ -284,7 +284,7 @@ export default function HowItWorksSection() {
     return (
         <section
             ref={sectionRef}
-            id="how-it-works"
+            id="community"
             className="relative overflow-hidden"
             style={{
                 background: '#05050F',

@@ -9,9 +9,8 @@ import { fadeDown, staggerContainerFast } from '@/lib/animations';
 
 const navItems = [
     { label: 'Features', href: '#explore' },
-    { label: 'How it Works', href: '#how-it-works' },
-    { label: 'Quests', href: '#quests' },
-    { label: 'Collections', href: '#collections' },
+    { label: 'How it Works', href: '#community' },
+    { label: 'Leaderboard', href: '#leaderboard' },
 ];
 
 export default function Navbar() {
@@ -45,8 +44,8 @@ export default function Navbar() {
                 }`}
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
-                {/* Left: Logo + Nav */}
-                <div className="flex items-center gap-6 lg:gap-10">
+                {/* Left: Logo */}
+                <div className="flex-1 flex justify-start">
                     <Link href="/" className="flex items-center gap-2 pt-1">
                         <Image
                             src="/assets/logo/logo-full.png"
@@ -57,32 +56,31 @@ export default function Navbar() {
                             priority
                         />
                     </Link>
-
-                    <motion.div
-                        className="hidden md:flex items-center gap-8"
-                        variants={staggerContainerFast}
-                        initial="hidden"
-                        animate="visible"
-                    >
-                        {navItems.map((item) => (
-                            <motion.div key={item.label} variants={fadeDown}>
-                                <Link
-                                    href={item.href}
-                                    onClick={(e) => handleScroll(e, item.href)}
-                                    className="text-sm font-medium text-[var(--hv-text-secondary)] hover:text-[var(--hv-text-primary)] transition-colors duration-200"
-                                    style={{ fontFamily: 'var(--font-dm-sans)' }}
-                                >
-                                    {item.label}
-                                </Link>
-                            </motion.div>
-                        ))}
-                    </motion.div>
                 </div>
 
-                {/* Right: Search + CTA + Hamburger */}
-                <div className="flex items-center gap-3">
+                {/* Center: Nav (Desktop) */}
+                <motion.div
+                    className="hidden md:flex items-center gap-8"
+                    variants={staggerContainerFast}
+                    initial="hidden"
+                    animate="visible"
+                >
+                    {navItems.map((item) => (
+                        <motion.div key={item.label} variants={fadeDown}>
+                            <Link
+                                href={item.href}
+                                onClick={(e) => handleScroll(e, item.href)}
+                                className="text-sm font-medium text-[var(--hv-text-secondary)] hover:text-[var(--hv-text-primary)] transition-colors duration-200"
+                                style={{ fontFamily: 'var(--font-dm-sans)' }}
+                            >
+                                {item.label}
+                            </Link>
+                        </motion.div>
+                    ))}
+                </motion.div>
 
-
+                {/* Right: CTA (Desktop) + Hamburger (Mobile) */}
+                <div className="flex-1 flex items-center justify-end gap-3">
                     {/* CTA button */}
                     <Link
                         href="/register"

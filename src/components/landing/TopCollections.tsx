@@ -44,7 +44,10 @@ export default function TopCollections() {
                     style={{
                         fontFamily: 'var(--font-syne)',
                         fontSize: 'clamp(42px, 5vw, 64px)',
-                        color: '#A78BFA',
+                        background: 'linear-gradient(135deg, #A78BFA, #F0ABFC)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text',
                     }}
                 >
                     Leaderboard.
@@ -91,7 +94,7 @@ export default function TopCollections() {
                         className={`px-10 py-3 rounded-full text-sm font-bold tracking-widest transition-all duration-300 uppercase ${activeTab === 'guilds' ? 'bg-[#F0ABFC] text-[#05050F] shadow-[0_0_20px_rgba(167,139,250,0.4)]' : 'text-[#A1A1C7] hover:text-white'}`}
                         style={{ fontFamily: 'var(--font-dm-sans)' }}
                     >
-                        Top Guilds
+                        Top Clans
                     </button>
                 </div>
             </motion.div>

@@ -248,7 +248,39 @@ export default function QuestBoardClient() {
           </div>
         </CardContent>
 
-        <CardFooter className="pt-0 pb-6 hidden group-hover:flex animate-in fade-in slide-in-from-bottom-2 duration-300">
+        {/* Mobile: always visible */}
+        <CardFooter className="pt-0 pb-6 flex md:hidden">
+          <div className="grid grid-cols-2 gap-2 w-full">
+            {quest.status === 'pending' || quest.status === 'in_progress' ? (
+              <>
+                <Button
+                  onClick={() => router.push(`/dashboard/focus?questId=${quest._id}`)}
+                  className="bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl h-11"
+                >
+                  <Play className="w-4 h-4 mr-2" /> FOCUS
+                </Button>
+                <Button
+                  onClick={() => setQuestToComplete(quest)}
+                  variant="outline"
+                  className="border-fuchsia-500/20 text-fuchsia-400 hover:bg-fuchsia-500/10 font-bold rounded-xl h-11"
+                >
+                  <CheckCircle2 className="w-4 h-4 mr-2" /> DONE
+                </Button>
+              </>
+            ) : (
+              <Button
+                onClick={() => deleteQuest(quest._id)}
+                variant="outline"
+                className="col-span-2 border-red-500/20 text-red-500 hover:bg-red-500/10 font-bold rounded-xl h-11"
+              >
+                <Trash2 className="w-4 h-4 mr-2" /> HAPUS JEJAK
+              </Button>
+            )}
+          </div>
+        </CardFooter>
+
+        {/* Desktop: show on hover */}
+        <CardFooter className="pt-0 pb-6 hidden md:group-hover:flex animate-in fade-in slide-in-from-bottom-2 duration-300">
           <div className="grid grid-cols-2 gap-2 w-full">
             {quest.status === 'pending' || quest.status === 'in_progress' ? (
               <>

@@ -214,8 +214,14 @@ function Sidebar({ user, open, onClose }: { user: { name?: string; email?: strin
 
 function SignOutForm() {
     const handleSignOut = async () => {
-        const { signOut } = await import('next-auth/react');
-        await signOut({ callbackUrl: '/' });
+        try {
+            const { signOut } = await import('next-auth/react');
+            await signOut({ redirect: false });
+            window.location.href = '/';
+        } catch (error) {
+            // Fallback: force redirect
+            window.location.href = '/';
+        }
     };
 
     return (

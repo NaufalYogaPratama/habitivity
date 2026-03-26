@@ -110,12 +110,11 @@ function StepCard({
         <motion.div
             custom={delay}
             variants={variant}
-            className="cursor-pointer transition-all duration-300 relative group"
-            style={{ maxWidth: 420 }}
+            className="cursor-pointer transition-all duration-300 relative group max-w-[320px] sm:max-w-[420px]"
             whileHover={{ y: -6, transition: { duration: 0.25 } }}
         >
             <div
-                className="rounded-[20px] p-8 sm:p-9 transition-all duration-300 relative overflow-hidden"
+                className="rounded-[20px] p-5 sm:p-8 md:p-9 transition-all duration-300 relative overflow-hidden"
                 style={{
                     background: `linear-gradient(135deg, ${accent}1A 0%, rgba(13,13,32,0.8) 100%)`,
                     border: `1px solid ${accent}26`,
@@ -159,7 +158,7 @@ function StepCard({
 
                 {/* Title */}
                 <h3
-                    className="text-[22px] font-[800] tracking-[-0.02em] mt-1 mb-2.5"
+                    className="text-[18px] sm:text-[22px] font-[800] tracking-[-0.02em] mt-1 mb-2.5"
                     style={{ color: '#F8F8FF', fontFamily: 'var(--font-syne)' }}
                 >
                     {step.title}
@@ -167,7 +166,7 @@ function StepCard({
 
                 {/* Description */}
                 <p
-                    className="text-[15px] leading-[1.75] mb-5"
+                    className="text-[13px] sm:text-[15px] leading-[1.75] mb-5"
                     style={{
                         color: '#A1A1C7',
                         fontFamily: 'var(--font-dm-sans)',

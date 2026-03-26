@@ -425,15 +425,13 @@ export default function HeroSection() {
                                     className="rounded-xl mb-2.5 relative overflow-hidden flex items-center justify-center"
                                     style={{
                                         aspectRatio: '1',
-                                        background:
-                                            'linear-gradient(135deg, #4338ca 0%, #7c3aed 50%, #a855f7 100%)',
                                     }}
                                 >
                                     <Image
                                         src="/assets/hero3.png"
                                         alt="Zen Master"
                                         fill
-                                        className="object-contain p-4 drop-shadow-2xl rounded-xl"
+                                        className="object-cover drop-shadow-2xl"
                                     />
                                     <div
                                         className="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded-full text-[9px] font-bold"
